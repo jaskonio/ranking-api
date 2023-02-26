@@ -9,6 +9,10 @@ class Race(BaseModel):
     url: str
     is_load: Union[bool, None] = None
 
+@app.get("/")
+def home():
+    return {"Home": "Ranking-api"}
+
 @app.get("/admin/race/{race_id}")
 def read_race(race_id: int, q: Union[str, None] = None):
     return {"race_id": race_id, "q": q}
