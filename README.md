@@ -17,5 +17,5 @@
 ## Run 
 
 ```cmd
-    docker run --rm --name ranking-api -p 9000:8080 ranking-api:latest
+    docker run -d --rm --name ranking-api -p 9000:8080 ranking-api:latest
 ```
