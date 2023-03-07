@@ -1,38 +1,42 @@
-from ast import List
 from fastapi import FastAPI
 from pydantic import BaseModel
+from Domain.FactoryDownloader import FactoryDownloader
+from fastapi.middleware.cors import CORSMiddleware
+
+factory_downloader = FactoryDownloader()
 
 app = FastAPI()
 
-class RaceDetail(BaseModel):
-    id: int
-    name: str
-    url: str
-    is_load: bool
+origins = [
+    "http://localhost:4200"
+]
 
-config = []
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+class RaceDownload(BaseModel):
+    url: str
 
 @app.get("/")
 def home():
     return {"Home": "Ranking-api"}
 
-@app.get("/admin/races")
-def read_race():
-    return config
+@app.post("/race/download")
+def download(item: RaceDownload):
+    print("download")
+    print("item: " + str(item))
+    
+    downloader = factory_downloader.factory_method(item.url)
+    data = []
 
-@app.post("/admin/race/{race_id}")
-def add_race(race_id: int, race: RaceDetail):
-    race.id = race_id
-    config.append(race)
+    if downloader != None:
+        data = downloader.race_data
+    else:
+        print("[ERROR]: Process facotry downloader")
 
-    return race
-
-@app.put("/admin/race/{race_id}")
-def update_race(race_id: int, new_race: RaceDetail):
-    for race in config:
-        if race.id == race_id:
-            race.name = new_race.name
-            race.url = new_race.url
-
-    return new_race
-
+    return data
