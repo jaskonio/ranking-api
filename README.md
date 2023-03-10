@@ -18,12 +18,16 @@ pip3 install -r requirements.txt
 ## Build 
 
 ```cmd
-    docker build -t ranking-api:latest .
+    docker build -t ranking-api .
 ```
-
 
 ## Run 
 
 ```cmd
-    docker run -d --rm --name ranking-api -p 9000:8080 ranking-api:latest
+    docker run -d --rm --name ranking-api -p 9000:8080 ranking-api
+```
+
+## Stop 
+```cmd
+    docker stop ranking-api
 ```

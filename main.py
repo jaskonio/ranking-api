@@ -7,9 +7,7 @@ factory_downloader = FactoryDownloader()
 
 app = FastAPI()
 
-origins = [
-    "http://localhost:4200"
-]
+origins = ["*"]
 
 app.add_middleware(
     CORSMiddleware,
@@ -37,6 +35,6 @@ def download(item: RaceDownload):
     if downloader != None:
         data = downloader.race_data
     else:
-        print("[ERROR]: Process facotry downloader")
+        print("[ERROR]: Process factory downloader")
 
     return data
