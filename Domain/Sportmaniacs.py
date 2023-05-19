@@ -1,6 +1,7 @@
-
+from typing import List
 from Domain.Downloader import Downloader
-
+from Domain.Runner import Runner
+from Domain.UtilsRunner import build_runner
 
 class Sportmaniacs(Downloader):
     url_base = 'https://sportmaniacs.com/es/races/rankings/'
@@ -15,12 +16,12 @@ class Sportmaniacs(Downloader):
         self.requests_options['url'] = self.url_base + self.race_id
 
     def process_data(self):
-        self.race_data = self.requests_response.json()
-        self.race_data = self.__get_rankings_by_club()
-        self.race_data = self.__set_rankings_format()
-        
-    def __get_rankings_by_club(self):
-        rankings = self.race_data['data']['Rankings']
+        json_response_data = self.requests_response.json()
+        data_filtered_by_club = self.__get_rankings_by_club(json_response_data)
+        self.race_data = self.__set_rankings_format(data_filtered_by_club)
+
+    def __get_rankings_by_club(self, json_response_data):
+        rankings = json_response_data['data']['Rankings']
 
         rankings_by_club_list = []
         for row in rankings:
@@ -29,10 +30,12 @@ class Sportmaniacs(Downloader):
 
         return rankings_by_club_list
 
-    def __set_rankings_format(self):
-        delete_keys = ['category_id', 'user_id', 'defaultImage', 'photos', 'externalPhotos', 'externalVideos',
-                    'externalDiploma', 'Points']
-        for row in self.race_data:
+    def __set_rankings_format(self, runners):
+        delete_keys = ['category_id', 'user_id', 'defaultImage', 'photos', 'externalPhotos', 'externalVideos', 'externalDiploma', 'Points']
+        
+        new_runners:List[Runner] = []
+            
+        for row in runners:
             # delete key pos
             key_pos = [key for key in row.keys() if 'pos_' in key][0]
             delete_keys.append(key_pos)
@@ -42,4 +45,10 @@ class Sportmaniacs(Downloader):
             # Update gender value
             row['gender'] = 'Masculino' if row['gender'] == 'gender_0' else 'Femenino'
 
-        return self.race_data
+            runner = build_runner(row["dorsal"], row["name"], row["club"], row["nationality"], row["finishedRace"], row["gender"], row["category"],
+                                  row["officialTime"], row["pos"], row["average"], row["catPos"], row["genPos"],
+                                  row["realTime"], row["realPos"], row["averageNet"], row["realCatPos"], row["realGenPos"])
+
+            new_runners.append(runner)
+
+        return new_runners

@@ -6,3 +6,5 @@ parse~=1.19.0
 openpyxl==3.0.9
 pyinstaller==4.5.1
 beautifulsoup4==4.10.0
+python-dotenv==0.13.0
+pymongo==3.10.1

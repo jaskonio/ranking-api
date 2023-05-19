@@ -1,4 +1,7 @@
+from typing import List
 import requests
+
+from Domain.Runner import Runner
 
 class Downloader:
     requests_options = {
@@ -12,7 +15,7 @@ class Downloader:
     race_id = None
     race_name = None
     requests_response = None
-    race_data = []
+    race_data:List[Runner] = []
     official_team_name = 'REDOLAT TEAM'
     team_name = ['REDOLAT TEAM', 'REDOLATTEAM', 'Redolat Team', 'RedolatTeam', 'Redolat', 'redolatteam', 'redolat team']
 
