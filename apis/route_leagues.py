@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Request
+from fastapi import APIRouter
 from Controller.LeagueController import LeagueController
 from Model.LeagueModel import LeagueModel
 from Model.RaceModel import RaceModel

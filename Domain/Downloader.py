@@ -2,7 +2,6 @@ from typing import List
 from Model.RunnerModel import RunnerModel
 import requests
 
-
 class Downloader:
     requests_options = {
         'method': 'GET',

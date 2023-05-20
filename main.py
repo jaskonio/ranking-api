@@ -1,4 +1,3 @@
-import logging
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from Infrastructure.MongoDB.mongoDB_utils import close_mongo_connection, connect_to_mongo
@@ -25,7 +24,6 @@ def start_application():
     include_router(app)
     add_middleware(app)    
     return app
-
 
 app = start_application()
 
