@@ -5,6 +5,7 @@ from Domain.Valenciaciudaddelrunning import Valenciaciudaddelrunning
 
 class FactoryDownloader:
     def factory_method(self, url_race):
+        print("FactoryDownloader. factory_method. url_race: " + url_race)
         downloader = None
 
         if 'sportmaniacs' in url_race:

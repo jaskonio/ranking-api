@@ -1,7 +1,7 @@
 from typing import List
 from Domain.Downloader import Downloader
-from Domain.Runner import Runner
 from Domain.UtilsRunner import build_runner
+from Model.RunnerModel import RunnerModel
 
 class Sportmaniacs(Downloader):
     url_base = 'https://sportmaniacs.com/es/races/rankings/'
@@ -33,7 +33,7 @@ class Sportmaniacs(Downloader):
     def __set_rankings_format(self, runners):
         delete_keys = ['category_id', 'user_id', 'defaultImage', 'photos', 'externalPhotos', 'externalVideos', 'externalDiploma', 'Points']
         
-        new_runners:List[Runner] = []
+        new_runners:List[RunnerModel] = []
             
         for row in runners:
             # delete key pos
