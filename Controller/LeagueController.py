@@ -10,16 +10,21 @@ class LeagueController:
         self.legueRepository = league_repository
         self.downloader_factory = downloader_factory
 
+    def get_all(self):
+        result = self.legueRepository.get_all()
+        
+        return result
+        
     def create_league(self, league: LeagueModel):
         result = self.legueRepository.add_legue(league)
 
         return {'message': 'League creada', 'id': str(result.inserted_id)}
 
     def get_league(self, league_id: str):
-        result = self.legueRepository.get_legue_by_id(league_id)
+        result = self.legueRepository.get_by_id(league_id)
 
         if result:
-            return LeagueModel(id=result['_id'], name=result['name'], races=result['races'], finalRanking=result['finalRanking'])
+            return LeagueModel.from_mongo(result)
         else:
             return {'message': 'LeagueModel no encontrada'}
 

@@ -1,14 +1,15 @@
 from typing import List
-from pydantic import BaseModel, Field
+from pydantic import Field
+from Model.BaseMongoModel import BaseMongoModel
+from Model.OID import OID
 from Model.RaceModel import RaceModel
 from Model.RunnerModel import RunnerModel
-from bson import ObjectId
 
-class LeagueModel(BaseModel):
-    id: ObjectId = Field(default_factory=ObjectId())
+class LeagueModel(BaseMongoModel):
+    id: OID = Field(default_factory=OID)
     name: str
-    races: List[RaceModel] = Field(default_factory=[])
-    finalRanking: List[RunnerModel] = Field(default_factory=[])
+    races: List[RaceModel] = Field(default_factory=list)
+    finalRanking: List[RunnerModel] = Field(default_factory=list)
 
     def get_races(self):
         return sorted(self.races, key=lambda race: (race.order))
@@ -36,9 +37,4 @@ class LeagueModel(BaseModel):
             return sum(runner.posiciones_ant) / len(runner.posiciones_ant)
         except :
             return 0
-        
-    class Config:
-        allow_population_by_field_name = True
-        arbitrary_types_allowed = True
-        json_encoders = {ObjectId: str}
-        
+

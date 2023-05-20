@@ -10,10 +10,13 @@ router = APIRouter()
 controller = LeagueController(LeagueList(), FactoryDownloader())
 
 # Rutas de la API
+@router.get('/')
+def get_all():
+    return controller.get_all()
+
 @router.post('/')
 def create_league(league: LeagueModel):
-    
-    return controller.create_league(league)
+    return controller.create_league(league.mongo())
 
 @router.get('/{league_id}')
 def get_league(league_id: str):
