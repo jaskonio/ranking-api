@@ -5,12 +5,10 @@ from Model.LeagueModel import LeagueModel
 from Model.RaceModel import RaceModel
 from Model.RunnerModel import RunnerModel
 
-factory_downloader = FactoryDownloader()
-
 class LeagueController:
-    def __init__(self) -> None:
-        self.legueRepository = LeagueList()
-        pass
+    def __init__(self, league_repository:LeagueList, downloader_factory:FactoryDownloader):
+        self.legueRepository = league_repository
+        self.downloader_factory = downloader_factory
 
     def create_league(self, league: LeagueModel):
         result = self.legueRepository.add_legue(league)
@@ -41,32 +39,15 @@ class LeagueController:
         else:
             return {'message': 'LeagueModel no encontrada'}
 
-    def calcular_ranking_league(self, league_id: str):
+    def get_final_ranking_by_league_id(self, league_id: str):
         league = self.get_league(league_id)
-        return self.calcular_ranking_by_league(league)
-
-    def calcular_ranking_by_league(self, league: LeagueModel):
-        if isinstance(league, LeagueModel) and 'carreras' in league:
-            ranking_league = {}
-
-            for race in league.get_races():
-                for runner in race.get_ranking():
-                    if runner.name not in ranking_league:
-                        ranking_league[runner.name] = RunnerModel(**runner.dict())
-                    else:
-                        ranking_league[runner.name].puntos += runner.puntos
-                        ranking_league[runner.name].posiciones_ant.extend(runner.posiciones_ant)
-
-            sorted_ranking = sorted(ranking_league.values(), key=lambda runner: (runner.puntos, sum(runner.posiciones_ant) / len(runner.posiciones_ant)), reverse=True)
-            return {'ranking_league': sorted_ranking}
-        else:
-            return {'message': 'Liga no encontrada o sin carreras registradas'}
+        return league.finalRanking
 
     def add_new_race_by_id(self, league_id, new_race: RaceModel):
         print("league_id: " + str(league_id))
         print("new_race: " + str(new_race))
 
-        downloader = factory_downloader.factory_method(new_race.url)
+        downloader = self.downloader_factory.factory_method(new_race.url)
 
         runners:List[RunnerModel] = []
 

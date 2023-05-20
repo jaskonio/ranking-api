@@ -1,5 +1,10 @@
 from fastapi import APIRouter
-from apis import route_leagues
 
-api_router = APIRouter()
-api_router.include_router(route_leagues.router, prefix="/leagues", tags=["leagues"])
+from apis.route_leagues import router
+
+def get_routers():
+    api_router = APIRouter()
+
+    api_router.include_router(router, prefix="/leagues", tags=["leagues"])
+    
+    return api_router
