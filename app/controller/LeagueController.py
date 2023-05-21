@@ -77,7 +77,7 @@ class LeagueController:
 
         if runners:
             new_race.ranking = runners
-            league = self.get_league(league_id)
+            league = self.league_repository.get_by_id(league_id)
 
             if league:
                 league.add_race(new_race)

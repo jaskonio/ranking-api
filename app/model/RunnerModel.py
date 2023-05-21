@@ -3,5 +3,5 @@ from .RunnerBaseModel import RunnerBaseModel
 from .RunnerResultModel import RunnerResultModel
 
 class RunnerModel(RunnerBaseModel, RunnerResultModel):
-    puntos: int
-    posiciones_ant: List[int]
+    puntos: int = 0
+    posiciones_ant: List[int] = []

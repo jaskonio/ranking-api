@@ -8,7 +8,7 @@ class RaceModel(BaseModel):
     name: str
     url: str
     order: int
-    ranking: List[RunnerModel]
+    ranking: List[RunnerModel] = Field(default_factory=list)
     sorted: bool = False
     runnerDisqualified: List[RunnerBaseModel] = Field(default_factory=list)
 
