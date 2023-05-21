@@ -95,5 +95,24 @@ class LeagueControllerTestCase(unittest.TestCase):
         self.mock_league_repository.get_by_id.assert_called_once_with(league_id)
         self.mock_league_repository.update_league.assert_not_called()
 
+    def test_disqualify_runner_success(self):
+        bib_number = 1
+        race_name = "Race Name 1"
+        league_id = "123"
+
+        rankings_fake = self.runner_base_model_builder.create_runners_base_fake(4)
+        races_fake = [self.race_model_builder.create_race_moldel_fake(ranking=rankings_fake)]
+
+        current_league = self.league_model_builder.create_league_model_fake(name=league_id,
+                                                                            races=races_fake,
+                                                                            runnerParticipants=self.runner_base_model_builder.create_runners_base_fake(4))
+        self.mock_league_repository.get_by_id.return_value = current_league
+
+        result = self.controller.disqualify_runner(bib_number, race_name, league_id)
+
+        self.assertEqual(result, current_league)
+        self.mock_league_repository.get_by_id.assert_called_once_with(league_id)        
+        self.mock_league_repository.update_league.assert_called_once_with(league_id, current_league)
+
 if __name__ == "__main__":
     unittest.main()

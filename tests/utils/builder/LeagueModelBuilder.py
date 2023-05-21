@@ -2,9 +2,9 @@ from app.model.LeagueModel import LeagueModel
 
 
 class LeagueModelBuilder:
-    def create_league_model_fake(self, races=[], runnerParticipants=[]):
+    def create_league_model_fake(self, name="123", races=[], runnerParticipants=[]):
         league_fake = {
-            "name": "league_01",
+            "name": name,
             "races": races,
             "runnerParticipants": runnerParticipants
         }

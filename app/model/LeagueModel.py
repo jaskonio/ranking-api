@@ -44,6 +44,8 @@ class LeagueModel(BaseMongoModel):
 
     def disqualify_runner_process(self, bib_number:int, race_name:str):
         disqualified_runner = self.__get_runner_by_bib_number(bib_number)
+        if not disqualified_runner:
+            return 
         current_race = self.__get_race_by_name(race_name)
         self.__disqualify_runner(disqualified_runner, current_race)
         self.__update_subsequent_races(disqualified_runner, current_race)

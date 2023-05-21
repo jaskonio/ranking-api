@@ -18,7 +18,7 @@ def get_all():
 
 @router.post('/')
 def create_league(league: LeagueModel):
-    return controller.create_league(league.mongo())
+    return controller.create_league(league)
 
 @router.get('/{league_id}')
 def get_league(league_id: str):

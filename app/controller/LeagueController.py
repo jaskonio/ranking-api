@@ -92,8 +92,11 @@ class LeagueController:
         current_league = self.league_repository.get_by_id(league_id)
 
         if current_league:
+            if len(current_league.races) == 0:
+                return {'message': 'No se encontró la carrera especificada.'}
+
             current_league.disqualify_runner_process(bib_number, race_name)
-            self.league_repository.update_league(league_id, current_league.mongo())
+            self.league_repository.update_league(league_id, current_league)
             return current_league
         else:
             return {'message': 'No se encontró la LigaModel especificada.'}
