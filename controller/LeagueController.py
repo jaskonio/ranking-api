@@ -1,7 +1,6 @@
 import logging
 from typing import List
 from Domain.DownloaderService import DownloaderService
-from Domain.FactoryDownloader import FactoryDownloader
 from Infrastructure.MongoDB.LeagueList import LeagueList
 from Model.LeagueModel import LeagueModel
 from Model.RaceModel import RaceModel

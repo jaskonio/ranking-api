@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from Controller.LeagueController import LeagueController
+from controller.LeagueController import LeagueController
 from Domain.DownloaderService import DownloaderService
 from Domain.FactoryDownloader import FactoryDownloader
 from Infrastructure.MongoDB.LeagueList import LeagueList
