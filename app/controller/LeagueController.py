@@ -1,11 +1,11 @@
 import logging
 from typing import List
-from Domain.DownloaderService import DownloaderService
-from Infrastructure.MongoDB.LeagueList import LeagueList
-from Model.LeagueModel import LeagueModel
-from Model.RaceModel import RaceModel
-from Model.RunnerBaseModel import RunnerBaseModel
-from Model.RunnerModel import RunnerModel
+from ..infrastructure.mongoDB.LeagueList import LeagueList
+from ..domain.DownloaderService import DownloaderService
+from ..model.LeagueModel import LeagueModel
+from ..model.RaceModel import RaceModel
+from ..model.RunnerBaseModel import RunnerBaseModel
+from ..model.RunnerModel import RunnerModel
 
 class LeagueController:
     def __init__(self, league_repository:LeagueList, downloader_service:DownloaderService):

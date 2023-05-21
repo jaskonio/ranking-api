@@ -1,11 +1,11 @@
 from fastapi import APIRouter
-from controller.LeagueController import LeagueController
-from Domain.DownloaderService import DownloaderService
-from Domain.FactoryDownloader import FactoryDownloader
-from Infrastructure.MongoDB.LeagueList import LeagueList
-from Model.LeagueModel import LeagueModel
-from Model.RaceModel import RaceModel
-from Model.RunnerBaseModel import RunnerBaseModel
+from ..controller.LeagueController import LeagueController
+from ..domain.DownloaderService import DownloaderService
+from ..domain.FactoryDownloader import FactoryDownloader
+from ..infrastructure.mongoDB.LeagueList import LeagueList
+from ..model.LeagueModel import LeagueModel
+from ..model.RaceModel import RaceModel
+from ..model.RunnerBaseModel import RunnerBaseModel
 
 router = APIRouter()
 

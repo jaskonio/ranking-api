@@ -1,6 +1,6 @@
-from Domain.Sportmaniacs import Sportmaniacs
-from Domain.TopRun import TopRun
-from Domain.Valenciaciudaddelrunning import Valenciaciudaddelrunning
+from .Sportmaniacs import Sportmaniacs
+from .TopRun import TopRun
+from .Valenciaciudaddelrunning import Valenciaciudaddelrunning
 
 class FactoryDownloader:
     def factory_method(self, url_race):

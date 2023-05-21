@@ -1,4 +1,4 @@
-from Domain.Downloader import Downloader
+from .Downloader import Downloader
 from bs4 import BeautifulSoup
 
 class Valenciaciudaddelrunning(Downloader):

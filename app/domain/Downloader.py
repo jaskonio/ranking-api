@@ -1,5 +1,5 @@
 from typing import List
-from Model.RunnerModel import RunnerModel
+from ..model.RunnerModel import RunnerModel
 import requests
 
 class Downloader:

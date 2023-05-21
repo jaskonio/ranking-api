@@ -1,5 +1,5 @@
-from Infrastructure.MongoDB.MongoDBSession import get_database
-from Model.LeagueModel import LeagueModel
+from .MongoDBSession import get_database
+from ...model.LeagueModel import LeagueModel
 from bson import ObjectId
 from pymongo import collection
 

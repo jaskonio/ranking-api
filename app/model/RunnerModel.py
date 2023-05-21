@@ -1,6 +1,6 @@
 from typing import List
-from Model.RunnerBaseModel import RunnerBaseModel
-from Model.RunnerResultModel import RunnerResultModel
+from .RunnerBaseModel import RunnerBaseModel
+from .RunnerResultModel import RunnerResultModel
 
 class RunnerModel(RunnerBaseModel, RunnerResultModel):
     puntos: int

@@ -1,5 +1,4 @@
-from Model.RunnerModel import RunnerModel
-
+from ..model.RunnerModel import RunnerModel
 
 def build_runner(dorsal=0, name="", club="", nationality="", finished="", gender="", category="",
                  officialTime="", officialPos="", officialAverageTime="", officialCatPos="", officialGenPos="", 

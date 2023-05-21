@@ -1,6 +1,6 @@
 import logging
 from pymongo import MongoClient
-from Infrastructure.MongoDB.MongoDBSession import db
+from .MongoDBSession import db
 
 logger = logging.getLogger()
 

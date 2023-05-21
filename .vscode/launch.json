@@ -19,7 +19,7 @@
             "module": "uvicorn",
             "console": "integratedTerminal",
             //"args": ["main:app","--reload"]
-            "args": ["main:app","--reload", "--log-config", "log_conf.yaml"]
+            "args": ["app.main:app","--reload", "--log-config", "log_conf.yaml"]
         }
     ]
 }

@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from apis.route_leagues import router
+from .route_leagues import router
 
 def get_routers():
     api_router = APIRouter()

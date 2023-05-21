@@ -1,10 +1,10 @@
 from typing import List
 from pydantic import Field
-from Model.BaseMongoModel import BaseMongoModel
-from Model.OID import OID
-from Model.RaceModel import RaceModel
-from Model.RunnerBaseModel import RunnerBaseModel
-from Model.RunnerModel import RunnerModel
+from .BaseMongoModel import BaseMongoModel
+from .OID import OID
+from .RaceModel import RaceModel
+from .RunnerBaseModel import RunnerBaseModel
+from .RunnerModel import RunnerModel
 
 class LeagueModel(BaseMongoModel):
     id: OID = Field(default_factory=OID)
