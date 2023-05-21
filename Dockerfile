@@ -2,11 +2,16 @@ FROM python:3.8.10
 
 WORKDIR /usr/src/app
 
-COPY requirements.txt ./
-RUN pip install --no-cache-dir -r requirements.txt
+RUN mkdir app
 
-COPY . .
+COPY requirements.txt ./app
+COPY log_conf.yaml ./app
+
+RUN pip install --no-cache-dir -r app/requirements.txt
+
+COPY app/ ./app/
+COPY .env ./
 
 EXPOSE 8000
 
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8080", "--log-config", "app/log_conf.yaml"]

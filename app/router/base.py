@@ -1,5 +1,4 @@
 from fastapi import APIRouter
-
 from .route_leagues import router
 
 def get_routers():

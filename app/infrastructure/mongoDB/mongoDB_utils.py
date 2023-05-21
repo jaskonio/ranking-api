@@ -5,7 +5,7 @@ from .MongoDBSession import db
 logger = logging.getLogger()
 
 def connect_to_mongo(uri, db_name):
-    logger.info("Connecting to database...")
+    logger.info("Connecting to database...\nuri: " + uri + "\ndb_name: " + db_name)
     db.client = MongoClient(uri)
     db.db = db.client[db_name]
 

@@ -1,13 +1,12 @@
 import logging
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.infrastructure.mongoDB.mongoDB_utils import close_mongo_connection, connect_to_mongo
+from .infrastructure.mongoDB.mongoDB_utils import close_mongo_connection, connect_to_mongo
 from .core.config import Settings
 
 connect_to_mongo(Settings.MONGODB_URI, Settings.MONGODB_DATABASE)
 
-from app.router.base import get_routers
-
+from .router.base import get_routers
 
 def add_middleware(app: FastAPI):
     origins = ["*"]
