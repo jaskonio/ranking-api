@@ -26,7 +26,9 @@ class LeagueList:
         return result
 
     def get_by_id(self, str_id):
-        return self.collection.find_one({'_id': ObjectId(str_id)})
+        league = self.collection.find_one({'_id': ObjectId(str_id)})
+
+        return LeagueModel.from_mongo(league)
 
     def update_league(self, league_id, league):
         league_dict = league.dict()

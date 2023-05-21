@@ -1,14 +1,25 @@
 from typing import List
+from Domain.DownloaderService import DownloaderService
 from Domain.FactoryDownloader import FactoryDownloader
 from Infrastructure.MongoDB.LeagueList import LeagueList
 from Model.LeagueModel import LeagueModel
 from Model.RaceModel import RaceModel
+from Model.RunnerBaseModel import RunnerBaseModel
 from Model.RunnerModel import RunnerModel
 
 class LeagueController:
-    def __init__(self, league_repository:LeagueList, downloader_factory:FactoryDownloader):
+    def __init__(self, league_repository:LeagueList, downloader_service:DownloaderService):
         self.legueRepository = league_repository
-        self.downloader_factory = downloader_factory
+        self.downloader_service = downloader_service
+
+    def add_runner(self, new_runner: RunnerBaseModel, league_id: str):
+        league = self.legueRepository.get_by_id(league_id)
+        
+        league.runnerParticipants.append(new_runner)
+        
+        self.legueRepository.update_league(league_id, league)
+        
+        return {'message': 'runner añadido'}
 
     def get_all(self):
         result = self.legueRepository.get_all()
@@ -24,7 +35,7 @@ class LeagueController:
         result = self.legueRepository.get_by_id(league_id)
 
         if result:
-            return LeagueModel.from_mongo(result)
+            return result
         else:
             return {'message': 'LeagueModel no encontrada'}
 
@@ -52,17 +63,8 @@ class LeagueController:
         print("league_id: " + str(league_id))
         print("new_race: " + str(new_race))
 
-        downloader = self.downloader_factory.factory_method(new_race.url)
+        runners:List[RunnerModel] = self.downloader_service.download_race_data(new_race.url)
 
-        runners:List[RunnerModel] = []
-
-        if downloader != None:
-            runners = downloader.race_data
-            print("Se ha descargado con exito")
-        else:
-            return {'message': 'Process factory downloader'}           
-
-        # Se crea el objeto carrera y se guarda en base de datos
         new_race.ranking = runners
         
         league = self.get_league(league_id)
@@ -70,3 +72,12 @@ class LeagueController:
         league.add_race(new_race)
         
         return self.update_league(league_id, league)
+
+    def disqualify_runner(self, bib_number:int, race_name:str, league_id: str):
+        current_league = self.legueRepository.get_by_id(league_id)
+
+        current_league.disqualify_runner_process(bib_number, race_name)
+
+        self.legueRepository.update_league(league_id, current_league.mongo())
+
+        return current_league

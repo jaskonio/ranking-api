@@ -1,6 +1,7 @@
 from datetime import datetime
 from typing import List
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+from Model.RunnerBaseModel import RunnerBaseModel
 from Model.RunnerModel import RunnerModel
 
 class RaceModel(BaseModel):
@@ -9,6 +10,7 @@ class RaceModel(BaseModel):
     order: int
     ranking: List[RunnerModel]
     sorted: bool = False
+    runnerDisqualified: List[RunnerBaseModel] = Field(default_factory=list)
 
     def add_runner(self, runner):
         self.ranking.append(runner)
@@ -28,6 +30,11 @@ class RaceModel(BaseModel):
 
         return [runner for runner in self.ranking if runner.puntos != 0]
 
+    def set_runner_disqualified(self, runner:RunnerBaseModel):
+        self.runnerDisqualified.append(runner)
+        self.sorted = False
+        self.ranking = self.get_ranking()
+
     def __sort_runners(self):
         format = "%H:%M:%S"
         # Orderna los Runner primero por finished True primero False segundo, realTime y officialTime
@@ -42,6 +49,13 @@ class RaceModel(BaseModel):
         if not self.sorted:
             self.sort_runners()
 
+        # excluir los runners descalificados
+
+        bibs_number_disqualified = [ runner for runner in self.runnerDisqualified if runner.dorsal]
+                                    
         # Asignar puntos solo a las 10 primeras personas en llegar a la meta
-        for i, persona in enumerate(self.ranking[:10], start=1):
-            persona.puntos = 10 - i + 1
+        for i, runner in enumerate(self.ranking[:10], start=1):
+            if runner.dorsal in bibs_number_disqualified:
+                continue
+
+            runner.puntos = 10 - i + 1
