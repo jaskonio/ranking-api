@@ -30,10 +30,20 @@ class RaceModel(BaseModel):
 
         return [runner for runner in self.ranking if runner.puntos != 0]
 
+    def set_runners_disqualified(self, runners:List[RunnerBaseModel]):
+        self.runnerDisqualified.extend(runners)
+        self.sorted = False
+        self.update_ranking()            
+
     def set_runner_disqualified(self, runner:RunnerBaseModel):
         self.runnerDisqualified.append(runner)
         self.sorted = False
-        self.ranking = self.get_ranking()
+        self.update_ranking()
+
+    def update_ranking(self):
+        if not self.sorted:
+            self.__sort_runners()
+            self.__set_points()
 
     def __sort_runners(self):
         format = "%H:%M:%S"
@@ -47,15 +57,15 @@ class RaceModel(BaseModel):
 
     def __set_points(self):
         if not self.sorted:
-            self.sort_runners()
+            self.__sort_runners()
 
         # excluir los runners descalificados
 
-        bibs_number_disqualified = [ runner for runner in self.runnerDisqualified if runner.dorsal]
-                                    
+        disqualified_bibs  = [ runner for runner in self.runnerDisqualified if runner.dorsal]
+
         # Asignar puntos solo a las 10 primeras personas en llegar a la meta
         for i, runner in enumerate(self.ranking[:10], start=1):
-            if runner.dorsal in bibs_number_disqualified:
+            if runner.dorsal in disqualified_bibs :
                 continue
 
             runner.puntos = 10 - i + 1
