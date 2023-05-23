@@ -31,7 +31,7 @@ class LeagueList:
         return LeagueModel.from_mongo(league)
 
     def update_league(self, league_id, league:LeagueModel):
-        league_dict = league.mongo().dict()
+        league_dict = league.mongo()
         return self.collection.update_one({'_id': ObjectId(league_id)}, {'$set': league_dict})
 
     def delete_league(self, league_id):

@@ -5,7 +5,18 @@ def build_runner(dorsal=0, name="", club="", nationality="", finished="", gender
                  realTime="", realPos="", realAverageTime="", realCatPos="", realGenPos="",
                  puntos=0, posiciones_ant=[]):
     finished = strtobool(finished)
-    new_runner = RunnerModel(name= name, dorsal=dorsal, club=club, nationality=nationality, finished=finished, gender=gender, category=category, officialTime=officialTime, officialPos=officialPos, officialAverageTime=officialAverageTime, officialCatPos=officialCatPos, officialGenPos=officialGenPos, realTime=realTime, realPos=realPos, realAverageTime=realAverageTime, realCatPos=realCatPos, realGenPos=realGenPos, puntos=puntos, posiciones_ant=posiciones_ant)
+    officialPos = convert_to_int(officialPos)
+    officialCatPos = convert_to_int(officialCatPos)
+    officialGenPos = convert_to_int(officialGenPos)
+    realPos = convert_to_int(realPos)    
+    realCatPos = convert_to_int(realCatPos)
+    realGenPos = convert_to_int(realGenPos)    
+    
+    puntos = convert_to_int(puntos)
+    new_runner = RunnerModel(name= name, dorsal=dorsal, club=club, nationality=nationality, finished=finished, gender=gender, category=category, 
+                             officialTime=officialTime, officialPos=officialPos, officialAverageTime=officialAverageTime, officialCatPos=officialCatPos, officialGenPos=officialGenPos, 
+                             realTime=realTime, realPos=realPos, realAverageTime=realAverageTime, realCatPos=realCatPos, realGenPos=realGenPos, 
+                             puntos=puntos, posiciones_ant=posiciones_ant)
 
     return new_runner
 
@@ -23,4 +34,9 @@ def strtobool(val):
         return False
     else:
         raise ValueError("invalid truth value %r" % (val,))
-    
+
+def convert_to_int(value):
+    try:
+        return int(value)
+    except (ValueError, TypeError):
+        return 0

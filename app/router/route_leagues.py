@@ -24,7 +24,7 @@ def create_league(league: LeagueModel):
 def get_league(league_id: str):
     return controller.get_league(league_id)
 
-@router.put('/{league_id}')
+@router.put('/')
 def update_league(league_id: str, league: LeagueModel):
     return controller.update_league(league_id, league)
 

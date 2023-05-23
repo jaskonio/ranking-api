@@ -65,7 +65,7 @@ class LeagueController:
             return {'message': 'No se encontró la LigaModel especificada.'}
 
     def get_final_ranking_by_league_id(self, league_id: str):
-        league = self.get_league(league_id)
+        league = self.league_repository.get_by_id(league_id)
 
         if league:
             return league.finalRanking
@@ -73,11 +73,15 @@ class LeagueController:
             return {'message': 'No se encontró la LigaModel especificada.'}
 
     def add_new_race_by_id(self, league_id, new_race: RaceModel):
+        league = self.league_repository.get_by_id(league_id)
+        
+        if not league:
+            return {'message': 'No se encontró la Liga especificada.'}
+
         runners:List[RunnerModel] = self.downloader_service.download_race_data(new_race.url)
 
         if runners:
-            new_race.ranking = runners
-            league = self.league_repository.get_by_id(league_id)
+            new_race.ranking.extend(runners)
 
             if league:
                 league.add_race(new_race)

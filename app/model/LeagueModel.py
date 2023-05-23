@@ -1,3 +1,4 @@
+import logging
 from typing import List
 from pydantic import Field
 from .BaseMongoModel import BaseMongoModel
@@ -6,13 +7,15 @@ from .RaceModel import RaceModel
 from .RunnerBaseModel import RunnerBaseModel
 from .RunnerModel import RunnerModel
 
+logger = logging.getLogger(__name__)
+        
 class LeagueModel(BaseMongoModel):
     id: OID = Field(default_factory=OID)
     name: str
     races: List[RaceModel] = Field(default_factory=list)
     finalRanking: List[RunnerModel] = Field(default_factory=list)
     runnerParticipants: List[RunnerBaseModel] = Field(default_factory=list)
-
+    
     def get_races(self):
         return sorted(self.races, key=lambda race: (race.order))
 
@@ -65,6 +68,9 @@ class LeagueModel(BaseMongoModel):
             return 0
 
     def __filter_participants(self, race: RaceModel):
+        if (len(self.runnerParticipants) == 0 ):
+            logging.warn("There are no participants in the League")
+
         bib_participants = [participant.dorsal for participant in self.runnerParticipants if participant.dorsal]
         return [runner for runner in race.ranking if runner.dorsal in bib_participants]
 
