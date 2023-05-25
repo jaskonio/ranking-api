@@ -35,7 +35,7 @@ class LeagueController:
         except Exception as e:
             self.logger.error(f"Error retrieving all leagues: {str(e)}")
             return {'message': 'An error occurred while retrieving all leagues.'}
-        
+
     def create_league(self, league: LeagueModel):
         result = self.league_repository.add_legue(league)
         return {'message': 'Liga creada correctamente.', 'id': str(result.inserted_id)}
@@ -74,7 +74,7 @@ class LeagueController:
 
     def add_new_race_by_id(self, league_id, new_race: RaceModel):
         league = self.league_repository.get_by_id(league_id)
-        
+
         if not league:
             return {'message': 'No se encontró la Liga especificada.'}
 
