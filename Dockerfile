@@ -10,7 +10,6 @@ COPY log_conf.yaml ./app
 RUN pip install --no-cache-dir -r app/requirements.txt
 
 COPY app/ ./app/
-COPY .env ./
 
 EXPOSE 8000
 
