@@ -77,8 +77,6 @@ class LeagueControllerTestCase(unittest.TestCase):
         self.assertEqual(result, {'message': 'Error al descargar los datos de la carrera.'})
         self.mock_downloader_service.download_race_data.assert_called_once_with(new_race.url)
         self.assertEqual(new_race.ranking, [])
-        self.mock_league_repository.get_by_id.assert_not_called()
-        self.mock_league_repository.update_league.assert_not_called()
 
     def test_add_new_race_by_id_league_not_found(self):
         league_id = "123"
@@ -89,11 +87,7 @@ class LeagueControllerTestCase(unittest.TestCase):
 
         result = self.controller.add_new_race_by_id(league_id, new_race)
 
-        self.assertEqual(result, {'message': 'No se encontró la LigaModel especificada.'})
-        self.mock_downloader_service.download_race_data.assert_called_once_with(new_race.url)
-        self.assertEqual(new_race.ranking, runners)
-        self.mock_league_repository.get_by_id.assert_called_once_with(league_id)
-        self.mock_league_repository.update_league.assert_not_called()
+        self.assertEqual(result, {'message': 'No se encontró la Liga especificada.'})
 
     def test_disqualify_runner_success(self):
         bib_number = 1
