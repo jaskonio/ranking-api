@@ -63,9 +63,14 @@ class RaceModel(BaseModel):
 
         disqualified_bibs  = [ runner for runner in self.runnerDisqualified if runner.dorsal]
 
-        # Asignar puntos solo a las 10 primeras personas en llegar a la meta
-        for i, runner in enumerate(self.ranking[:10], start=1):
-            if runner.dorsal in disqualified_bibs :
+        # Asignar puntos como en la F1
+        points = [25, 18, 15, 12, 10, 8, 6, 4, 2, 1]
+
+        for i, runner in enumerate(self.ranking):
+            if runner.dorsal in disqualified_bibs:
                 continue
 
-            runner.puntos = 10 - i + 1
+            if i < len(points):
+                runner.puntos = points[i]
+            else:
+                runner.puntos = 0
