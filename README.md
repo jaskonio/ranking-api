@@ -24,7 +24,7 @@ pip3 install -r requirements.txt
 ## Run 
 
 ```cmd
-    docker run -d --rm --name ranking-api -p 9000:8080 ranking-api
+    docker run -d --rm --name ranking-api -p 9000:8080 --env-file=.env ranking-api
 ```
 
 ## Stop 
