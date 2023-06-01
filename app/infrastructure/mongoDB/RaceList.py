@@ -6,22 +6,22 @@ from pymongo import collection
 class RaceList:
     def __init__(self):
         collection_name = "RaceList"
-        self.db = get_database()
-        self.collection:collection.Collection = self.db[collection_name]
+        self.database = get_database()
+        self.collection:collection.Collection = self.database.get_collection(collection_name)
 
     def get_all(self):
         results = self.collection.find()
-        
+
         leagues = []
-        
+
         for result in results:
             leagues.append(RaceBaseModel.from_mongo(result))
-        
+
         return leagues
 
     def add_race(self, race: RaceBaseModel):
         result = self.collection.insert_one(race.mongo())
-        
+
         return result
 
     def get_by_id(self, str_id):

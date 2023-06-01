@@ -1,28 +1,28 @@
 from .MongoDBSession import get_database
-from ...model.LeagueModel import LeagueModel
 from bson import ObjectId
-from pymongo import collection
+from pymongo import collection, database
+from app.model.LeagueModel import LeagueModel
+
 
 class LeagueList:
     def __init__(self):
         collection_name = "LeagueList"
-        self.db = get_database()
-        self.collection:collection.Collection = self.db[collection_name]  # Obtener la colección
+        self.database:database.Database = get_database()
+        self.collection:collection.Collection = self.database.get_collection(collection_name)
 
     def get_all(self):
         results = self.collection.find()
-        
+
         leagues = []
-        
+
         for result in results:
             leagues.append(LeagueModel.from_mongo(result))
-        
+
         return leagues
 
     def add_legue(self, league: LeagueModel):
-        #league_dict = league.dict()
         result = self.collection.insert_one(league.mongo())
-        
+
         return result
 
     def get_by_id(self, str_id):

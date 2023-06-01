@@ -28,7 +28,7 @@ class RaceController:
     def add_race(self, new_race: RaceBaseModel):
         try:
             if new_race.proceesEnabled:
-                runners:List[RunnerModel] = self.downloader_service.download_race_data(new_race.url)            
+                runners:List[RunnerModel] = self.downloader_service.download_race_data(new_race.url)
                 new_race.set_ranking(runners)
 
             self.race_repository.add_race(new_race)
@@ -41,13 +41,13 @@ class RaceController:
     def update_race(self, race_id: str, race: RaceBaseModel):
         try:
             if race.proceesEnabled:
-                runners:List[RunnerModel] = self.downloader_service.download_race_data(race.url)            
+                runners:List[RunnerModel] = self.downloader_service.download_race_data(race.url)
                 race.set_ranking(runners)
 
             result = self.race_repository.update_race(race_id, race)
 
             if result.modified_count:
-                return result
+                return race
             else:
                 return {'message': 'No se encontró la carrera especificada.'}
         except Exception as e:

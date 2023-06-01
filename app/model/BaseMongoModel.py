@@ -13,12 +13,12 @@ class BaseMongoModel(BaseModel):
         """We must convert _id into "id". """
         if not data:
             return data
-        id = data.pop('_id', None)
-        return cls(**dict(data, id=id))
-    
+        new_id = data.pop('_id', None)
+        return cls(**dict(data, id=new_id))
+
     def mongo(self, **kwargs):
-        exclude_unset = kwargs.pop('exclude_unset', True)
-        by_alias = kwargs.pop('by_alias', True)
+        # exclude_unset = kwargs.pop('exclude_unset', True)
+        # by_alias = kwargs.pop('by_alias', True)
 
         # parsed = self.dict(
         #     exclude_unset=exclude_unset,
@@ -33,7 +33,7 @@ class BaseMongoModel(BaseModel):
         # Mongo uses `_id` as default key. We should stick to that as well.
         #if '_id' not in parsed and 'id' in parsed:
             #parsed['_id'] = parsed.pop('id')
-        
+
         parsed.pop('id')
 
         return parsed

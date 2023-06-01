@@ -1,21 +1,21 @@
 import logging
 from typing import List
 from pydantic import Field
-from .BaseMongoModel import BaseMongoModel
-from .OID import OID
-from .RaceModel import RaceModel
-from .RunnerBaseModel import RunnerBaseModel
-from .RunnerModel import RunnerModel
+from app.model.BaseMongoModel import BaseMongoModel
+from app.model.OID import OID
+from app.model.RaceModel import RaceModel
+from app.model.RunnerBaseModel import RunnerBaseModel
+from app.model.RunnerModel import RunnerModel
 
 logger = logging.getLogger(__name__)
-        
+
 class LeagueModel(BaseMongoModel):
     id: OID = Field(default_factory=OID)
     name: str
     races: List[RaceModel] = Field(default_factory=list)
-    finalRanking: List[RunnerModel] = Field(default_factory=list)
+    final_ranking: List[RunnerModel] = Field(default_factory=list)
     runnerParticipants: List[RunnerBaseModel] = Field(default_factory=list)
-    
+
     def get_races(self):
         return sorted(self.races, key=lambda race: (race.order))
 
@@ -27,7 +27,7 @@ class LeagueModel(BaseMongoModel):
 
         new_race.ranking = runners_participants_race
         new_race.set_runners_disqualified(self.__get_disqualified_runners())
-        
+
         self.races.append(new_race)
         self.calculate_final_ranking()
 
@@ -43,28 +43,28 @@ class LeagueModel(BaseMongoModel):
                     ranking_league[runner.name].puntos += runner.puntos
                     ranking_league[runner.name].posiciones_ant.extend(runner.posiciones_ant)
 
-        self.finalRanking = sorted(ranking_league.values(), key=lambda runner: (runner.puntos, self.__order_runner(runner)), reverse=True)
+        self.final_ranking = sorted(ranking_league.values(), key=lambda runner: (runner.puntos, self.__order_runner(runner)), reverse=True)
 
     def disqualify_runner_process(self, bib_number:int, race_name:str):
         disqualified_runner = self.__get_runner_by_bib_number(bib_number)
         if not disqualified_runner:
-            return 
+            return
         current_race = self.__get_race_by_name(race_name)
         self.__disqualify_runner(disqualified_runner, current_race)
         self.__update_subsequent_races(disqualified_runner, current_race)
 
     def __get_disqualified_runners(self):
         disqualified_runners: List[RunnerBaseModel] = []
-        
+
         for race in self.get_races():
             disqualified_runners.extend(race.runnerDisqualified)
-        
+
         return disqualified_runners
-        
+
     def __order_runner(self, runner):
         try:
             return sum(runner.posiciones_ant) / len(runner.posiciones_ant)
-        except :
+        except:
             return 0
 
     def __filter_participants(self, race: RaceModel):

@@ -1,11 +1,11 @@
 from datetime import datetime
 from typing import List
-from pydantic import BaseModel, Field
-
+from pydantic import Field
+from app.model.BaseMongoModel import BaseMongoModel
 from app.model.OID import OID
-from .RunnerModel import RunnerModel
+from app.model.RunnerModel import RunnerModel
 
-class RaceBaseModel(BaseModel):
+class RaceBaseModel(BaseMongoModel):
     id: OID = Field(default_factory=OID)
     name: str
     url: str
@@ -13,7 +13,7 @@ class RaceBaseModel(BaseModel):
     sorted: bool = False
     ranking: List[RunnerModel] = Field(default_factory=list)
     proceesEnabled: bool = False
-    
+
     def set_ranking(self, runner):
         self.ranking.clear()
         self.ranking.extend(runner)
@@ -31,11 +31,11 @@ class RaceBaseModel(BaseModel):
         return self.ranking
 
     def __sort_ranking__(self):
-        format = "%H:%M:%S"
+        format_datetime = "%H:%M:%S"
 
         # Orderna los Runner primero por finished True primero False segundo, realTime y officialTime
-        runners_finished = sorted(self.ranking, key=lambda runner: (not runner.finished, datetime.strptime(runner.realTime, format), datetime.strptime(runner.officialTime, format)), reverse=False)
+        runners_finished = sorted(self.ranking, key=lambda runner: (not runner.finished, datetime.strptime(runner.realTime, format_datetime), datetime.strptime(runner.officialTime, format_datetime)), reverse=False)
 
         self.ranking = runners_finished
-        
+
         self.sorted = True

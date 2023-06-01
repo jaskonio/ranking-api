@@ -8,7 +8,7 @@ def connect_to_mongo(uri, db_name):
     try:
         logger.info("Connecting to database...\nuri: %s\ndb_name: %s", uri, db_name)
         db.client = MongoClient(uri)
-        db.db = db.client[db_name]
+        db.database = db.client[db_name]
         logger.info("Database connected!")
     except Exception as e:
         logger.error("Error connecting to database: %s", str(e))

@@ -6,30 +6,29 @@ from .core.config import Settings
 
 connect_to_mongo(Settings.MONGODB_URI, Settings.MONGODB_DATABASE)
 
-from .router.base import get_routers
+from app.router.base import get_routers
 
-def add_middleware(app: FastAPI):
+def add_middleware(fast_api: FastAPI) -> None:
     origins = ["*"]
 
-    app.add_middleware(
+    fast_api.add_middleware(
         CORSMiddleware,
         allow_origins=origins,
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
     )
-   
+
 def start_application():
-    app = FastAPI(title=Settings.PROJECT_NAME, version=Settings.PROJECT_VERSION)
+    fast_api = FastAPI(title=Settings.PROJECT_NAME, version=Settings.PROJECT_VERSION)
     logging.info("connect_to_mongo")
-    
+
     logging.info("include_router")
-    app.include_router(get_routers())
-        
-    add_middleware(app)    
-    return app
+    fast_api.include_router(get_routers())
+
+    add_middleware(fast_api)
+    return fast_api
 
 app = start_application()
 
 app.add_event_handler("shutdown", close_mongo_connection)
-
