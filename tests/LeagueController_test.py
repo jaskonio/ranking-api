@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import Mock
-from app.controller.LeagueController import LeagueController
+from app.controller.league_controller import LeagueController
 from app.infrastructure.mongoDB.LeagueList import LeagueList
 from app.domain.DownloaderService import DownloaderService
 from tests.utils.builder.LeagueModelBuilder import LeagueModelBuilder

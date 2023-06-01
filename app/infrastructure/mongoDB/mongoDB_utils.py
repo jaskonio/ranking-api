@@ -1,8 +1,9 @@
-import logging
+""" Module providing_function printing python version."""
 from pymongo import MongoClient
-from .MongoDBSession import db
+from app.controller.logguer import get_logger
+from app.infrastructure.mongoDB.MongoDBSession import db
 
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 def connect_to_mongo(uri, db_name):
     try:
