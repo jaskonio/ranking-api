@@ -3,13 +3,13 @@ from app.controller.league_controller import LeagueController
 from app.domain.DownloaderService import DownloaderService
 from app.domain.FactoryDownloader import FactoryDownloader
 from app.infrastructure.mongoDB.LeagueList import LeagueList
+from app.infrastructure.mongoDB.RaceList import RaceList
 from app.model.LeagueModel import LeagueModel
-from app.model.RaceModel import RaceModel
 from app.model.RunnerBaseModel import RunnerBaseModel
 
 router_league = APIRouter()
 
-controller = LeagueController(LeagueList(), DownloaderService(FactoryDownloader()))
+controller = LeagueController(LeagueList(), RaceList())
 
 # Rutas de la API
 @router_league.get('/')
@@ -37,8 +37,8 @@ def get_final_ranking_by_league_id(league_id: str):
     return controller.get_final_ranking_by_league_id(league_id)
 
 @router_league.post('/add_race')
-def add_race_into_league(league_id: str, new_race: RaceModel):
-    return controller.add_new_race_by_id(league_id, new_race)
+def add_race_into_league(league_id: str, race_id:str, order:int):
+    return controller.add_new_race_by_id(league_id, race_id, order)
 
 @router_league.post('/add_runner')
 def add_runner(new_runner: RunnerBaseModel, league_id: str):

@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from app.controller.RaceController import RaceController
+from app.controller.race_controller import RaceController
 from app.domain.DownloaderService import DownloaderService
 from app.domain.FactoryDownloader import FactoryDownloader
 from app.infrastructure.mongoDB.RaceList import RaceList

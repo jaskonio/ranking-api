@@ -1,3 +1,6 @@
+"""
+TODO
+"""
 import logging
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -8,7 +11,10 @@ connect_to_mongo(Settings.MONGODB_URI, Settings.MONGODB_DATABASE)
 
 from app.router.base import get_routers
 
-def add_middleware(fast_api: FastAPI) -> None:
+def add_middleware(fast_api: FastAPI):
+    """
+    TODO
+    """
     origins = ["*"]
 
     fast_api.add_middleware(
@@ -20,6 +26,9 @@ def add_middleware(fast_api: FastAPI) -> None:
     )
 
 def start_application():
+    """
+    TODO
+    """
     fast_api = FastAPI(title=Settings.PROJECT_NAME, version=Settings.PROJECT_VERSION)
     logging.info("connect_to_mongo")
 

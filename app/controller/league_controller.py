@@ -2,21 +2,18 @@
 TODO
 """
 import logging
-from typing import List
-from pymongo import errors
 from app.infrastructure.mongoDB.LeagueList import LeagueList
-from app.domain.DownloaderService import DownloaderService
+from app.infrastructure.mongoDB.RaceList import RaceList
 from app.model.LeagueModel import LeagueModel
 from app.model.RaceModel import RaceModel
 from app.model.RunnerBaseModel import RunnerBaseModel
-from app.model.RunnerModel import RunnerModel
 
 
 class LeagueController:
     '''
         This class managment League Model
     '''
-    def __init__(self, league_repository:LeagueList, downloader_service:DownloaderService):
+    def __init__(self, league_repository:LeagueList, race_repository:RaceList):
         '''
         Initializes an instance of LeagueController.
 
@@ -25,7 +22,7 @@ class LeagueController:
             downloader_service (DownloaderService): The service used for downloading race data.
         '''
         self.league_repository = league_repository
-        self.downloader_service = downloader_service
+        self.race_repository = race_repository
         self.logger = logging.getLogger(__name__)
 
     def add_runner(self, new_runner: RunnerBaseModel, league_id: str):
@@ -54,11 +51,8 @@ class LeagueController:
                 self.logger.error("League not found.")
                 message = 'League not found.'
             return {'message': message}
-        except errors.NetworkTimeout as network_timeout:
-            self.logger.error('Error adding runner: %', network_timeout)
-
-        except Exception as e:
-            self.logger.error("Error adding runner: {}".format(str(e)))
+        except Exception as exception_error:  # pylint: disable=broad-except
+            self.logger.error("Error adding runner: %s", exception_error)
             return {'message': 'An error occurred while adding the runner.'}
 
     def get_all(self):
@@ -70,8 +64,8 @@ class LeagueController:
         '''
         try:
             return self.league_repository.get_all()
-        except Exception as e:
-            self.logger.error(f"Error retrieving all leagues: {str(e)}")
+        except Exception as exception_error: # pylint: disable=broad-except
+            self.logger.error("Error retrieving all leagues: %s", exception_error)
             return {'message': 'An error occurred while retrieving all leagues.'}
 
     def create_league(self, league: LeagueModel):
@@ -120,8 +114,8 @@ class LeagueController:
 
         if result.modified_count:
             return league
-        else:
-            return {'message': 'No se encontró la LigaModel especificada.'}
+
+        return {'message': 'No se encontró la LigaModel especificada.'}
 
     def delete_league(self, league_id: str):
         '''
@@ -159,10 +153,10 @@ class LeagueController:
 
         if league:
             return league.finalRanking
-        else:
-            return {'message': 'No se encontró la LigaModel especificada.'}
 
-    def add_new_race_by_id(self, league_id, new_race: RaceModel):
+        return {'message': 'No se encontró la LigaModel especificada.'}
+
+    def add_new_race_by_id(self, league_id:str, race_id: str, order:int):
         '''
         Adds a new race to a league by its ID.
 
@@ -176,23 +170,17 @@ class LeagueController:
             if there was an error downloading the race data.
         '''
         league = self.league_repository.get_by_id(league_id)
+        race = self.race_repository.get_by_id(race_id)
 
-        if not league:
-            return {'message': 'No se encontró la Liga especificada.'}
+        if not league and race:
+            return {'message': 'No se encontró la Liga o Carrera especificada.'}
 
-        runners:List[RunnerModel] = self.downloader_service.download_race_data(new_race.url)
+        new_race = RaceModel(name=race.name, url=race.url, order=order, ranking=race.ranking)
 
-        if runners:
-            new_race.ranking.extend(runners)
+        league.add_race(new_race)
+        self.league_repository.update_league(league_id, league)
 
-            if league:
-                league.add_race(new_race)
-                self.update_league(league_id, league)
-                return {'message': 'Carrera añadida correctamente.'}
-            else:
-                return {'message': 'No se encontró la LigaModel especificada.'}
-        else:
-            return {'message': 'Error al descargar los datos de la carrera.'}
+        return {'message': 'Se ha incluido correctame la carrera'}
 
     def disqualify_runner(self, bib_number:int, race_name:str, league_id: str):
         '''

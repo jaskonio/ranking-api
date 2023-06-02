@@ -3,6 +3,7 @@ from typing import List
 from pydantic import Field
 from app.model.BaseMongoModel import BaseMongoModel
 from app.model.OID import OID
+from app.model.RaceBaseModel import RaceBaseModel
 from app.model.RaceModel import RaceModel
 from app.model.RunnerBaseModel import RunnerBaseModel
 from app.model.RunnerModel import RunnerModel
@@ -22,7 +23,12 @@ class LeagueModel(BaseMongoModel):
     def add_runner(self, new_runner: RunnerBaseModel):
         self.runnerParticipants.append(new_runner)
 
-    def add_race(self, new_race: RaceModel):
+    def add_race(self, new_race: RaceBaseModel):
+        """_summary_
+
+        Args:
+            new_race (RaceBaseModel): _description_
+        """
         runners_participants_race = self.__filter_participants(new_race)
 
         new_race.ranking = runners_participants_race
@@ -68,7 +74,7 @@ class LeagueModel(BaseMongoModel):
             return 0
 
     def __filter_participants(self, race: RaceModel):
-        if (len(self.runnerParticipants) == 0 ):
+        if len(self.runnerParticipants) == 0:
             logging.warn("There are no participants in the League")
 
         bib_participants = [participant.dorsal for participant in self.runnerParticipants if participant.dorsal]
