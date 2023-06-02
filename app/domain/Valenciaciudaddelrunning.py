@@ -1,5 +1,6 @@
-from .Downloader import Downloader
 from bs4 import BeautifulSoup
+from app.domain.downloader import Downloader
+
 
 class Valenciaciudaddelrunning(Downloader):
     url_base = 'https://resultados.valenciaciudaddelrunning.com/medio-maraton-clubs.php?y=$$year$$'
@@ -7,12 +8,12 @@ class Valenciaciudaddelrunning(Downloader):
 
     def __init__(self, url) -> None:
         super().__init__(url)
-    
+
     def process_url(self):
         self.requests_options['method'] = 'POST'
 
         url = self.url
-        
+
         year = ''.join([str(x) for x in [int(s) for s in url if s.isdigit()]])
 
         self.requests_options['url'] = self.url_base.replace('$$year$$', year)
@@ -30,7 +31,7 @@ class Valenciaciudaddelrunning(Downloader):
 
     def __process_ValenciaCiudadDelRunning_data(self):
         req = self.requests_response
-        
+
         status_code = req.status_code
 
         runners = []

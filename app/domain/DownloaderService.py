@@ -1,6 +1,6 @@
 from typing import List
-from .FactoryDownloader import FactoryDownloader
-from ..model.RunnerModel import RunnerModel
+from app.domain.FactoryDownloader import FactoryDownloader
+from app.model.RunnerModel import RunnerModel
 
 class DownloaderService:
     def __init__(self, downloader_factory: FactoryDownloader):
