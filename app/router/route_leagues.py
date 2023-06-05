@@ -1,3 +1,8 @@
+"""_summary_
+
+Returns:
+    _type_: _description_
+"""
 from fastapi import APIRouter
 from app.controller.league_controller import LeagueController
 from app.infrastructure.mongoDB.LeagueList import LeagueList

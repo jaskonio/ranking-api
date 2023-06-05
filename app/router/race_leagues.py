@@ -1,3 +1,8 @@
+"""_summary_
+
+Returns:
+    _type_: _description_
+"""
 from fastapi import APIRouter
 from app.controller.race_controller import RaceController
 from app.domain.DownloaderService import DownloaderService
