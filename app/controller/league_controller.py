@@ -175,7 +175,7 @@ class LeagueController:
         if not league and race:
             return {'message': 'No se encontró la Liga o Carrera especificada.'}
 
-        new_race = RaceModel(name=race.name, url=race.url, order=order, ranking=race.ranking)
+        new_race = RaceModel(name=race.name, url=race.url, order=order)
 
         league.add_race(new_race)
         self.league_repository.update_league(league_id, league)
