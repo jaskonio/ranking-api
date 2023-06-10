@@ -1,3 +1,8 @@
+"""_summary_
+
+Returns:
+    _type_: _description_
+"""
 from app.model.RaceBaseModel import RaceBaseModel
 from .MongoDBSession import get_database
 from bson import ObjectId
