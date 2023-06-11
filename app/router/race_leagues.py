@@ -3,7 +3,8 @@
 Returns:
     _type_: _description_
 """
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
+from app.auth.auth_bearer import JWTBearer
 from app.controller.race_controller import RaceController
 from app.domain.DownloaderService import DownloaderService
 from app.domain.FactoryDownloader import FactoryDownloader
@@ -31,7 +32,7 @@ def get_all():
 
     return data
 
-@race_router.post('/')
+@race_router.post('/', dependencies=[Depends(JWTBearer())])
 def create(race: RaceBaseModel):
     """_summary_
 
@@ -62,7 +63,7 @@ def get_race(race_id: str):
 
     return data
 
-@race_router.put('/')
+@race_router.put('/', dependencies=[Depends(JWTBearer())])
 def update_race(race_id: str, race: RaceBaseModel):
     """_summary_
 
@@ -75,7 +76,7 @@ def update_race(race_id: str, race: RaceBaseModel):
     """
     return controller.update_race(race_id, race)
 
-@race_router.delete('/{race_id}')
+@race_router.delete('/{race_id}', dependencies=[Depends(JWTBearer())])
 def delete_race(race_id: str):
     """_summary_
 

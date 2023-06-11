@@ -3,7 +3,8 @@
 Returns:
     _type_: _description_
 """
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
+from app.auth.auth_bearer import JWTBearer
 from app.controller.league_controller import LeagueController
 from app.infrastructure.mongoDB.LeagueList import LeagueList
 from app.infrastructure.mongoDB.RaceList import RaceList
@@ -32,7 +33,7 @@ def get_all():
 
     return data
 
-@router_league.post('/')
+@router_league.post('/', dependencies=[Depends(JWTBearer())])
 def create_league(league: LeagueModel):
     """_summary_
 
@@ -63,7 +64,7 @@ def get_league(league_id: str):
 
     return data
 
-@router_league.put('/')
+@router_league.put('/', dependencies=[Depends(JWTBearer())])
 def update_league(league_id: str, league: LeagueModel):
     """_summary_
 
@@ -76,7 +77,7 @@ def update_league(league_id: str, league: LeagueModel):
     """
     return controller.update_league(league_id, league)
 
-@router_league.delete('/{league_id}')
+@router_league.delete('/{league_id}', dependencies=[Depends(JWTBearer())])
 def delete_league(league_id: str):
     """_summary_
 
@@ -106,7 +107,7 @@ def get_final_ranking_by_league_id(league_id: str):
 
     return data
 
-@router_league.post('/add_race')
+@router_league.post('/add_race', dependencies=[Depends(JWTBearer())])
 def add_race_into_league(league_id: str, race_id:str, order:int):
     """_summary_
 
@@ -120,7 +121,7 @@ def add_race_into_league(league_id: str, race_id:str, order:int):
     """
     return controller.add_new_race_by_id(league_id, race_id, order)
 
-@router_league.post('/add_runner')
+@router_league.post('/add_runner', dependencies=[Depends(JWTBearer())])
 def add_runner(new_runner: RunnerBaseModel, league_id: str):
     """_summary_
 
@@ -133,7 +134,7 @@ def add_runner(new_runner: RunnerBaseModel, league_id: str):
     """
     return controller.add_runner(new_runner, league_id)
 
-@router_league.post('/disqualify_runner')
+@router_league.post('/disqualify_runner', dependencies=[Depends(JWTBearer())])
 def disqualify_runner(dorsal:int, race_name:str, league_id: str):
     """_summary_
 
