@@ -3,6 +3,7 @@
 Returns:
     _type_: _description_
 """
+import datetime
 import logging
 from typing import Dict
 import os
@@ -52,7 +53,7 @@ def sign_jwt(user: UserModel) -> Dict[str, str]:
     """
     payload = {
         "user_name": user.user_name,
-        "expires": time.time() + 600
+        "expires": datetime.datetime.now(datetime.timezone.utc).timestamp() + 600
     }
 
     token = jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
@@ -72,9 +73,6 @@ def decode_jwt(token: str):
         decoded_token = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
         logger.info("decoded_token: %s", str(decoded_token))
 
-        if decoded_token["expires"] >= time.time():
-            decoded_token = None
-
         return decoded_token
     except:
-        return {}
+        return None

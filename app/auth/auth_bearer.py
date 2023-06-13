@@ -8,6 +8,7 @@ Raises:
 Returns:
     _type_: _description_
 """
+import datetime
 import logging
 from fastapi import Request, HTTPException
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
@@ -45,12 +46,15 @@ class JWTBearer(HTTPBearer):
         """
         is_token_valid: bool = False
 
-        try:
-            payload = decode_jwt(jwtoken)
-        except:
-            payload = None
+        payload = decode_jwt(jwtoken)
 
-        if payload:
+        if not payload:
+            return False
+
+        current_time = datetime.datetime.now(datetime.timezone.utc).timestamp()
+        logger.info("current_time: %s", str(current_time))
+
+        if payload["expires"] <= current_time:
             is_token_valid = True
 
         return is_token_valid
