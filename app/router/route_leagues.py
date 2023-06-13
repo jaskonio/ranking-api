@@ -43,7 +43,11 @@ def create_league(league: LeagueModel):
     Returns:
         _type_: _description_
     """
-    return controller.create_league(league)
+    new_league = controller.create_league(league)
+    key = "league/"
+    local_cache.delete(key)
+
+    return new_league
 
 @router_league.get('/{league_id}')
 def get_league(league_id: str):
@@ -87,7 +91,12 @@ def delete_league(league_id: str):
     Returns:
         _type_: _description_
     """
-    return controller.delete_league(league_id)
+    result = controller.delete_league(league_id)
+
+    key = "league/"
+    local_cache.delete(key)
+
+    return result
 
 @router_league.get('/{league_id}/ranking')
 def get_final_ranking_by_league_id(league_id: str):

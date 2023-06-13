@@ -62,4 +62,14 @@ class Cache:
                 self.cache.pop(key)
         return None
 
+    def delete(self, key):
+        """_summary_
+
+        Args:
+            key (_type_): _description_
+        """
+        key = self.hash_key(key)
+        if key in self.cache:
+            self.cache.pop(key)
+
 local_cache = Cache(60)
