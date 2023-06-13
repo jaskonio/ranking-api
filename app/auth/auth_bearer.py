@@ -54,7 +54,7 @@ class JWTBearer(HTTPBearer):
         current_time = datetime.datetime.now(datetime.timezone.utc).timestamp()
         logger.info("current_time: %s", str(current_time))
 
-        if payload["expires"] <= current_time:
+        if payload["expires"] >= current_time:
             is_token_valid = True
 
         return is_token_valid
