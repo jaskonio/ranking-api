@@ -68,6 +68,12 @@ def decode_jwt(token: str):
     """
     try:
         decoded_token = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
-        return decoded_token if decoded_token["expires"] >= time.time() else None
+        print("decode_jwt")
+        print(decoded_token)
+
+        if decoded_token["expires"] >= time.time():
+            decoded_token = None
+
+        return decoded_token
     except:
         return {}
