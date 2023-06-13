@@ -8,10 +8,12 @@ Raises:
 Returns:
     _type_: _description_
 """
+import logging
 from fastapi import Request, HTTPException
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from app.auth.auth_handler import decode_jwt
 
+logger = logging.getLogger(__name__)
 
 class JWTBearer(HTTPBearer):
     """_summary_
@@ -24,9 +26,8 @@ class JWTBearer(HTTPBearer):
 
     async def __call__(self, request: Request):
         credentials: HTTPAuthorizationCredentials = await super(JWTBearer, self).__call__(request)
-        print("JWTBearer")
-        print("credentials")
-        print(credentials)
+        logger.info("credentials: %s", str(credentials))
+
         if credentials:
             if not credentials.scheme == "Bearer":
                 raise HTTPException(status_code=403, detail="Invalid authentication scheme.")

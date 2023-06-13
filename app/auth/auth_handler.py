@@ -3,13 +3,15 @@
 Returns:
     _type_: _description_
 """
+import logging
 from typing import Dict
 import os
 import time
-
 import jwt
 
 from app.model.user_model import UserModel
+
+logger = logging.getLogger(__name__)
 
 JWT_SECRET = os.getenv("JWT_KEY")
 JWT_ALGORITHM = os.getenv("JWT_ALGORITHM")
@@ -68,8 +70,7 @@ def decode_jwt(token: str):
     """
     try:
         decoded_token = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
-        print("decode_jwt")
-        print(decoded_token)
+        logger.info("decoded_token: %s", str(decoded_token))
 
         if decoded_token["expires"] >= time.time():
             decoded_token = None
