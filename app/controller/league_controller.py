@@ -6,7 +6,7 @@ from app.infrastructure.mongoDB.LeagueList import LeagueList
 from app.infrastructure.mongoDB.RaceList import RaceList
 from app.model.LeagueModel import LeagueModel
 from app.model.RaceModel import RaceModel
-from app.model.RunnerBaseModel import RunnerBaseModel
+from app.model.runner_base_model import RunnerBaseModel
 
 
 class LeagueController:

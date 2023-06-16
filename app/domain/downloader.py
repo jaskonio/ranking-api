@@ -3,7 +3,7 @@ _summary_
 """
 from typing import List
 import requests
-from app.model.RunnerModel import RunnerModel
+from app.model.runner_model import RunnerModel
 
 
 class Downloader:

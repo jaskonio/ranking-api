@@ -2,18 +2,15 @@
     TODO
 """
 import logging
-from typing import List
-from app.domain.DownloaderService import DownloaderService
-from app.infrastructure.mongoDB.RaceList import RaceList
-from app.model.RaceBaseModel import RaceBaseModel
-from app.model.runner_model import RunnerModel
+from app.infrastructure.mongoDB.person_list import PersonList
+from app.model.person_model import PersonModel
 
-class RaceController:
+
+class PersonController:
     """_summary_
     """
-    def __init__(self, race_repository:RaceList, downloader_service:DownloaderService):
-        self.race_repository = race_repository
-        self.downloader_service = downloader_service
+    def __init__(self, runner_repository:PersonList):
+        self.runner_repository = runner_repository
         self.logger = logging.getLogger(__name__)
 
     def get_all(self):
@@ -23,7 +20,7 @@ class RaceController:
             _type_: _description_
         """
         try:
-            return self.race_repository.get_all()
+            return self.runner_repository.get_all()
         except Exception as exception_error: # pylint: disable=broad-except
             self.logger.error("Error retrieving all races: %s", exception_error)
             return {'message': 'An error occurred while retrieving all races.'}
@@ -38,67 +35,58 @@ class RaceController:
             _type_: _description_
         """
         try:
-            return self.race_repository.get_by_id(race_id)
+            return self.runner_repository.get_by_id(race_id)
         except Exception as exception_error: # pylint: disable=broad-except
             self.logger.error("Error retrieving race: %s", exception_error)
             return {'message': 'An error occurred while retrieving race.'}
 
-    def add_race(self, new_race: RaceBaseModel):
+    def add(self, new_runner: PersonModel):
         """_summary_
 
         Args:
-            new_race (RaceBaseModel): _description_
+            new_race (PersonModel): _description_
 
         Returns:
             _type_: _description_
         """
         try:
-            if new_race.proceesEnabled:
-                runners:List[RunnerModel] = self.downloader_service.download_race_data(new_race.url)
-                new_race.set_ranking(runners)
-
-            self.race_repository.add_race(new_race)
-
+            self.runner_repository.add(new_runner)
             return {'message': 'La carrera se ha añadido correctamente.'}
         except Exception as exception_error: # pylint: disable=broad-except
             self.logger.error("Error adding race: %s", exception_error)
             return {'message': 'An error occurred while adding the race.'}
 
-    def update_race(self, race_id: str, race: RaceBaseModel):
+    def update_runner(self, runner_id: str, new_runner: PersonModel):
         """_summary_
 
         Args:
             race_id (str): _description_
-            race (RaceBaseModel): _description_
+            race (PersonModel): _description_
 
         Returns:
             _type_: _description_
         """
         try:
-            if race.proceesEnabled:
-                runners:List[RunnerModel] = self.downloader_service.download_race_data(race.url)
-                race.set_ranking(runners)
-
-            result = self.race_repository.update_race(race_id, race)
+            result = self.runner_repository.update_by_id(runner_id, new_runner)
 
             if result.modified_count:
-                return race
+                return result
             else:
                 return {'message': 'No se encontró la carrera especificada.'}
         except Exception as exception_error: # pylint: disable=broad-except
             self.logger.error("Error adding race: %s", exception_error)
             return {'message': 'An error occurred while adding the race.'}
 
-    def delete_race(self, race_id: str):
+    def delete_runner(self, runner_id: str):
         """_summary_
 
         Args:
-            race_id (str): _description_
+            runner_id (str): _description_
 
         Returns:
             _type_: _description_
         """
-        result = self.race_repository.delete_race(race_id)
+        result = self.runner_repository.delete_by_id(runner_id)
 
         if result.deleted_count:
             return {'message': 'Carrera eliminada correctamente.'}

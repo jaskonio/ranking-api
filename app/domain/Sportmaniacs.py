@@ -1,7 +1,7 @@
 from typing import List
 from app.domain.downloader import Downloader
 from app.domain.UtilsRunner import build_runner
-from app.model.RunnerModel import RunnerModel
+from app.model.runner_model import RunnerModel
 
 class Sportmaniacs(Downloader):
     url_base = 'https://sportmaniacs.com/es/races/rankings/'

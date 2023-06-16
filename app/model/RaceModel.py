@@ -1,8 +1,8 @@
 from datetime import datetime
 from typing import List
 from pydantic import BaseModel, Field
-from .RunnerBaseModel import RunnerBaseModel
-from .RunnerModel import RunnerModel
+from .runner_base_model import RunnerBaseModel
+from .runner_model import RunnerModel
 
 class RaceModel(BaseModel):
     name: str

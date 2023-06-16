@@ -2,8 +2,21 @@ from pydantic import BaseConfig, BaseModel
 from bson import ObjectId
 
 class BaseMongoModel(BaseModel):
+    """_summary_
+
+    Args:
+        BaseModel (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
 
     class Config(BaseConfig):
+        """_summary_
+
+        Args:
+            BaseConfig (_type_): _description_
+        """
         allow_population_by_field_name = True
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
@@ -16,7 +29,12 @@ class BaseMongoModel(BaseModel):
         new_id = data.pop('_id', None)
         return cls(**dict(data, id=new_id))
 
-    def mongo(self, **kwargs):
+    def mongo(self):
+        """_summary_
+
+        Returns:
+            _type_: _description_
+        """
         # exclude_unset = kwargs.pop('exclude_unset', True)
         # by_alias = kwargs.pop('by_alias', True)
 

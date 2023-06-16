@@ -5,8 +5,8 @@ from app.model.BaseMongoModel import BaseMongoModel
 from app.model.OID import OID
 from app.model.RaceBaseModel import RaceBaseModel
 from app.model.RaceModel import RaceModel
-from app.model.RunnerBaseModel import RunnerBaseModel
-from app.model.RunnerModel import RunnerModel
+from app.model.runner_base_model import RunnerBaseModel
+from app.model.runner_model import RunnerModel
 
 logger = logging.getLogger(__name__)
 

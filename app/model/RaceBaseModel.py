@@ -3,7 +3,7 @@ from typing import List
 from pydantic import Field
 from app.model.BaseMongoModel import BaseMongoModel
 from app.model.OID import OID
-from app.model.RunnerModel import RunnerModel
+from app.model.runner_model import RunnerModel
 
 class RaceBaseModel(BaseMongoModel):
     id: OID = Field(default_factory=OID)
