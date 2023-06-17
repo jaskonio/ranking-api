@@ -1,5 +1,7 @@
-from pydantic import BaseConfig, BaseModel
+from pydantic import BaseConfig, BaseModel, Field
 from bson import ObjectId
+from app.model.OID import OID
+
 
 class BaseMongoModel(BaseModel):
     """_summary_
@@ -10,6 +12,7 @@ class BaseMongoModel(BaseModel):
     Returns:
         _type_: _description_
     """
+    id: OID = Field(default_factory=OID)
 
     class Config(BaseConfig):
         """_summary_
