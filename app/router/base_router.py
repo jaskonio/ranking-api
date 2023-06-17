@@ -3,11 +3,15 @@
 Returns:
     _type_: _description_
 """
+from ast import List
+import logging
 from typing import Generic, TypeVar
 from fastapi import APIRouter, Depends
 from app.auth.auth_bearer import JWTBearer
 from app.controller.base_controller import BaseController
 from app.core.cache import local_cache
+from app.router.api_exception import ApiException
+from app.router.response_base import IResponseBase
 
 
 T = TypeVar("T")
@@ -26,6 +30,7 @@ class BaseRouter(Generic[T]):
         self.key_cache = key_cache
         self.body_type = body_type
         self.load_router()
+        self.logger = logging.getLogger(__name__)
 
     def load_router(self):
         """_summary_
@@ -51,7 +56,7 @@ class BaseRouter(Generic[T]):
         update_by_id.__annotations__["id"] = str
         update_by_id.__annotations__["new_item"] = self.body_type
 
-        self.router.get('/')(self.__get_all__)
+        self.router.get('/', response_model=IResponseBase)(self.__get_all__)
         self.router.post('/', dependencies=[Depends(JWTBearer())])(add)
         self.router.get('/{id}')(self.__get_by_id__)
         self.router.put('/', dependencies=[Depends(JWTBearer())])(update_by_id)
@@ -63,14 +68,17 @@ class BaseRouter(Generic[T]):
         Returns:
             _type_: _description_
         """
-        key = self.key_cache + '__get_all__'
-        data = local_cache.get(key)
+        try:
+            key = self.key_cache + '__get_all__'
+            data = local_cache.get(key)
 
-        if not data:
-            data = self.controller.get_all()
-            local_cache.add(key, data)
-
-        return data
+            if not data:
+                data = self.controller.get_all()
+                local_cache.add(key, data)
+            return IResponseBase(items=data)
+        except Exception as exception_error: # pylint: disable=broad-except
+            self.logger.error("Error retrieving all items: %s", exception_error)
+            raise ApiException(500, "Error retrieving all items") from None
 
     def __add__(self, new_item:Generic[T]):
         """_summary_

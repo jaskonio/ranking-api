@@ -21,8 +21,8 @@ class BaseController:
         try:
             return self.repository.get_all()
         except Exception as exception_error: # pylint: disable=broad-except
-            self.logger.error("Error retrieving all races: %s", exception_error)
-            return {'message': 'An error occurred while retrieving all races.'}
+            self.logger.error("Error retrieving all items: %s", exception_error)
+            raise TypeError('An error occurred while retrieving all items.') from None
 
     def get_by_id(self, race_id:str):
         """_summary_
