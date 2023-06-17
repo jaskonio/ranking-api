@@ -35,6 +35,7 @@ class BaseList(BaseInterfaceList):
         Returns:
             _type_: _description_
         """
+        item = self.object(item)
         result = self.collection.insert_one(item.mongo())
 
         return result
