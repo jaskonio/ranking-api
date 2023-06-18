@@ -1,7 +1,7 @@
 from .MongoDBSession import get_database
 from bson import ObjectId
 from pymongo import collection, database
-from app.model.LeagueModel import LeagueModel
+from app.model.league_model import LeagueModel
 
 
 class LeagueList:

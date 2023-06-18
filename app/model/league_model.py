@@ -9,7 +9,7 @@ from pydantic import Field
 from app.model.BaseMongoModel import BaseMongoModel
 from app.model.OID import OID
 from app.model.RaceBaseModel import RaceBaseModel
-from app.model.RaceModel import RaceModel
+from app.model.race_model import RaceModel
 from app.model.runner_base_model import RunnerBaseModel
 from app.model.runner_model import RunnerModel
 

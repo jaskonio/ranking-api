@@ -8,7 +8,7 @@ from app.auth.auth_bearer import JWTBearer
 from app.controller.league_controller import LeagueController
 from app.infrastructure.mongoDB.LeagueList import LeagueList
 from app.infrastructure.mongoDB.RaceList import RaceList
-from app.model.LeagueModel import LeagueModel
+from app.model.league_model import LeagueModel
 from app.model.runner_base_model import RunnerBaseModel
 from app.core.cache import local_cache
 

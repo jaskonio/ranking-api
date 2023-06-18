@@ -1,10 +1,23 @@
+"""_summary_
+
+Returns:
+    _type_: _description_
+"""
 from datetime import datetime
 from typing import List
 from pydantic import BaseModel, Field
-from .runner_base_model import RunnerBaseModel
-from .runner_model import RunnerModel
+from app.model.runner_base_model import RunnerBaseModel
+from app.model.runner_model import RunnerModel
 
 class RaceModel(BaseModel):
+    """_summary_
+
+    Args:
+        BaseModel (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
     name: str
     url: str
     order: int
@@ -13,10 +26,20 @@ class RaceModel(BaseModel):
     runnerDisqualified: List[RunnerBaseModel] = Field(default_factory=list)
 
     def add_runner(self, runner):
+        """_summary_
+
+        Args:
+            runner (_type_): _description_
+        """
         self.ranking.append(runner)
         self.sorted = False
 
     def get_ranking(self):
+        """_summary_
+
+        Returns:
+            _type_: _description_
+        """
         if not self.sorted:
             self.__sort_runners()
             self.__set_points()
@@ -24,6 +47,11 @@ class RaceModel(BaseModel):
         return self.ranking
 
     def get_runners_with_points(self):
+        """_summary_
+
+        Returns:
+            _type_: _description_
+        """
         if not self.sorted:
             self.__sort_runners()
             self.__set_points()
@@ -31,16 +59,28 @@ class RaceModel(BaseModel):
         return [runner for runner in self.ranking if runner.puntos != 0]
 
     def set_runners_disqualified(self, runners:List[RunnerBaseModel]):
+        """_summary_
+
+        Args:
+            runners (List[RunnerBaseModel]): _description_
+        """
         self.runnerDisqualified.extend(runners)
         self.sorted = False
         self.update_ranking()
 
     def set_runner_disqualified(self, runner:RunnerBaseModel):
+        """_summary_
+
+        Args:
+            runner (RunnerBaseModel): _description_
+        """
         self.runnerDisqualified.append(runner)
         self.sorted = False
         self.update_ranking()
 
     def update_ranking(self):
+        """_summary_
+        """
         if not self.sorted:
             self.__sort_runners()
             self.__set_points()
