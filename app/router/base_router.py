@@ -95,7 +95,7 @@ class BaseRouter(Generic[T]):
         if not result.inserted_id:
             return {'message': 'El item no se ha añadido correctamente.'}
 
-        key = self.key_cache + '__add__'
+        key = self.key_cache + '__get_all__'
         local_cache.delete(key)
 
         return {'message': 'El item se ha añadido correctamente.'}
