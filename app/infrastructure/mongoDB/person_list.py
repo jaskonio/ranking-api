@@ -11,5 +11,5 @@ class PersonList(BaseList):
     """_summary_
     """
     def __init__(self):
-        collection_name = "RunnerList"
+        collection_name = "PersonList"
         super().__init__(collection_name, PersonModel)
