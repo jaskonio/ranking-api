@@ -53,7 +53,7 @@ def sign_jwt(user: UserModel) -> Dict[str, str]:
     """
     payload = {
         "user_name": user.user_name,
-        "expires": datetime.datetime.now(datetime.timezone.utc).timestamp() + 600
+        "expires": datetime.datetime.now(datetime.timezone.utc).timestamp() + 6000
     }
 
     token = jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)

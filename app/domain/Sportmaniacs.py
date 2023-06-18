@@ -31,10 +31,11 @@ class Sportmaniacs(Downloader):
         return rankings_by_club_list
 
     def __set_rankings_format(self, runners):
-        delete_keys = ['category_id', 'user_id', 'defaultImage', 'photos', 'externalPhotos', 'externalVideos', 'externalDiploma', 'Points']
-        
+        delete_keys = ['category_id', 'user_id', 'defaultImage', 'photos',
+                       'externalPhotos', 'externalVideos', 'externalDiploma', 'Points']
+
         new_runners:List[RunnerModel] = []
-            
+
         for row in runners:
             # delete key pos
             key_pos = [key for key in row.keys() if 'pos_' in key][0]
@@ -45,9 +46,12 @@ class Sportmaniacs(Downloader):
             # Update gender value
             row['gender'] = 'Masculino' if row['gender'] == 'gender_0' else 'Femenino'
 
-            runner = build_runner(row["dorsal"], row["name"], row["club"], row["nationality"], row["finishedRace"], row["gender"], row["category"],
-                                  row["officialTime"], row["pos"], row["average"], row["catPos"], row["genPos"],
-                                  row["realTime"], row["realPos"], row["averageNet"], row["realCatPos"], row["realGenPos"])
+            runner = build_runner(row["dorsal"], row["name"], row["club"], row["nationality"],
+                                    row["finishedRace"], row["gender"], row["category"],
+                                  row["officialTime"], row["pos"], row["average"], row["catPos"],
+                                    row["genPos"],
+                                  row["realTime"], row["realPos"], row["averageNet"],
+                                    row["realCatPos"], row["realGenPos"])
 
             new_runners.append(runner)
 

@@ -11,7 +11,7 @@ class RunnerBaseModel(BaseModel):
         BaseModel (_type_): _description_
     """
     name: str
-    last_name: str
+    last_name: str = ''
     dorsal: int = 0
     club: str = 'Redolat Team'
     nationality: str = ''
