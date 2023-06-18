@@ -142,7 +142,7 @@ class BaseRouter(Generic[T]):
         """
         result = self.controller.delete_by_id(id)
 
-        key = self.key_cache + '__delete_by_id__'
+        key = self.key_cache + '__get_all__'
         local_cache.delete(key)
 
         return result
