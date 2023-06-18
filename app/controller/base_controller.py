@@ -88,6 +88,6 @@ class BaseController:
         result = self.repository.delete_by_id(runner_id)
 
         if result.deleted_count:
-            return {'message': 'Carrera eliminada correctamente.'}
+            return {'message': 'El Item se ha eliminado correctamente.'}
 
-        return {'message': 'No se encontró la Carrera especificada.'}
+        return {'message': 'No se encontró el Item especificada.'}
