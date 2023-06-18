@@ -20,7 +20,7 @@ class RaceModel(BaseModel):
         if not self.sorted:
             self.__sort_runners()
             self.__set_points()
-        
+
         return self.ranking
 
     def get_runners_with_points(self):
@@ -33,7 +33,7 @@ class RaceModel(BaseModel):
     def set_runners_disqualified(self, runners:List[RunnerBaseModel]):
         self.runnerDisqualified.extend(runners)
         self.sorted = False
-        self.update_ranking()            
+        self.update_ranking()
 
     def set_runner_disqualified(self, runner:RunnerBaseModel):
         self.runnerDisqualified.append(runner)
@@ -47,12 +47,17 @@ class RaceModel(BaseModel):
 
     def __sort_runners(self):
         format = "%H:%M:%S"
-        # Orderna los Runner primero por finished True primero False segundo, realTime y officialTime
 
-        runners_finished = sorted(self.ranking, key=lambda runner: (not runner.finished, datetime.strptime(runner.realTime, format), datetime.strptime(runner.officialTime, format)), reverse=False)
+        # Orderna los Runner primero por finished True
+        # primero False segundo, realTime y officialTime
+        runners_finished = sorted(self.ranking,
+                                    key=lambda runner: (not runner.finished,
+                                                datetime.strptime(runner.realTime, format),
+                                                datetime.strptime(runner.officialTime, format)),
+                                    reverse=False)
 
         self.ranking = runners_finished
-        
+
         self.sorted = True
 
     def __set_points(self):

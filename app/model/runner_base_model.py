@@ -10,9 +10,12 @@ class RunnerBaseModel(BaseModel):
     Args:
         BaseModel (_type_): _description_
     """
-    dorsal: int
-    name: str = ''
+    name: str
+    last_name: str
+    dorsal: int = 0
     club: str = 'Redolat Team'
     nationality: str = ''
     gender: str = ''
     category: str = ''
+    photo: str = ''
+    person_id: str = ''

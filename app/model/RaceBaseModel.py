@@ -1,3 +1,8 @@
+"""_summary_
+
+Returns:
+    _type_: _description_
+"""
 from datetime import datetime
 from typing import List
 from pydantic import Field
@@ -6,6 +11,14 @@ from app.model.OID import OID
 from app.model.runner_model import RunnerModel
 
 class RaceBaseModel(BaseMongoModel):
+    """_summary_
+
+    Args:
+        BaseMongoModel (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
     id: OID = Field(default_factory=OID)
     name: str
     url: str
@@ -15,6 +28,11 @@ class RaceBaseModel(BaseMongoModel):
     proceesEnabled: bool = False
 
     def set_ranking(self, runner):
+        """_summary_
+
+        Args:
+            runner (_type_): _description_
+        """
         self.ranking.clear()
         self.ranking.extend(runner)
 
@@ -25,16 +43,29 @@ class RaceBaseModel(BaseMongoModel):
         self.processed = True
 
     def get_ranking(self):
+        """_summary_
+
+        Returns:
+            _type_: _description_
+        """
         if not self.sorted:
             self.__sort_ranking__()
 
         return self.ranking
 
     def __sort_ranking__(self):
-        format_datetime = "%H:%M:%S"
+        """_summary_
+        """
+        format = "%H:%M:%S"
 
-        # Orderna los Runner primero por finished True primero False segundo, realTime y officialTime
-        runners_finished = sorted(self.ranking, key=lambda runner: (not runner.finished, datetime.strptime(runner.realTime, format_datetime), datetime.strptime(runner.officialTime, format_datetime)), reverse=False)
+        # Orderna los Runner primero por finished
+        # True primero y False segundo
+        # tiempos que se tienen en cuenta realTime y officialTime
+        runners_finished = sorted(self.ranking,
+                                  key=lambda runner: (not runner.finished,
+                                                    datetime.strptime(runner.realTime, format),
+                                                    datetime.strptime(runner.officialTime, format)),
+                                  reverse=False)
 
         self.ranking = runners_finished
 

@@ -25,25 +25,23 @@ class LeagueController:
         self.race_repository = race_repository
         self.logger = logging.getLogger(__name__)
 
-    def add_runner(self, new_runner: RunnerBaseModel, league_id: str):
-        '''
-        Adds a new runner to a league.
+    def add_runner(self, new_participant: RunnerBaseModel, league_id: str):
+        """_summary_
 
         Args:
-            new_runner (RunnerBaseModel): The runner to be added.
-            league_id (str): The ID of the league.
+            new_participant (PersonModel): _description_
+            league_id (str): _description_
 
         Returns:
-            dict: A dictionary containing a success message or an
-            error message if an exception occurred.
-        '''
+            _type_: _description_
+        """
         try:
             league = self.league_repository.get_by_id(league_id)
 
             message = ''
 
             if league:
-                league.add_runner(new_runner)
+                league.add_runner(new_participant)
                 self.league_repository.update_league(league_id, league)
                 self.logger.info("Runner added successfully.")
                 message = 'Runner añadido correctamente.'
