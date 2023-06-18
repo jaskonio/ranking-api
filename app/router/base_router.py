@@ -3,7 +3,6 @@
 Returns:
     _type_: _description_
 """
-from ast import List
 import logging
 from typing import Generic, TypeVar
 from fastapi import APIRouter, Depends
@@ -15,6 +14,7 @@ from app.router.response_base import IResponseBase
 
 
 T = TypeVar("T")
+
 
 class BaseRouter(Generic[T]):
     """_summary_
