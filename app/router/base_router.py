@@ -92,13 +92,13 @@ class BaseRouter(Generic[T]):
         print(type(new_item))
 
         result = self.controller.add(new_item)
-        if result.inserted_id:
+        if not result.inserted_id:
             return {'message': 'El item no se ha añadido correctamente.'}
 
         key = self.key_cache + '__add__'
         local_cache.delete(key)
 
-        return {'message': 'La carrera se ha añadido correctamente.'}
+        return {'message': 'El item se ha añadido correctamente.'}
 
     def __get_by_id__(self, item_id: str):
         """_summary_
