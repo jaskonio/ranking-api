@@ -103,7 +103,7 @@ class BaseRouter(Generic[T]):
 
         return {'message': 'El item se ha añadido correctamente.'}
 
-    def __get_by_id__(self, item_id: str):
+    def __get_by_id__(self, id: str):
         """_summary_
 
         Args:
@@ -112,11 +112,11 @@ class BaseRouter(Generic[T]):
         Returns:
             _type_: _description_
         """
-        key = self.key_cache + "__add__%s",str(item_id)
+        key = self.key_cache + "__add__%s",str(id)
         data = local_cache.get(key)
 
         if not data:
-            data = self.controller.get_by_id(item_id)
+            data = self.controller.get_by_id(id)
             local_cache.add(key, data)
 
         return data
