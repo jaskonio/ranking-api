@@ -57,10 +57,13 @@ class BaseRouter(Generic[T]):
         update_by_id.__annotations__["new_item"] = self.body_type
 
         self.router.get('/', response_model=IResponseBase)(self.__get_all__)
-        self.router.post('/', dependencies=[Depends(JWTBearer())])(add)
+        #self.router.post('/', dependencies=[Depends(JWTBearer())])(add)
+        self.router.post('/')(add)
         self.router.get('/{id}')(self.__get_by_id__)
-        self.router.put('/', dependencies=[Depends(JWTBearer())])(update_by_id)
-        self.router.delete('/{id}', dependencies=[Depends(JWTBearer())])(self.__delete_by_id__)
+        #self.router.put('/', dependencies=[Depends(JWTBearer())])(update_by_id)
+        self.router.put('/')(update_by_id)
+        #self.router.delete('/{id}', dependencies=[Depends(JWTBearer())])(self.__delete_by_id__)
+        self.router.delete('/{id}')(self.__delete_by_id__)
 
     def __get_all__(self):
         """_summary_
