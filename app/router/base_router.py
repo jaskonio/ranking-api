@@ -61,7 +61,7 @@ class BaseRouter(Generic[T]):
         self.router.post('/')(add)
         self.router.get('/{id}')(self.__get_by_id__)
         #self.router.put('/', dependencies=[Depends(JWTBearer())])(update_by_id)
-        self.router.put('/')(update_by_id)
+        self.router.put('/{id}')(update_by_id)
         #self.router.delete('/{id}', dependencies=[Depends(JWTBearer())])(self.__delete_by_id__)
         self.router.delete('/{id}')(self.__delete_by_id__)
 
