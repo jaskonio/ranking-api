@@ -50,7 +50,7 @@ class BaseList(BaseInterfaceList):
         """
         race = self.collection.find_one({'_id': ObjectId(str_id)})
 
-        return BaseMongoModel.from_mongo(race)
+        return self.object.from_mongo(race)
 
     def update_by_id(self, old_item_id, new_item:BaseMongoModel):
         """_summary_
