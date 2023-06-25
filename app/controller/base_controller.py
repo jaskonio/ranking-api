@@ -69,7 +69,7 @@ class BaseController:
             result = self.repository.update_by_id(runner_id, new_runner)
 
             if result.modified_count:
-                return result
+                return {'message': 'El item se ha actualizado correctamente.'}
             else:
                 return {'message': 'No se encontró la carrera especificada.'}
         except Exception as exception_error: # pylint: disable=broad-except
