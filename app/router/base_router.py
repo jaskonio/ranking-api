@@ -132,6 +132,10 @@ class BaseRouter(Generic[T]):
             _type_: _description_
         """
         result = self.controller.update_by_id(id, new_item)
+
+        key = self.key_cache + '__get_all__'
+        local_cache.delete(key)
+
         return result
 
     def __delete_by_id__(self, id: str):
