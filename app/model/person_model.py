@@ -12,3 +12,7 @@ class PersonModel(BaseMongoModel):
     first_name: str
     last_name: str
     photo: str = ''
+    photo_url: str = ''
+
+    def build_properties(self):
+        self.photo_url = '/images/' + str(self.id)
