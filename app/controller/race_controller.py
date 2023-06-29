@@ -78,6 +78,7 @@ class RaceController:
             if race.proceesEnabled:
                 runners:List[RunnerModel] = self.downloader_service.download_race_data(race.url)
                 race.set_ranking(runners)
+                race.proceesEnabled = False
 
             result = self.race_repository.update_race(race_id, race)
 

@@ -32,7 +32,7 @@ def get_all():
 
     return data
 
-@race_router.post('/', dependencies=[Depends(JWTBearer())])
+@race_router.post('/')
 def create(race: RaceBaseModel):
     """_summary_
 
@@ -63,8 +63,8 @@ def get_race(race_id: str):
 
     return data
 
-@race_router.put('/', dependencies=[Depends(JWTBearer())])
-def update_race(race_id: str, race: RaceBaseModel):
+@race_router.put('/{id}')
+def update_race(id: str, race: RaceBaseModel):
     """_summary_
 
     Args:
@@ -74,9 +74,9 @@ def update_race(race_id: str, race: RaceBaseModel):
     Returns:
         _type_: _description_
     """
-    return controller.update_race(race_id, race)
+    return controller.update_race(id, race)
 
-@race_router.delete('/{race_id}', dependencies=[Depends(JWTBearer())])
+@race_router.delete('/{race_id}')
 def delete_race(race_id: str):
     """_summary_
 
