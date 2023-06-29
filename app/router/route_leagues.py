@@ -68,18 +68,18 @@ def get_league(league_id: str):
 
     return data
 
-@router_league.put('/')
-def update_league(league_id: str, league: LeagueModel):
+@router_league.put('/{id}')
+def update_league(id: str, league: LeagueModel):
     """_summary_
 
     Args:
-        league_id (str): _description_
+        id (str): _description_
         league (LeagueModel): _description_
 
     Returns:
         _type_: _description_
     """
-    return controller.update_league(league_id, league)
+    return controller.update_league(id, league)
 
 @router_league.delete('/{league_id}')
 def delete_league(league_id: str):
