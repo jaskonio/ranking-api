@@ -24,12 +24,7 @@ def get_all():
     Returns:
         _type_: _description_
     """
-    key = "league/"
-    data = local_cache.get(key)
-
-    if not data:
-        data = controller.get_all()
-        local_cache.add(key, data)
+    data = controller.get_all()
 
     return data
 
