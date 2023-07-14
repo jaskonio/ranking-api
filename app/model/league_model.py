@@ -115,8 +115,10 @@ class LeagueModel(BaseMongoModel):
         for runner in race.ranking:
             for participant in self.runnerParticipants:
                 if runner.dorsal == participant.dorsal:
+                    runner.photo = participant.photo
                     runner_participants_in_race.append(runner)
                 elif runner.name == participant.name + participant.last_name:
+                    runner.photo = participant.photo
                     runner_participants_in_race.append(runner)
 
         return runner_participants_in_race
