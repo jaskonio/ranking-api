@@ -108,6 +108,8 @@ class LeagueController:
             Union[LeagueModel, dict]: The updated league if it was found and updated,
             or an error message if the league was not found.
         '''
+        league.calculate_final_ranking()
+
         result = self.league_repository.update_league(league_id, league)
 
         if result.modified_count:

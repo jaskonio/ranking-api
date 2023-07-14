@@ -5,11 +5,13 @@ Returns:
 """
 from datetime import datetime
 from typing import List
-from pydantic import BaseModel, Field
+from pydantic import Field
+from app.model.BaseMongoModel import BaseMongoModel
+from app.model.OID import OID
 from app.model.runner_base_model import RunnerBaseModel
 from app.model.runner_model import RunnerModel
 
-class RaceModel(BaseModel):
+class RaceModel(BaseMongoModel):
     """_summary_
 
     Args:
@@ -18,6 +20,7 @@ class RaceModel(BaseModel):
     Returns:
         _type_: _description_
     """
+    id: OID = Field(default_factory=OID)
     name: str
     url: str
     order: int
