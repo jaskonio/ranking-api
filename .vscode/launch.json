@@ -20,6 +20,13 @@
             "console": "integratedTerminal",
             //"args": ["main:app","--reload"]
             "args": ["app.main:app","--reload", "--log-config", "log_conf.yaml"]
-        }
+        },
+        {
+            "name": "Python: Current File",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal"
+        },
     ]
 }

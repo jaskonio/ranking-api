@@ -9,6 +9,7 @@ from pydantic import Field
 from app.model.BaseMongoModel import BaseMongoModel
 from app.model.OID import OID
 from app.model.RaceBaseModel import RaceBaseModel
+from app.model.RunnerParticipantModel import RunnerParticipantModel
 from app.model.race_model import RaceModel
 from app.model.runner_base_model import RunnerBaseModel
 from app.model.runner_model import RunnerModel
@@ -24,11 +25,10 @@ class LeagueModel(BaseMongoModel):
     Returns:
         _type_: _description_
     """
-    id: OID = Field(default_factory=OID)
     name: str
     races: List[RaceModel] = Field(default_factory=list)
     final_ranking: List[RunnerModel] = Field(default_factory=list)
-    runnerParticipants: List[RunnerBaseModel] = Field(default_factory=list)
+    runnerParticipants: List[RunnerParticipantModel] = Field(default_factory=list)
 
     def get_races(self):
         """_summary_

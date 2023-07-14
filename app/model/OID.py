@@ -10,8 +10,9 @@ class OID(str):
     @classmethod
     def validate(cls, v):
         try:
-            return ObjectId(str(v))
-        except InvalidDiscriminator:
+            a = ObjectId(str(v))
+            return a
+        except Exception as e:
             raise ValueError("Not a valid ObjectId")
 
 # fix ObjectId & FastApi conflict
