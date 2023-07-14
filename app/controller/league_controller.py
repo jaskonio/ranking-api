@@ -108,9 +108,20 @@ class LeagueController:
             Union[LeagueModel, dict]: The updated league if it was found and updated,
             or an error message if the league was not found.
         '''
-        league.calculate_final_ranking()
+        new_league = LeagueModel(id=league.id,
+            races=[],
+            runnerParticipants=[],
+            final_ranking=[],
+            name=league.name)
 
-        result = self.league_repository.update_league(league_id, league)
+
+        for runner in league.runnerParticipants:
+            new_league.add_runner(runner)
+
+        for race in league.races:
+            new_league.add_race(race)
+
+        result = self.league_repository.update_league(league_id, new_league)
 
         if result.modified_count:
             return league
