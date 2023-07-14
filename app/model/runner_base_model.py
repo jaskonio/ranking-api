@@ -1,10 +1,8 @@
 """_summary_
 """
+from app.model.BaseMongoModel import BaseMongoModel
 
-from pydantic import BaseModel
-
-
-class RunnerBaseModel(BaseModel):
+class RunnerBaseModel(BaseMongoModel):
     """_summary_
 
     Args:
