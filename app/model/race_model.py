@@ -57,7 +57,7 @@ class RaceModel(BaseMongoModel):
         """
         if not self.sorted:
             self.__sort_runners()
-            self.__set_points()
+            self.set_points()
 
         return [runner for runner in self.ranking if runner.puntos != 0]
 
@@ -69,7 +69,6 @@ class RaceModel(BaseMongoModel):
         """
         self.runnerDisqualified.extend(runners)
         self.sorted = False
-        self.update_ranking()
 
     def set_runner_disqualified(self, runner:RunnerBaseModel):
         """_summary_
@@ -103,7 +102,7 @@ class RaceModel(BaseMongoModel):
 
         self.sorted = True
 
-    def __set_points(self):
+    def set_points(self):
         if not self.sorted:
             self.__sort_runners()
 
@@ -112,13 +111,18 @@ class RaceModel(BaseMongoModel):
         disqualified_bibs  = [ runner for runner in self.runnerDisqualified if runner.dorsal]
 
         # Asignar puntos como en la F1
-        points = [25, 18, 15, 12, 10, 8, 6, 4, 2, 1]
+        points = [25, 18, 15, 12, 10, 8, 6, 4, 2, 1, 0.75, 0.50, 0.25, 0.10, 0.05]
+        point_index = 0
 
-        for i, runner in enumerate(self.ranking):
+        for runner in self.ranking:
             if runner.dorsal in disqualified_bibs:
                 continue
 
-            if i < len(points):
-                runner.puntos = points[i]
+            if point_index < len(points):
+                runner.puntos = points[point_index]
             else:
                 runner.puntos = 0
+
+            runner.position = point_index + 1
+
+            point_index = point_index + 1

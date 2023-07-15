@@ -11,6 +11,9 @@ class RunnerModel(RunnerBaseModel, RunnerResultModel):
         RunnerBaseModel (_type_): _description_
         RunnerResultModel (_type_): _description_
     """
+    position: int = 0
     puntos: int = 0
-    posiciones_ant: List[int] = []
     photo_data = ''
+    posiciones_ant: List[int] = []
+    averages_ant: List[str] = []
+    poistion_general_ant: List[int] = []

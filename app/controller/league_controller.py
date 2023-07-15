@@ -114,12 +114,8 @@ class LeagueController:
             final_ranking=[],
             name=league.name)
 
-
-        for runner in league.runnerParticipants:
-            new_league.add_runner(runner)
-
-        for race in league.races:
-            new_league.add_race(race)
+        new_league.add_runners(league.runnerParticipants)
+        new_league.add_races(league.races)
 
         result = self.league_repository.update_league(league_id, new_league)
 
