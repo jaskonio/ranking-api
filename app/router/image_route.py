@@ -9,6 +9,7 @@ import logging
 from fastapi import APIRouter
 from PIL import Image
 from app.controller.person_controller import PersonController
+from app.infrastructure.mongoDB.LeagueList import LeagueList
 from app.infrastructure.mongoDB.person_list import PersonList
 from app.model.person_model import PersonModel
 from starlette.responses import StreamingResponse
@@ -18,7 +19,7 @@ logger = logging.getLogger(__name__)
 
 image_router = APIRouter()
 
-controller = PersonController(PersonList())
+controller = PersonController(PersonList(), LeagueList())
 
 @image_router.get('/{id}')
 def get_image(id: str):
