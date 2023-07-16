@@ -8,8 +8,8 @@ from app.auth.auth_bearer import JWTBearer
 from app.controller.league_controller import LeagueController
 from app.infrastructure.mongoDB.LeagueList import LeagueList
 from app.infrastructure.mongoDB.RaceList import RaceList
+from app.model.RunnerParticipantModel import RunnerParticipantModel
 from app.model.league_model import LeagueModel
-from app.model.runner_base_model import RunnerBaseModel
 from app.core.cache import local_cache
 
 router_league = APIRouter()
@@ -125,8 +125,8 @@ def add_race_into_league(league_id: str, race_id:str, order:int):
     """
     return controller.add_new_race_by_id(league_id, race_id, order)
 
-@router_league.post('/add_runner')
-def add_runner(new_runner: RunnerBaseModel, league_id: str):
+@router_league.post('/{league_id}/add_runner')
+def add_runner(league_id: str, new_runner: RunnerParticipantModel, ):
     """_summary_
 
     Args:

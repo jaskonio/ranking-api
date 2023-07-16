@@ -4,9 +4,9 @@ TODO
 import logging
 from app.infrastructure.mongoDB.LeagueList import LeagueList
 from app.infrastructure.mongoDB.RaceList import RaceList
+from app.model.RunnerParticipantModel import RunnerParticipantModel
 from app.model.league_model import LeagueModel
 from app.model.race_model import RaceModel
-from app.model.runner_base_model import RunnerBaseModel
 
 
 class LeagueController:
@@ -25,7 +25,7 @@ class LeagueController:
         self.race_repository = race_repository
         self.logger = logging.getLogger(__name__)
 
-    def add_runner(self, new_participant: RunnerBaseModel, league_id: str):
+    def add_runner(self, new_participant: RunnerParticipantModel, league_id: str):
         """_summary_
 
         Args:
