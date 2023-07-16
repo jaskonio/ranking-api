@@ -73,23 +73,23 @@ class LeagueModel(BaseMongoModel):
         # aqui iterar los runner para actulizar los valore acumulativos como 'posiciones_ant'
         #runners_populate: List[RunnerModel] = []
 
-        if self.__get_previus_race() is not None:
-            for current_runner in new_race.ranking:
-                previus_runner = self.__get_previus_runner(current_runner)
+        for current_runner in new_race.ranking:
+            previus_runner = self.__get_previus_runner(current_runner)
 
-                current_runner.posiciones_ant = previus_runner.posiciones_ant
-                current_runner.posiciones_ant.append(current_runner.position)
-
-                current_runner.averages_ant = previus_runner.averages_ant
-                current_runner.averages_ant.append(current_runner.realAverageTime)
-
-                current_runner.poistion_general_ant = previus_runner.poistion_general_ant
-                current_runner.poistion_general_ant.append(current_runner.realPos)
-        else:
-            for current_runner in new_race.ranking:
+            if previus_runner is None:
                 current_runner.posiciones_ant.append(current_runner.position)
                 current_runner.averages_ant.append(current_runner.realAverageTime)
                 current_runner.poistion_general_ant.append(current_runner.realPos)
+                continue
+
+            current_runner.posiciones_ant = previus_runner.posiciones_ant
+            current_runner.posiciones_ant.append(current_runner.position)
+
+            current_runner.averages_ant = previus_runner.averages_ant
+            current_runner.averages_ant.append(current_runner.realAverageTime)
+
+            current_runner.poistion_general_ant = previus_runner.poistion_general_ant
+            current_runner.poistion_general_ant.append(current_runner.realPos)
 
         self.races.append(new_race)
         self.calculate_final_ranking()
@@ -134,8 +134,8 @@ class LeagueModel(BaseMongoModel):
 
                 new_runner.participations = len(runner.posiciones_ant)
                 new_runner.best_position = str(min(runner.posiciones_ant)) + '(x' + str(Counter(runner.posiciones_ant)[min(runner.posiciones_ant)]) + ')'
-            new_runner.last_position_race = runner.poistion_general_ant[-1]
-            new_runner.best_avegare_peace = self.__get_best_avegare_peace(runner.averages_ant, "mm:ss / km")
+                new_runner.last_position_race = runner.poistion_general_ant[-1]
+                new_runner.best_avegare_peace = self.__get_best_avegare_peace(runner.averages_ant, "mm:ss / km")
             #new_runner.best_position_real = runner.photo
 
             runner_final_ranking.append(new_runner)
@@ -181,7 +181,7 @@ class LeagueModel(BaseMongoModel):
                 if runner.dorsal == participant.dorsal:
                     runner.photo = participant.photo
                     runner_participants_in_race.append(runner)
-                elif runner.name == participant.name + participant.last_name:
+                elif runner.name == participant.name + ' ' + participant.last_name:
                     runner.photo = participant.photo
                     runner_participants_in_race.append(runner)
 
@@ -210,6 +210,7 @@ class LeagueModel(BaseMongoModel):
         for runner in previus_race.ranking:
             if runner.dorsal == current_runner.dorsal or runner.name == current_runner.name:
                 return runner
+        return None
 
     def __get_previus_race(self):
         if len(self.races) == 0:
