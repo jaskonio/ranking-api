@@ -12,7 +12,7 @@ class RunnerModel(RunnerBaseModel, RunnerResultModel):
         RunnerResultModel (_type_): _description_
     """
     position: int = 0
-    puntos: int = 0
+    puntos: float = 0
     photo_data = ''
     posiciones_ant: List[int] = []
     averages_ant: List[str] = []

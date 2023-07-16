@@ -94,8 +94,7 @@ class RaceModel(BaseMongoModel):
         # primero False segundo, realTime y officialTime
         runners_finished = sorted(self.ranking,
                                     key=lambda runner: (not runner.finished,
-                                                datetime.strptime(runner.realTime, format),
-                                                datetime.strptime(runner.officialTime, format)),
+                                                datetime.strptime(runner.realTime, format)),
                                     reverse=False)
 
         self.ranking = runners_finished
