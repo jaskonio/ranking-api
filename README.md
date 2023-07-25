@@ -1,33 +1,35 @@
 # ranking-api
 
-### Prepare virual environment
+## Prepare virual environment
+
 ```cmd
 python3 -m  venv env
 source env/bin/activate
 pip3 install -r requirements.txt
 ```
 
+## Development
 
-# Development
 ```cmd
  uvicorn main:app --reload
 ```
 
+### Docker
 
-# Docker
-## Build 
+#### Build
 
 ```cmd
     docker build -t ranking-api .
 ```
 
-## Run 
+#### Run
 
 ```cmd
     docker run -d --rm --name ranking-api -p 9000:8080 --env-file=.env ranking-api
 ```
 
-## Stop 
+#### Stop
+
 ```cmd
     docker stop ranking-api
 ```
