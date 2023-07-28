@@ -1,68 +1,34 @@
-"""_summary_
-
-Returns:
-    _type_: _description_
-"""
+import logging
 from collections import Counter
 from datetime import timedelta
-import logging
 from typing import List
-from pydantic import Field
-from app.domain.UtilsRunner import convert_string_to_timedelta, convert_timedelta_to_string
-from app.model.BaseMongoModel import BaseMongoModel
-from app.model.RaceBaseModel import RaceBaseModel
-from app.model.RunnerParticipantModel import RunnerParticipantModel
-from app.model.race_model import RaceModel
-from app.model.ranking_view_model import RankingViewModelBase
-from app.model.runner_base_model import RunnerBaseModel
-from app.model.runner_model import RunnerModel
+from app.domain.race import Race
+from app.domain.runner import Runner
+from app.domain.runner_league_ranking import RunnerLeagueRanking
+from app.domain.runner_race_detail import RunnerRaceDetail
+from app.services.UtilsRunner import convert_string_to_timedelta, convert_timedelta_to_string
+
 
 logger = logging.getLogger(__name__)
 
-class LeagueModel(BaseMongoModel):
-    """_summary_
-
-    Args:
-        BaseMongoModel (_type_): _description_
-
-    Returns:
-        _type_: _description_
-    """
-    name: str
-    races: List[RaceModel] = Field(default_factory=list)
-    final_ranking: List[RankingViewModelBase] = Field(default_factory=list)
-    runnerParticipants: List[RunnerParticipantModel] = Field(default_factory=list)
+class League():
+    def __init__(self, name:str, races: List[Race] = None, ranking:List[RunnerLeagueRanking] = None
+                 , runners: List[Runner] = None ):
+        self.name = name
+        self.races = races
+        self.ranking = ranking
+        self.runners = runners
 
     def get_races(self):
-        """_summary_
-
-        Returns:
-            _type_: _description_
-        """
         return sorted(self.races, key=lambda race: (race.order))
 
-    def add_runner(self, new_runner: RunnerBaseModel):
-        """_summary_
+    def add_runner(self, new_runner: Runner):
+        self.runners.append(new_runner)
 
-        Args:
-            new_runner (RunnerBaseModel): _description_
-        """
-        self.runnerParticipants.append(new_runner)
+    def add_runners(self, new_runners:List[Runner]):
+        self.runners.extend(new_runners)
 
-    def add_runners(self, new_runners:List[RunnerBaseModel]):
-        """_summary_
-
-        Args:
-            new_runner (RunnerBaseModel): _description_
-        """
-        self.runnerParticipants.extend(new_runners)
-
-    def add_race(self, new_race: RaceModel):
-        """_summary_
-
-        Args:
-            new_race (RaceBaseModel): _description_
-        """
+    def add_race(self, new_race: Race):
         runners_participants_race = self.__filter_participants(new_race)
         new_race.set_runners_disqualified(self.__get_disqualified_runners())
         new_race.ranking = runners_participants_race
@@ -94,39 +60,32 @@ class LeagueModel(BaseMongoModel):
         self.races.append(new_race)
         self.calculate_final_ranking()
 
-    def add_races(self, new_races: List[RaceBaseModel]):
-        """_summary_
-
-        Args:
-            new_race (RaceBaseModel): _description_
-        """
+    def add_races(self, new_races: List[Race]):
         for race in new_races:
             self.add_race(race)
 
     def calculate_final_ranking(self):
-        """_summary_
-        """
         ranking_league = {}
 
         for race in self.get_races():
             runners = race.get_runners_with_points()
             for index, runner in enumerate(runners):
                 if runner.name not in ranking_league:
-                    ranking_league[runner.name] = RunnerModel(**runner.dict())
+                    ranking_league[runner.name] = RunnerRaceDetail(**runner.dict())
                 else:
                     ranking_league[runner.name].puntos += runner.puntos
 
-        final_ranking:List[RunnerModel] = sorted(ranking_league.values(),
+        final_ranking:List[RunnerLeagueRanking] = sorted(ranking_league.values(),
                                     key=lambda runner: (runner.puntos),
                                     reverse=True)
-        runner_final_ranking:List[RankingViewModelBase] = []
+        runner_final_ranking:List[RunnerLeagueRanking] = []
 
         for index, runner in enumerate(final_ranking):
-            new_runner = RankingViewModelBase()
+            new_runner = RunnerLeagueRanking(runner.name, runner.last_name)
             new_runner.position = index+1
             new_runner.photo = runner.photo
             new_runner.points = runner.puntos
-            new_runner.name = runner.name + runner.last_name
+            #new_runner.name = runner.name + runner.last_name
 
             if len(runner.posiciones_ant) != 0:
                 new_runner.pos_last_race = runner.posiciones_ant[-1]
@@ -136,19 +95,12 @@ class LeagueModel(BaseMongoModel):
                 new_runner.best_position = str(min(runner.posiciones_ant)) + '(x' + str(Counter(runner.posiciones_ant)[min(runner.posiciones_ant)]) + ')'
                 new_runner.last_position_race = runner.poistion_general_ant[-1]
                 new_runner.best_avegare_peace = self.__get_best_avegare_peace(runner.averages_ant, "mm:ss / km")
-            #new_runner.best_position_real = runner.photo
 
             runner_final_ranking.append(new_runner)
 
-        self.final_ranking = runner_final_ranking
+        self.ranking = runner_final_ranking
 
     def disqualify_runner_process(self, bib_number:int, race_name:str):
-        """_summary_
-
-        Args:
-            bib_number (int): _description_
-            race_name (str): _description_
-        """
         disqualified_runner = self.__get_runner_by_bib_number(bib_number)
         if not disqualified_runner:
             return
@@ -157,51 +109,42 @@ class LeagueModel(BaseMongoModel):
         self.__update_subsequent_races(disqualified_runner, current_race)
 
     def __get_disqualified_runners(self):
-        disqualified_runners: List[RunnerBaseModel] = []
+        disqualified_runners: List[Runner] = []
 
         for race in self.get_races():
             disqualified_runners.extend(race.runnerDisqualified)
 
         return disqualified_runners
 
-    # def __other_criteria_ordenation(self, runner):
-    #     try:
-    #         return sum(runner.posiciones_ant) / len(runner.posiciones_ant)
-    #     except:
-    #         return 0
 
-    def __filter_participants(self, race: RaceModel):
-        if len(self.runnerParticipants) == 0:
+    def __filter_participants(self, race: Race):
+        if len(self.runners) == 0:
             logging.warn("There are no participants in the League")
 
-        runner_participants_in_race:List[RunnerModel] = []
+        runner_participants_in_race:List[RunnerLeagueRanking] = []
 
         for runner in race.ranking:
-            for participant in self.runnerParticipants:
-                if runner.dorsal == participant.dorsal:
-                    runner.photo = participant.photo
-                    runner_participants_in_race.append(runner)
-                elif runner.name == participant.name + ' ' + participant.last_name:
-                    runner.photo = participant.photo
+            for participant in self.runners:
+                if runner.dorsal == participant.dorsal or runner.name == participant.name + ' ' + participant.last_name:
                     runner_participants_in_race.append(runner)
 
         return runner_participants_in_race
 
     def __get_runner_by_bib_number(self, bib_number:int):
-        return next((runner for runner in self.runnerParticipants if runner.dorsal == bib_number), None)
+        return next((runner for runner in self.runners if runner.dorsal == bib_number), None)
 
     def __get_race_by_name(self, race_name: str):
         return next((race for race in self.races if race.name == race_name), None)
 
-    def __disqualify_runner(self, runner:RunnerBaseModel, current_race:RaceModel):
+    def __disqualify_runner(self, runner:Runner, current_race:Race):
         current_race.set_runner_disqualified(runner)
 
-    def __update_subsequent_races(self, disqualified_runner: RunnerBaseModel, current_race: RaceModel):
+    def __update_subsequent_races(self, disqualified_runner: Runner, current_race: Race):
         subsequent_races = [race for race in self.get_races() if race.order > current_race.order]
         for race in subsequent_races:
             race.set_runner_disqualified(disqualified_runner)
 
-    def __get_previus_runner(self, current_runner: RunnerModel):
+    def __get_previus_runner(self, current_runner: RunnerLeagueRanking):
         previus_race = self.__get_previus_race()
 
         if previus_race is None:
@@ -210,6 +153,7 @@ class LeagueModel(BaseMongoModel):
         for runner in previus_race.ranking:
             if runner.dorsal == current_runner.dorsal or runner.name == current_runner.name:
                 return runner
+
         return None
 
     def __get_previus_race(self):

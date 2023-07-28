@@ -1,43 +1,24 @@
-from pydantic import BaseConfig, BaseModel, Field
-from bson import ObjectId
-from app.model.OID import OID
+from logging.config import BaseConfigurator
+from pydantic import Field, BaseModel
+from app.infrastructure.mongoDB.model.OID import OID
 
 
 class BaseMongoModel(BaseModel):
-    """_summary_
-
-    Args:
-        BaseModel (_type_): _description_
-
-    Returns:
-        _type_: _description_
-    """
     id: OID = Field(default_factory=OID)
 
-    class Config(BaseConfig):
-        """_summary_
-
-        Args:
-            BaseConfig (_type_): _description_
-        """
+    class Config(BaseConfigurator):
         allow_population_by_field_name = True
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
 
     @classmethod
     def from_mongo(cls, data: dict):
-        """We must convert _id into "id". """
         if not data:
             return data
         new_id = data.pop('_id', None)
         return cls(**dict(data, id=new_id))
 
     def mongo(self):
-        """_summary_
-
-        Returns:
-            _type_: _description_
-        """
         # exclude_unset = kwargs.pop('exclude_unset', True)
         # by_alias = kwargs.pop('by_alias', True)
 
