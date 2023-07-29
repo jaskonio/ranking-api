@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from app.infrastructure.rest_api.person_router import person_router
+from app.infrastructure.rest_api.route.person_router import person_router
 
 def get_routers():
     api_router = APIRouter()

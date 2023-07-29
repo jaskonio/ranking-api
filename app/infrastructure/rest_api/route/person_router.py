@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 from app.infrastructure.repository.repository_utils import load_repository_from_config
 from app.infrastructure.rest_api.model.person_request import PersonRequest
-from app.infrastructure.rest_api.person_controller import PersonController
+from app.infrastructure.rest_api.controller.person_controller import PersonController
 from app.aplication.person_service import PersonService
 
 

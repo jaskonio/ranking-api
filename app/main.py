@@ -2,7 +2,7 @@ import logging
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import Settings
-from app.infrastructure.rest_api.import_routers import get_routers
+from app.infrastructure.rest_api.route.import_routers import get_routers
 
 logger = logging.getLogger(__name__)
 
