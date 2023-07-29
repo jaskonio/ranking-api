@@ -1,9 +1,4 @@
-"""
-_summary_
-"""
-from typing import List
 import requests
-from app.model.runner_model import RunnerModel
 
 
 class Downloader:
@@ -20,7 +15,7 @@ class Downloader:
     race_id = None
     race_name = None
     requests_response = None
-    race_data:List[RunnerModel] = []
+    race_data = []
     official_team_name = 'REDOLAT TEAM'
     team_name = ['REDOLAT TEAM', 'REDOLATTEAM', 'Redolat Team', 'RedolatTeam', 'Redolat', 'redolatteam', 'redolat team']
 

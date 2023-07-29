@@ -1,6 +1,5 @@
-from app.domain.Sportmaniacs import Sportmaniacs
-from app.domain.TopRun import TopRun
-from app.domain.Valenciaciudaddelrunning import Valenciaciudaddelrunning
+from app.aplication.Sportmaniacs import Sportmaniacs
+
 
 class FactoryDownloader:
     def factory_method(self, url_race):
@@ -13,11 +12,11 @@ class FactoryDownloader:
 
         elif 'valenciaciudaddelrunning' in url_race:
             print("Platform: valenciaciudaddelrunning")
-            downloader = Valenciaciudaddelrunning(url_race)
+            #downloader = Valenciaciudaddelrunning(url_race)
 
         elif 'toprun' in url_race:
             print("Platform: toprun")
-            downloader = TopRun(url_race)
+            #downloader = TopRun(url_race)
         else:
             print("Platform not compatible")
 

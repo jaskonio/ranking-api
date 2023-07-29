@@ -1,38 +1,5 @@
-"""_summary_
-
-Raises:
-    ValueError: _description_
-
-Returns:
-    _type_: _description_
-"""
 import re
 from datetime import timedelta
-from app.model.runner_model import RunnerModel
-
-def build_runner(dorsal=0, name="", club="", nationality="", finished="", gender="", category="",
-                 officialTime="", officialPos="", officialAverageTime="", officialCatPos="", officialGenPos="",
-                 realTime="", realPos="", realAverageTime="", realCatPos="", realGenPos="",
-                 puntos=0, posiciones_ant=[]):
-    finished = strtobool(finished)
-    officialPos = convert_to_int(officialPos)
-    officialCatPos = convert_to_int(officialCatPos)
-    officialGenPos = convert_to_int(officialGenPos)
-    realPos = convert_to_int(realPos)
-    realCatPos = convert_to_int(realCatPos)
-    realGenPos = convert_to_int(realGenPos)
-
-    puntos = convert_to_int(puntos)
-    new_runner = RunnerModel(name= name, dorsal=dorsal, club=club, nationality=nationality,
-                             finished=finished, gender=gender, category=category,
-                             officialTime=officialTime, officialPos=officialPos,
-                             officialAverageTime=officialAverageTime, officialCatPos=officialCatPos,
-                             officialGenPos=officialGenPos,
-                             realTime=realTime, realPos=realPos, realAverageTime=realAverageTime,
-                             realCatPos=realCatPos, realGenPos=realGenPos,
-                             puntos=puntos, posiciones_ant=posiciones_ant)
-
-    return new_runner
 
 def strtobool(val):
     """Convert a string representation of truth to true or false.
@@ -47,7 +14,7 @@ def strtobool(val):
     elif val in ('n', 'no', 'f', 'false', 'off', '0'):
         return False
     else:
-        raise ValueError("invalid truth value %r" % (val,))
+        raise ValueError("invalid truth value %s",str(val))
 
 def convert_to_int(value):
     """_summary_

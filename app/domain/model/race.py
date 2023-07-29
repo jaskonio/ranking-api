@@ -5,11 +5,15 @@ from app.domain.model.runner_race_detail import RunnerRaceDetail
 
 
 class Race(RaceBase):
-    def __init__(self, name: str, url: str, ranking: List[RunnerRaceDetail] = None
+    def __init__(self, id, name: str, url: str, ranking: List[RunnerRaceDetail] = None
                  , order:int = 0, is_sorted: bool = False):
-        super().__init__(name, url, ranking)
+        super().__init__(id, name, url, ranking)
         self.order = order
         self.is_sorted = is_sorted
+
+    def add_runners(self, runners:RunnerRaceDetail):
+        for runner in runners:
+            self.add_runner(runner)
 
     def add_runner(self, runner):
         self.ranking.append(runner)
@@ -21,6 +25,13 @@ class Race(RaceBase):
             self.set_points()
 
         return self.ranking
+
+    def set_ranking(self, ranking:List[RunnerRaceDetail]):
+        if not self.is_sorted:
+            self.__sort_runners()
+            self.set_points()
+
+        self.ranking = ranking
 
     def get_runners_with_points(self):
         if not self.is_sorted:

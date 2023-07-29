@@ -1,7 +1,7 @@
-from typing import List
-from app.domain.downloader import Downloader
-from app.domain.UtilsRunner import build_runner
-from app.model.runner_model import RunnerModel
+from app.aplication.downloader import Downloader
+from app.aplication.UtilsRunner import strtobool
+from app.domain.model.runner_race_detail import RunnerRaceDetail
+
 
 class Sportmaniacs(Downloader):
     url_base = 'https://sportmaniacs.com/es/races/rankings/'
@@ -34,7 +34,7 @@ class Sportmaniacs(Downloader):
         delete_keys = ['category_id', 'user_id', 'defaultImage', 'photos',
                        'externalPhotos', 'externalVideos', 'externalDiploma', 'Points']
 
-        new_runners:List[RunnerModel] = []
+        new_runners = []
 
         for row in runners:
             # delete key pos
@@ -46,13 +46,32 @@ class Sportmaniacs(Downloader):
             # Update gender value
             row['gender'] = 'Masculino' if row['gender'] == 'gender_0' else 'Femenino'
 
-            runner = build_runner(row["dorsal"], row["name"], row["club"], row["nationality"],
-                                    row["finishedRace"], row["gender"], row["category"],
-                                  row["officialTime"], row["pos"], row["average"], row["catPos"],
-                                    row["genPos"],
-                                  row["realTime"], row["realPos"], row["averageNet"],
-                                    row["realCatPos"], row["realGenPos"])
+            runner = self.__build_runner_model(row)
 
             new_runners.append(runner)
 
         return new_runners
+
+    def __build_runner_model(self, row):
+        runner = RunnerRaceDetail()
+        runner.first_name = row["name"]
+        runner.dorsal = row["dorsal"]
+        runner.club = row["club"]
+        runner.nationality = row["nationality"]
+        runner.finished = strtobool(row["finishedRace"])
+        runner.gender = row["gender"]
+        runner.category = row["category"]
+        runner.position = row["pos"]
+
+        runner.official_time = row["officialTime"]
+        runner.official_avg_time = row["average"]
+        runner.official_cat_pos = row["catPos"]
+        runner.official_gen_pos = row["genPos"]
+
+        runner.real_time = row["realTime"]
+        runner.real_avg_time = row["averageNet"]
+        runner.real_pos = row["realPos"]
+        runner.real_cat_pos = row["realCatPos"]
+        runner.real_gen_pos = row["realGenPos"]
+
+        return runner

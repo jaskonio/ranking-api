@@ -1,6 +1,5 @@
-from typing import List
-from app.domain.FactoryDownloader import FactoryDownloader
-from app.model.runner_model import RunnerModel
+from app.aplication.factory_downloader import FactoryDownloader
+
 
 class DownloaderService:
     def __init__(self, downloader_factory: FactoryDownloader):
@@ -9,7 +8,7 @@ class DownloaderService:
     def download_race_data(self, url: str):
         downloader = self.downloader_factory.factory_method(url)
 
-        data:List[RunnerModel] = []
+        data = []
 
         if downloader is not None:
             data = downloader.race_data
