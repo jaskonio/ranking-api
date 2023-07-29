@@ -2,7 +2,7 @@ import base64
 import io
 from PIL import Image
 from fastapi.responses import StreamingResponse
-from app.aplication.mapper_service import  dict_to_class
+from app.aplication.mapper_service import dict_to_class
 from app.domain.model.person import Person
 from app.domain.repository.generic_repository import GenericRepository
 
