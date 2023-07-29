@@ -19,6 +19,6 @@ class PersonRepositoryMongoDB(PersonRepository):
 
         for result in persons_model:
             person_model = PersonModel.from_mongo(result)
-            persons.append(person_model)
+            persons.append(dict(person_model))
 
         return persons
