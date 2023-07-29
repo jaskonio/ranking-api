@@ -1,16 +1,16 @@
 import logging
 from bson import ObjectId
 from pymongo import collection
-from app.domain.repository.generic_repository import GenericRepository
-from app.infrastructure.mongoDB.MongoDBSession import get_database
+from pymongo.database import Database
+from app.infrastructure.repository.igeneric_repository import IGenericRepository
 
 
 logger = logging.getLogger(__name__)
 
-class GenericRepositoryMongoDB(GenericRepository):
-    def __init__(self, collection_name):
+class GenericRepositoryMongoDB(IGenericRepository):
+    def __init__(self, db_client: Database, collection_name):
         name = collection_name
-        self.database = get_database()
+        self.database = db_client
         self.collection:collection.Collection = self.database.get_collection(name)
 
     def get_all(self):

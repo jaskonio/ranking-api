@@ -14,3 +14,4 @@ dnspython==1.16.0
 PyJWT==2.7.0
 python-jose[cryptography]
 Pillow==9.5.0
+fastapi-utils==0.2.1

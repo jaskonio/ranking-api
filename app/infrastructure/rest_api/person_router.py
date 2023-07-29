@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from app.infrastructure.mongoDB.repository.generic_repository_mongo_db import GenericRepositoryMongoDB
+from app.infrastructure.repository.repository_utils import load_repository_from_config
 from app.infrastructure.rest_api.model.person_request import PersonRequest
 from app.infrastructure.rest_api.person_controller import PersonController
 from app.aplication.person_service import PersonService
@@ -7,7 +7,8 @@ from app.aplication.person_service import PersonService
 
 person_router = APIRouter()
 
-controller = PersonController(PersonService(GenericRepositoryMongoDB('PersonList')))
+db = load_repository_from_config()
+controller = PersonController(PersonService(db.get_repository('PersonList')))
 
 @person_router.get('/')
 def get_all():
@@ -25,6 +26,6 @@ def add(person: PersonRequest):
 def update_by_id(person_id: str, person: PersonRequest):
     return controller.update_by_id(person_id, person.mongo())
 
-@person_router.get('/{person_id}')
+@person_router.delete('/{person_id}')
 def delete_by_id(person_id:str):
     return controller.delete_by_id(person_id)
