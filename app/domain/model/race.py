@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import List
-from app.domain.race_base import RaceBase
-from app.domain.runner_race_detail import RunnerRaceDetail
+from app.domain.model.race_base import RaceBase
+from app.domain.model.runner_race_detail import RunnerRaceDetail
 
 
 class Race(RaceBase):

@@ -1,4 +1,5 @@
 from logging.config import BaseConfigurator
+from bson import ObjectId
 from pydantic import Field, BaseModel
 from app.infrastructure.mongoDB.model.OID import OID
 

@@ -1,4 +1,4 @@
-from app.domain.runner import Runner
+from app.domain.model.runner import Runner
 
 
 class RunnerRaceDetail(Runner):

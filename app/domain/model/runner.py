@@ -1,4 +1,4 @@
-from app.domain.person import Person
+from app.domain.model.person import Person
 
 
 class Runner(Person):

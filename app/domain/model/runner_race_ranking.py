@@ -1,6 +1,6 @@
 
 from typing import List
-from app.domain.runner_race_detail import RunnerRaceDetail
+from app.domain.model.runner_race_detail import RunnerRaceDetail
 
 
 class RunnerRaceRanking(RunnerRaceDetail):
