@@ -1,5 +1,6 @@
 import logging
 from app.aplication.person_service import PersonService
+from app.domain.model.person import Person
 
 
 class PersonController():
@@ -26,23 +27,38 @@ class PersonController():
             self.logger.error("Error retrieving item: %s", exception_error)
             raise TypeError('An error occurred while retrieving item.') from None
 
-    def add(self, person):
+    def add(self, person: Person):
         try:
-            return self.__person_service.add(person)
+            person = self.__person_service.add(person)
+
+            if person:
+                return person
+
+            return {}
         except Exception as exception_error:
             self.logger.error("Error saving: %s", exception_error)
             raise TypeError('An error occurred while saving.') from None
 
     def update_by_id(self, person_id:str, new_person):
         try:
-            return self.__person_service.update_by_id(person_id, new_person)
+            person = self.__person_service.update_by_id(person_id, new_person)
+
+            if person:
+                return person
+
+            return {}
         except Exception as exception_error:
             self.logger.error("Error updating: %s", exception_error)
             raise TypeError('An error occurred while updating.') from None
 
     def delete_by_id(self, person_id):
         try:
-            return self.__person_service.delete_by_id(person_id)
+            status = self.__person_service.delete_by_id(person_id)
+
+            if status:
+                return status
+
+            return {}
         except Exception as exception_error:
             self.logger.error("Error deleting: %s", exception_error)
             raise TypeError('An error occurred while deleting.') from None

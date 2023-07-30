@@ -21,11 +21,12 @@ def get_by_id(person_id:str):
 
 @person_router.post('/')
 def add(person: PersonRequest):
-    return controller.add(person.mongo())
+    person_model = person.to_entity(Person)
+    return controller.add(person_model)
 
 @person_router.put('/{person_id}')
 def update_by_id(person_id: str, person: PersonRequest):
-    return controller.update_by_id(person_id, person.mongo())
+    return controller.update_by_id(person_id, person.to_entity(Person))
 
 @person_router.delete('/{person_id}')
 def delete_by_id(person_id:str):

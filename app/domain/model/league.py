@@ -6,7 +6,6 @@ from app.domain.model.race import Race
 from app.domain.model.runner import Runner
 from app.domain.model.runner_league_ranking import RunnerLeagueRanking
 from app.domain.model.runner_race_detail import RunnerRaceDetail
-from app.services.UtilsRunner import convert_string_to_timedelta, convert_timedelta_to_string
 
 
 logger = logging.getLogger(__name__)

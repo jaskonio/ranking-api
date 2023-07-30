@@ -2,7 +2,8 @@ import logging
 from bson import ObjectId
 from pymongo import collection
 from pymongo.database import Database
-from app.infrastructure.utils.mapper_service import dict_to_class
+from app.domain.model.base_entity import BaseEntity
+from app.infrastructure.utils.mapper_service import dict_to_class, dicts_to_class
 from app.domain.repository.igeneric_repository import IGenericRepository
 
 
@@ -17,29 +18,27 @@ class MongoDBRepository(IGenericRepository):
 
     def get_all(self):
         try:
-            results = []
-            for entity in self.collection.find({}):
-                model = dict_to_class(self.entity_type, entity)
-                results.append(model)
+            results = self.collection.find({})
 
-            return results
+            return dicts_to_class(self.entity_type, list(results ))
         except Exception as exception:
             logger.error("Error al obtener todos los registros: %s", str(exception))
             return []
 
     def get_by_id(self, entity_id:str):
         try:
-            entidad = self.collection.find_one({"_id": ObjectId(entity_id)})
-            return entidad
+            entity = self.collection.find_one({"_id": ObjectId(entity_id)})
+            return dict_to_class(self.entity_type,entity) if entity else None
         except Exception as exception:
             logger.error("Error al obtener el registro con ID %s: %s"
                          , str(entity_id), str(exception))
             return None
 
-    def add(self, new_entity):
+    def add(self, new_entity: BaseEntity):
         try:
-            entidad_id = self.collection.insert_one(new_entity).inserted_id
-            return str(entidad_id)
+            entity_id = self.collection.insert_one(new_entity.to_dict()).inserted_id
+
+            return str(entity_id)
         except Exception as exception:
             logger.error("Error al agregar un nuevo registro: %s", str(exception))
             return ""

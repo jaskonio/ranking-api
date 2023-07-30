@@ -16,10 +16,7 @@ class PersonService():
     def get_by_id(self, person_id) -> Person:
         person = self.person_repository.get_by_id(person_id)
 
-        if person:
-            return person
-        else:
-            return None
+        return person
 
     def add(self, person) -> Person:
         person_id = self.person_repository.add(person)
@@ -35,12 +32,12 @@ class PersonService():
             person = self.person_repository.get_by_id(person_id)
             return person
         else:
-            return { 'message': 'Error al actualizar.'}
+            return None
 
     def delete_by_id(self, person_id):
         status = self.person_repository.delete_by_id(person_id)
 
         if status:
-            return { 'message': 'Se ha eliminado correctamente'}
-        else:
-            return { 'message': 'Error al actualizar.'}
+            return status
+
+        return None
