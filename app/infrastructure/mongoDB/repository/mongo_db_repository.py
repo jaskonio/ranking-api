@@ -45,7 +45,7 @@ class MongoDBRepository(IGenericRepository):
 
     def update_by_id(self, entity_id, new_entity):
         try:
-            result = self.collection.update_one({"_id": ObjectId(entity_id)}, {"$set": new_entity})
+            result = self.collection.update_one({"_id": ObjectId(entity_id)}, {"$set": new_entity.to_dict()})
             return result.modified_count > 0
         except Exception as exception:
             logger.error("Error al actualizar el registro con ID %s: %s"

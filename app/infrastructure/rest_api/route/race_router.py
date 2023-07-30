@@ -25,11 +25,13 @@ def get_by_id(race_id:str):
 
 @race_router.post('/')
 def add(race: RaceModel):
-    return controller.add(dict_to_class(Race, race.mongo()))
+    race_entity = race.to_entity(Race)
+    return controller.add(race_entity)
 
 @race_router.put('/{race_id}')
 def update_by_id(race_id: str, race: RaceModel):
-    return controller.update_by_id(race_id, dict_to_class(Race, race.mongo()))
+    race_entity = race.to_entity(Race)
+    return controller.update_by_id(race_id, race_entity)
 
 @race_router.delete('/{race_id}')
 def delete_by_id(race_id:str):

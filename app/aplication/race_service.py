@@ -3,7 +3,6 @@ from app.aplication.DownloaderService import DownloaderService
 from app.domain.model.race import Race
 from app.domain.model.runner_race_detail import RunnerRaceDetail
 from app.domain.repository.igeneric_repository import IGenericRepository
-from app.infrastructure.mongoDB.model.base_mongo_model import BaseMongoModel
 
 
 class RaceService():
@@ -20,17 +19,14 @@ class RaceService():
     def get_by_id(self, race_id) -> Race:
         race = self.__race_repository.get_by_id(race_id)
 
-        if race:
-            return race
-        else:
-            return None
+        return race
 
     def add(self, race: Race) -> Race:
         if not race.is_sorted:
             runners:List[RunnerRaceDetail] = self.__downloader_service.download_race_data(race.url)
             race.set_ranking(runners)
 
-        race_id = self.__race_repository.add(BaseMongoModel.mongo(race))
+        race_id = self.__race_repository.add(race)
 
         race = self.__race_repository.get_by_id(race_id)
 
@@ -43,12 +39,12 @@ class RaceService():
             race = self.__race_repository.get_by_id(race_id)
             return race
         else:
-            return { 'message': 'Error al actualizar.'}
+            return None
 
     def delete_by_id(self, race_id):
         status = self.__race_repository.delete_by_id(race_id)
 
         if status:
-            return { 'message': 'Se ha eliminado correctamente'}
-        else:
-            return { 'message': 'Error al actualizar.'}
+            return status
+
+        return None
