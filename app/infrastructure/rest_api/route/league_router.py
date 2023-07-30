@@ -13,8 +13,8 @@ from app.infrastructure.rest_api.model.runner_request import RunnerRequest
 league_router = APIRouter()
 
 db = load_repository_from_config()
-controller = LeagueController(LeagueService(db.get_repository('LeagueList', League)
-                                        , db.get_repository('RaceList', Race)))
+controller = LeagueController(LeagueService(db.get_repository('Leagues', League)
+                                        , db.get_repository('Races', Race)))
 
 @league_router.get('/')
 def get_all():

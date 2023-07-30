@@ -8,7 +8,7 @@ from app.infrastructure.rest_api.controller.image_controller import ImageControl
 image_router = APIRouter()
 
 db = load_repository_from_config()
-controller = ImageController(ImageService(db.get_repository('PersonList', Person)))
+controller = ImageController(ImageService(db.get_repository('Persons', Person)))
 
 @image_router.get('/{person_id}')
 def get_image_by_person_id(person_id: str):

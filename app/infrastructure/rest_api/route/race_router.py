@@ -11,7 +11,7 @@ from app.infrastructure.rest_api.controller.race_controller import RaceControlle
 race_router = APIRouter()
 
 db = load_repository_from_config()
-controller = RaceController(RaceService(db.get_repository('RaceList', Race)
+controller = RaceController(RaceService(db.get_repository('Races', Race)
                                         , DownloaderService(FactoryDownloader())))
 
 @race_router.get('/')

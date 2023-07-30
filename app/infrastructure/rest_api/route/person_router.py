@@ -9,7 +9,7 @@ from app.aplication.person_service import PersonService
 person_router = APIRouter()
 
 db = load_repository_from_config()
-controller = PersonController(PersonService(db.get_repository('PersonList', Person)))
+controller = PersonController(PersonService(db.get_repository('Persons', Person)))
 
 @person_router.get('/')
 def get_all():
