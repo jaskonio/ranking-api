@@ -2,23 +2,19 @@ import base64
 import io
 from PIL import Image
 from fastapi.responses import StreamingResponse
-from app.aplication.mapper_service import dict_to_class
-from app.domain.model.person import Person
-from app.domain.repository.generic_repository import GenericRepository
+from app.domain.repository.igeneric_repository import IGenericRepository
 
 
 class ImageService():
 
-    def __init__(self, person_repository:GenericRepository) -> None:
+    def __init__(self, person_repository:IGenericRepository) -> None:
         self.person_repository = person_repository
 
     def get_image_by_person_id(self, person_id):
-        person_dict = self.person_repository.get_by_id(person_id)
+        person = self.person_repository.get_by_id(person_id)
 
-        if person_dict is None:
+        if person is None:
             return None
-
-        person:Person = dict_to_class(Person, person_dict)
 
         binary = person.photo.split(',')[1]
 

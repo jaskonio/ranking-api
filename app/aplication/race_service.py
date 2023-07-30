@@ -1,30 +1,27 @@
 from typing import List
 from app.aplication.DownloaderService import DownloaderService
-from app.aplication.mapper_service import dict_to_class, dicts_to_class
 from app.domain.model.race import Race
 from app.domain.model.runner_race_detail import RunnerRaceDetail
-from app.domain.repository.generic_repository import GenericRepository
+from app.domain.repository.igeneric_repository import IGenericRepository
 from app.infrastructure.mongoDB.model.base_mongo_model import BaseMongoModel
 
 
 class RaceService():
 
-    def __init__(self, race_repository:GenericRepository, downloader_service:DownloaderService):
+    def __init__(self, race_repository:IGenericRepository, downloader_service:DownloaderService):
         self.__race_repository = race_repository
         self.__downloader_service = downloader_service
 
     def get_all(self) -> List[Race]:
         races = self.__race_repository.get_all()
 
-        new_races:List[Race] = dicts_to_class(Race, races)
-
-        return new_races
+        return races
 
     def get_by_id(self, race_id) -> Race:
         race = self.__race_repository.get_by_id(race_id)
 
         if race:
-            return dict_to_class(Race, race)
+            return race
         else:
             return None
 
@@ -37,14 +34,14 @@ class RaceService():
 
         race = self.__race_repository.get_by_id(race_id)
 
-        return dict_to_class(Race, race)
+        return race
 
     def update_by_id(self, race_id:str, new_race):
         status = self.__race_repository.update_by_id(race_id, new_race)
 
         if status:
             race = self.__race_repository.get_by_id(race_id)
-            return dict_to_class(Race, race)
+            return race
         else:
             return { 'message': 'Error al actualizar.'}
 

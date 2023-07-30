@@ -29,14 +29,4 @@ def start_application():
     return fast_api
 
 
-# def exception_handler_api_exception(request: Request, exception: ApiException):
-#     logger.error(exception.args)
-#     return JSONResponse(status_code = exception.code_error,
-#                         content = {"message": exception.message})
-
 app = start_application()
-
-#app.add_event_handler("startup", close_mongo_connection)
-#app.add_event_handler("shutdown", close_mongo_connection)
-
-#app.add_exception_handler(ApiException, handler=exception_handler_api_exception)

@@ -2,20 +2,27 @@ import logging
 from bson import ObjectId
 from pymongo import collection
 from pymongo.database import Database
-from app.infrastructure.repository.igeneric_repository import IGenericRepository
+from app.infrastructure.utils.mapper_service import dict_to_class
+from app.domain.repository.igeneric_repository import IGenericRepository
 
 
 logger = logging.getLogger(__name__)
 
-class GenericRepositoryMongoDB(IGenericRepository):
-    def __init__(self, db_client: Database, collection_name):
+class MongoDBRepository(IGenericRepository):
+    def __init__(self, db_client: Database, collection_name, entity_type):
         name = collection_name
         self.database = db_client
         self.collection:collection.Collection = self.database.get_collection(name)
+        self.entity_type = entity_type
 
     def get_all(self):
         try:
-            return list(self.collection.find({}))
+            results = []
+            for entity in self.collection.find({}):
+                model = dict_to_class(self.entity_type, entity)
+                results.append(model)
+
+            return results
         except Exception as exception:
             logger.error("Error al obtener todos los registros: %s", str(exception))
             return []
