@@ -1,6 +1,6 @@
 import csv
-import requests
 import json
+import requests
 
 rows = []
 
@@ -16,7 +16,7 @@ def add_person(row):
         'Content-Type': 'application/json'
     }
 
-    response = requests.request("POST", url, headers=headers, data=payload)
+    response = requests.request("POST", url, headers=headers, data=payload, timeout=60)
     print(response.text)
 
 with open('./scripts/BASE_DE_DATOS_2023_csv.csv', newline='') as csvfile:

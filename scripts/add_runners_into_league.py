@@ -1,22 +1,23 @@
-# Este script a apartir de un csv con las columnas dorsal, nombre, apellido, nombre de liga y genero 
+# Este script a apartir de un csv con las columnas dorsal, nombre, apellido, nombre de liga y genero
 # añade cada runner a la lista de participantes de una liga
 # IMPORTANTE este script actualiza el ranking final
 import csv
-import requests
 import json
+from requests import request
 
-path_file = './scripts/eliTEAM - Masculino_2023.csv'
-base_path = "https://ranking-api-jpzy.onrender.com"
-#base_path = "http://127.0.0.1:8000/leagues/64aa891c06cb93474117df5e/add_runner"
+
+PATH_FILE = './scripts/eliTEAM - Masculino_2023.csv'
+#BASE_PATH = "https://ranking-api-jpzy.onrender.com"
+BASE_PATH = "http://127.0.0.1:8000"
 
 
 def get_league_by_name(league_name):
-    url = base_path + "/leagues"
+    url = BASE_PATH + "/leagues"
     headers = {
         'Content-Type': 'application/json'
     }
 
-    response = requests.request("GET", url, headers=headers)
+    response = request("GET", url, headers=headers, timeout=60)
 
     for league in response.json():
         if league['name'] == league_name:
@@ -32,25 +33,32 @@ def persons_from_file(path_file):
         return rows_with_header
 
 def get_all_person():
-    url = base_path + "/persons"
+    url = BASE_PATH + "/persons"
     headers = {
         'Content-Type': 'application/json'
     }
 
-    response = requests.request("GET", url, headers=headers)
+    response = request("GET", url, headers=headers, timeout=60)
 
-    return response.json()['items']
+    return response.json()
 
 def add_person_into_league(person_csv, league, person_db):
-    url = base_path + "/leagues/{}/add_runner".format(league['id'])
+    league_id = league['id']
+
+    url = BASE_PATH + f'/leagues/{league_id}/add_runner'
 
     dorsal = str(0) if person_csv[0] == "CaC" else person_csv[0]
 
     person = {
-        "name": person_csv[1],
-        "last_name": person_csv[2],
+        "first_name": person_db['first_name'],
+        "last_name": person_db['last_name'],
+        "nationality": person_db['nationality'],
+        "gender": person_db['gender'],
+        "photo": person_db['photo'],
+        "photo_url": person_db['photo_url'],
         "dorsal": dorsal,
-        "person_id": person_db['id']
+        "club": 'Redolat Team',
+        "category": ''
     }
 
     payload = json.dumps(person)
@@ -59,26 +67,32 @@ def add_person_into_league(person_csv, league, person_db):
         'Content-Type': 'application/json'
     }
 
-    response = requests.request("POST", url, headers=headers, data=payload)
-    print(response.text)
+    request("POST", url, headers=headers, data=payload, timeout=60)
+
+    print("[INFO] finish request")
 
 if __name__ == '__main__':
-    persons = persons_from_file(path_file)
+    persons = persons_from_file(PATH_FILE)
     current_league_name = persons[0][3]
 
+    print("[INFO] Getting league")
     league = get_league_by_name(current_league_name)
 
     if league is None:
-        print("La liga {} no se ha encontrado.".format(current_league_name))
+        print("La liga %s no se ha encontrado.", str(current_league_name))
 
+    print("[INFO] Getting all persons")
     all_person = get_all_person()
+
     for person in persons:
         person_db = list(filter(lambda current_person: current_person['first_name'] + ' ' + current_person['last_name'] == person[1] + ' ' + person[2], all_person))
 
         if len(person_db) == 0:
-            print("No se ha encontrado a la person {} {}".format(person[1], person[2]))
+            print("No se ha encontrado a la persona %s %s", str(person[1]), str(person[2]))
             continue
 
+        print("[INFO] Start add person")
         add_person_into_league(person, league, person_db[0])
+        print("[INFO] End add person")
 
 print("finish")

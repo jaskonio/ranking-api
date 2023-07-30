@@ -60,7 +60,7 @@ class LeagueService():
 
         return league
 
-    def delete_runners(self, league_id:str, runners:List[Runner]):
+    def delete_runners(self, league_id:str, runners:List[Runner]):  
         league:League = self.league_repository.get_by_id(league_id)
 
         if league is None:

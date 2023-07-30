@@ -3,7 +3,7 @@ from bson import ObjectId
 from pymongo import collection
 from pymongo.database import Database
 from app.domain.model.base_entity import BaseEntity
-from app.infrastructure.utils.mapper_service import dict_to_class, dicts_to_class
+from app.core.mapper_utils import dict_to_class, dicts_to_class
 from app.domain.repository.igeneric_repository import IGenericRepository
 
 

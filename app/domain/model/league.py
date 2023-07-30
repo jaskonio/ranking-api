@@ -3,6 +3,7 @@ from collections import Counter
 from datetime import timedelta
 from typing import List
 from app.aplication.UtilsRunner import convert_string_to_timedelta, convert_timedelta_to_string
+from app.core.mapper_utils import dicts_to_class
 from app.domain.model.base_entity import BaseEntity
 from app.domain.model.race import Race
 from app.domain.model.runner import Runner
@@ -17,9 +18,9 @@ class League(BaseEntity):
                  , runners: List[Runner] = None ):
         self.id = str(id)
         self.name = name
-        self.races:List[Race] = [Race(item) for item in races]
-        self.ranking:List[RunnerLeagueRanking] = [RunnerLeagueRanking(item) for item in ranking]
-        self.runners:List[Runner] = [Runner(item) for item in runners]
+        self.races:List[Race] = dicts_to_class(Race, races)
+        self.ranking:List[RunnerLeagueRanking] = dicts_to_class(RunnerLeagueRanking, ranking)
+        self.runners:List[Runner] = dicts_to_class(Runner, runners)
 
     def get_races(self):
         return sorted(self.races, key=lambda race: (race.order))
@@ -140,7 +141,7 @@ class League(BaseEntity):
         for runner in race.ranking:
             for participant in self.runners:
                 if runner.dorsal == participant.dorsal or\
-                runner.name == participant.first_name + ' ' + participant.last_name:
+                runner.first_name == participant.first_name + ' ' + participant.last_name:
                     runner_participants_in_race.append(runner)
 
         return runner_participants_in_race

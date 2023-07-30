@@ -2,7 +2,7 @@ from logging.config import BaseConfigurator
 from bson import ObjectId
 from pydantic import Field, BaseModel
 from app.infrastructure.mongoDB.model.OID import OID
-from app.infrastructure.utils.mapper_service import dict_to_class
+from app.core.mapper_utils import dict_to_class
 
 class BaseMongoModel(BaseModel):
     id: OID = Field(default_factory=OID)
