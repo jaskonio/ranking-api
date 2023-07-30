@@ -2,7 +2,7 @@ from app.domain.model.runner import Runner
 
 
 class RunnerRaceDetail(Runner):
-    def __init__(self, first_name: str ='', last_name:str = '', nationality: str = ''
+    def __init__(self, id:str = '', first_name: str ='', last_name:str = '', nationality: str = ''
         , gender: str = '', photo:str = '', photo_url: str = '',  dorsal:int = 0
         , club: str = 'Redolat Team', category: str = '', position:int = 0, finished:bool = True
         , is_disqualified: bool =  False
@@ -10,7 +10,7 @@ class RunnerRaceDetail(Runner):
             , official_cat_pos:int = 0, official_gen_pos:int = 0
         , real_time:str = '', real_pos:int = 0, real_avg_time:str = ''
             , real_cat_pos:int = 0, real_gen_pos:int = 0) -> None:
-        super().__init__(first_name, last_name, nationality, gender, photo, photo_url, dorsal
+        super().__init__(id, first_name, last_name, nationality, gender, photo, photo_url, dorsal
                          , club, category)
         self.position = position
         self.finished = finished

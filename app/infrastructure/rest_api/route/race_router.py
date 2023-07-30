@@ -1,7 +1,6 @@
 from fastapi import APIRouter
 from app.aplication.DownloaderService import DownloaderService
 from app.aplication.factory_downloader import FactoryDownloader
-from app.infrastructure.utils.mapper_service import dict_to_class
 from app.aplication.race_service import RaceService
 from app.domain.model.race import Race
 from app.infrastructure.mongoDB.model.race_model import RaceModel

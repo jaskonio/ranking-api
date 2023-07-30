@@ -2,6 +2,8 @@ import logging
 from collections import Counter
 from datetime import timedelta
 from typing import List
+from app.aplication.UtilsRunner import convert_string_to_timedelta, convert_timedelta_to_string
+from app.domain.model.base_entity import BaseEntity
 from app.domain.model.race import Race
 from app.domain.model.runner import Runner
 from app.domain.model.runner_league_ranking import RunnerLeagueRanking
@@ -10,16 +12,25 @@ from app.domain.model.runner_race_detail import RunnerRaceDetail
 
 logger = logging.getLogger(__name__)
 
-class League():
-    def __init__(self, name:str, races: List[Race] = None, ranking:List[RunnerLeagueRanking] = None
+class League(BaseEntity):
+    def __init__(self, id:str='0', name:str='', races: List[Race] = None, ranking:List[RunnerLeagueRanking] = None
                  , runners: List[Runner] = None ):
+        self.id = str(id)
         self.name = name
-        self.races = races
-        self.ranking = ranking
-        self.runners = runners
+        self.races:List[Race] = [Race(item) for item in races]
+        self.ranking:List[RunnerLeagueRanking] = [RunnerLeagueRanking(item) for item in ranking]
+        self.runners:List[Runner] = [Runner(item) for item in runners]
 
     def get_races(self):
         return sorted(self.races, key=lambda race: (race.order))
+
+    def delete_runners(self, runners:List[Runner]):
+        for runner in runners:
+            self.delete_runner(runner)
+
+    def delete_runner(self, current_runner: Runner):
+        new_runners = [runner for runner in self.runners if runner != current_runner]
+        self.runners = new_runners
 
     def add_runner(self, new_runner: Runner):
         self.runners.append(new_runner)
@@ -91,9 +102,11 @@ class League():
                 new_runner.top_five = len([x for x in runner.posiciones_ant if x<=5])
 
                 new_runner.participations = len(runner.posiciones_ant)
-                new_runner.best_position = str(min(runner.posiciones_ant)) + '(x' + str(Counter(runner.posiciones_ant)[min(runner.posiciones_ant)]) + ')'
+                new_runner.best_position = str(min(runner.posiciones_ant)) \
+                    + '(x' + str(Counter(runner.posiciones_ant)[min(runner.posiciones_ant)]) + ')'
                 new_runner.last_position_race = runner.poistion_general_ant[-1]
-                new_runner.best_avegare_peace = self.__get_best_avegare_peace(runner.averages_ant, "mm:ss / km")
+                new_runner.best_avegare_peace = self.__get_best_avegare_peace(
+                    runner.averages_ant, "mm:ss / km")
 
             runner_final_ranking.append(new_runner)
 
@@ -101,8 +114,10 @@ class League():
 
     def disqualify_runner_process(self, bib_number:int, race_name:str):
         disqualified_runner = self.__get_runner_by_bib_number(bib_number)
+
         if not disqualified_runner:
-            return
+            return None
+
         current_race = self.__get_race_by_name(race_name)
         self.__disqualify_runner(disqualified_runner, current_race)
         self.__update_subsequent_races(disqualified_runner, current_race)
@@ -124,7 +139,8 @@ class League():
 
         for runner in race.ranking:
             for participant in self.runners:
-                if runner.dorsal == participant.dorsal or runner.name == participant.name + ' ' + participant.last_name:
+                if runner.dorsal == participant.dorsal or\
+                runner.name == participant.first_name + ' ' + participant.last_name:
                     runner_participants_in_race.append(runner)
 
         return runner_participants_in_race

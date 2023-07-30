@@ -3,7 +3,7 @@ from app.domain.model.base_entity import BaseEntity
 
 class Person(BaseEntity):
 
-    def __init__(self, id:int=0, first_name: str = '', last_name:str = '', nationality: str = '',
+    def __init__(self, id:str=0, first_name: str = '', last_name:str = '', nationality: str = '',
                  gender: str = '', photo:str = '', photo_url: str = '') -> None:
         self.id = str(id)
         self.first_name = first_name

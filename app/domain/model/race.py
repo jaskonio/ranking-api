@@ -5,7 +5,7 @@ from app.domain.model.runner_race_detail import RunnerRaceDetail
 
 
 class Race(RaceBase):
-    def __init__(self, id, name: str, url: str, ranking: List[RunnerRaceDetail] = None
+    def __init__(self, id, name: str='', url: str='', ranking: List[RunnerRaceDetail] = None
                  , order:int = 0, is_sorted: bool = False):
         super().__init__(id, name, url, ranking)
         self.order = order
@@ -64,7 +64,7 @@ class Race(RaceBase):
         # primero False segundo, realTime y officialTime
         runners_finished = sorted(self.ranking,
                                     key=lambda runner: (not runner.finished,
-                                                datetime.strptime(runner.realTime, time_format)),
+                                                datetime.strptime(runner.real_time, time_format)),
                                     reverse=False)
 
         self.ranking = runners_finished
