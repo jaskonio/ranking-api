@@ -1,17 +1,17 @@
 from datetime import datetime
 from typing import List
 from app.domain.model.race_base import RaceBase
-from app.domain.model.runner_race_detail import RunnerRaceDetail
+from app.domain.model.runner_race_ranking import RunnerRaceRanking
 
 
 class Race(RaceBase):
-    def __init__(self, id, name: str='', url: str='', ranking: List[RunnerRaceDetail] = None
+    def __init__(self, id, name: str='', url: str='', ranking: List[RunnerRaceRanking] = []
                  , order:int = 0, is_sorted: bool = False):
         super().__init__(id, name, url, ranking)
         self.order = order
         self.is_sorted = is_sorted
 
-    def add_runners(self, runners:RunnerRaceDetail):
+    def add_runners(self, runners:RunnerRaceRanking):
         for runner in runners:
             self.add_runner(runner)
 
@@ -26,7 +26,7 @@ class Race(RaceBase):
 
         return self.ranking
 
-    def set_ranking(self, ranking:List[RunnerRaceDetail]):
+    def set_ranking(self, ranking:List[RunnerRaceRanking]):
         if not self.is_sorted:
             self.__sort_runners()
             self.set_points()
@@ -38,13 +38,13 @@ class Race(RaceBase):
             self.__sort_runners()
             self.set_points()
 
-        return [runner for runner in self.ranking if runner.puntos != 0]
+        return [runner for runner in self.ranking if runner.points != 0]
 
-    def set_runners_disqualified(self, runners:List[RunnerRaceDetail]):
+    def set_runners_disqualified(self, runners:List[RunnerRaceRanking]):
         for runner in runners:
             self.set_runner_disqualified(runner)
 
-    def set_runner_disqualified(self, current_runner:RunnerRaceDetail):
+    def set_runner_disqualified(self, current_runner:RunnerRaceRanking):
         for runner in self.ranking:
             if runner == current_runner:
                 runner.is_disqualified = True
@@ -92,9 +92,9 @@ class Race(RaceBase):
                 continue
 
             if point_index < len(points):
-                runner.puntos = points[point_index]
+                runner.points = points[point_index]
             else:
-                runner.puntos = 0
+                runner.points = 0
 
             runner.position = point_index + 1
 

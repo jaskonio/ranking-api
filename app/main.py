@@ -19,10 +19,8 @@ def add_middleware(fast_api: FastAPI):
 
 def start_application():
     fast_api = FastAPI(title=Settings.PROJECT_NAME, version=Settings.PROJECT_VERSION)
-    logging.info("connect_to_mongo")
 
     logging.info("include_router")
-
     fast_api.include_router(get_routers())
 
     add_middleware(fast_api)

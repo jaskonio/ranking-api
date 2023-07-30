@@ -104,7 +104,7 @@ class LeagueService():
         new_race = Race(id=0, name=race.name, url=race.url, ranking=race.ranking, order=order_race)
 
         league.add_race(new_race)
-        self.league_repository.update_league(league_id, league)
+        self.league_repository.update_by_id(league_id, league)
 
         return league
 

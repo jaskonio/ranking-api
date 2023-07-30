@@ -9,6 +9,7 @@ from app.domain.model.race import Race
 from app.domain.model.runner import Runner
 from app.domain.model.runner_league_ranking import RunnerLeagueRanking
 from app.domain.model.runner_race_detail import RunnerRaceDetail
+from app.domain.model.runner_race_ranking import RunnerRaceRanking
 
 
 logger = logging.getLogger(__name__)
@@ -50,23 +51,23 @@ class League(BaseEntity):
         # aqui iterar los runner para actulizar los valore acumulativos como 'posiciones_ant'
         #runners_populate: List[RunnerModel] = []
 
-        for current_runner in new_race.ranking:
+        for current_runner in new_race.get_ranking():
             previus_runner = self.__get_previus_runner(current_runner)
 
             if previus_runner is None:
                 current_runner.posiciones_ant.append(current_runner.position)
-                current_runner.averages_ant.append(current_runner.realAverageTime)
-                current_runner.poistion_general_ant.append(current_runner.realPos)
+                current_runner.averages_ant.append(current_runner.real_avg_time)
+                current_runner.poistion_general_ant.append(current_runner.real_pos)
                 continue
 
             current_runner.posiciones_ant = previus_runner.posiciones_ant
             current_runner.posiciones_ant.append(current_runner.position)
 
             current_runner.averages_ant = previus_runner.averages_ant
-            current_runner.averages_ant.append(current_runner.realAverageTime)
+            current_runner.averages_ant.append(current_runner.real_avg_time)
 
             current_runner.poistion_general_ant = previus_runner.poistion_general_ant
-            current_runner.poistion_general_ant.append(current_runner.realPos)
+            current_runner.poistion_general_ant.append(current_runner.real_pos)
 
         self.races.append(new_race)
         self.calculate_final_ranking()
@@ -81,21 +82,21 @@ class League(BaseEntity):
         for race in self.get_races():
             runners = race.get_runners_with_points()
             for index, runner in enumerate(runners):
-                if runner.name not in ranking_league:
-                    ranking_league[runner.name] = RunnerRaceDetail(**runner.dict())
+                if runner.first_name + runner.last_name  not in ranking_league:
+                    ranking_league[runner.first_name + runner.last_name] = RunnerRaceRanking(**runner.to_dict())
                 else:
-                    ranking_league[runner.name].puntos += runner.puntos
+                    ranking_league[runner.first_name + runner.last_name].points += runner.points
 
         final_ranking:List[RunnerLeagueRanking] = sorted(ranking_league.values(),
-                                    key=lambda runner: (runner.puntos),
+                                    key=lambda runner: (runner.points),
                                     reverse=True)
         runner_final_ranking:List[RunnerLeagueRanking] = []
 
         for index, runner in enumerate(final_ranking):
-            new_runner = RunnerLeagueRanking(runner.name, runner.last_name)
+            new_runner = RunnerLeagueRanking(first_name=runner.first_name, last_name=runner.last_name)
             new_runner.position = index+1
             new_runner.photo = runner.photo
-            new_runner.points = runner.puntos
+            new_runner.points = runner.points
             #new_runner.name = runner.name + runner.last_name
 
             if len(runner.posiciones_ant) != 0:
@@ -167,7 +168,7 @@ class League(BaseEntity):
             return None
 
         for runner in previus_race.ranking:
-            if runner.dorsal == current_runner.dorsal or runner.name == current_runner.name:
+            if runner.dorsal == current_runner.dorsal or runner.first_name == current_runner.first_name:
                 return runner
 
         return None
