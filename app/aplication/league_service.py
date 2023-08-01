@@ -1,6 +1,7 @@
 import logging
 from typing import List
 from app.domain.model.league import League
+from app.domain.model.person import Person
 from app.domain.model.race import Race
 from app.domain.model.race_base import RaceBase
 from app.domain.model.runner import Runner
@@ -10,9 +11,11 @@ from app.domain.repository.igeneric_repository import IGenericRepository
 class LeagueService():
 
     def __init__(self, league_repository:IGenericRepository
-                 , race_repository:IGenericRepository) -> None:
+                 , race_repository:IGenericRepository
+                 , person_repository:IGenericRepository) -> None:
         self.league_repository = league_repository
         self.race_repository = race_repository
+        self.person_repository = person_repository
         self.logger = logging.getLogger(__name__)
 
     def get_all(self) -> List[League]:
@@ -32,12 +35,20 @@ class LeagueService():
 
         return league
 
-    def add_runners(self, league_id:str, new_runners:List[Runner]):
+    def add_runners(self, league_id:str, runners:List[Runner]):
         league:League = self.league_repository.get_by_id(league_id)
 
         if league is None:
             self.logger.error("League not found.")
             return None
+
+        new_runners:List[Runner] = []
+
+        for runner in runners:
+            person:Person = self.person_repository.get_by_id(runner.id)
+            new_runner = Runner(person.to_dict())
+            new_runner.dorsal = runner.dorsal
+            new_runners.append(new_runner)
 
         league.add_runners(new_runners)
 
@@ -46,21 +57,25 @@ class LeagueService():
 
         return league
 
-    def add_runner(self, league_id:str, new_runner:Runner):
+    def add_runner(self, league_id:str, runner:Runner):
         league:League = self.league_repository.get_by_id(league_id)
 
         if league is None:
             self.logger.error("League not found.")
             return None
 
-        league.add_runner(new_runner)
+        person:Runner = self.person_repository.get_by_id(runner.id)
+
+        person.dorsal = runner.dorsal
+
+        league.add_runner(person)
 
         self.league_repository.update_by_id(league_id, league)
         self.logger.info("Runner added successfully.")
 
         return league
 
-    def delete_runners(self, league_id:str, runners:List[Runner]):  
+    def delete_runners(self, league_id:str, runners:List[Runner]):
         league:League = self.league_repository.get_by_id(league_id)
 
         if league is None:

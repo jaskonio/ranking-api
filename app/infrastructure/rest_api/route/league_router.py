@@ -2,6 +2,7 @@ from typing import List
 from fastapi import APIRouter
 from app.aplication.league_service import LeagueService
 from app.domain.model.league import League
+from app.domain.model.person import Person
 from app.domain.model.race import Race
 from app.domain.model.runner import Runner
 from app.infrastructure.repository.repository_utils import load_repository_from_config
@@ -14,7 +15,8 @@ league_router = APIRouter()
 
 db = load_repository_from_config()
 controller = LeagueController(LeagueService(db.get_repository('Leagues', League)
-                                        , db.get_repository('Races', Race)))
+                                        , db.get_repository('Races', Race)
+                                        , db.get_repository('Persons', Person)))
 
 @league_router.get('/')
 def get_all():

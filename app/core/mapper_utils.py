@@ -15,6 +15,8 @@ def dict_to_class(class_name, data:dict):
 
     if '_id' in data:
         new_id = data.pop('_id', None)
+    elif 'id' in data:
+        new_id = data.pop('id', None)
 
     new_class = class_name(**dict(data, id=new_id))
     return new_class

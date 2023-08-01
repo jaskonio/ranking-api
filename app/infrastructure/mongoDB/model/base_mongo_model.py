@@ -14,7 +14,8 @@ class BaseMongoModel(BaseModel):
 
 
     def to_entity(self, entity_type):
-        return dict_to_class(entity_type, self.mongo())
+        #return dict_to_class(entity_type, self.mongo())
+        return dict_to_class(entity_type, self.dict())
 
     @classmethod
     def from_mongo(cls, data: dict):
