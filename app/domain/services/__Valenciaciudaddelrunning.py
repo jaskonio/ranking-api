@@ -1,5 +1,5 @@
 from bs4 import BeautifulSoup
-from app.domain.downloader import Downloader
+from app.domain.services.downloader import Downloader
 
 
 class Valenciaciudaddelrunning(Downloader):

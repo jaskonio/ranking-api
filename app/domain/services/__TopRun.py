@@ -1,7 +1,7 @@
 from bs4 import BeautifulSoup
 import requests
 from urllib.parse import urlparse
-from app.domain.downloader import Downloader
+from app.domain.services.downloader import Downloader
 
 class TopRun(Downloader):
     url_base = 'https://www.toprun.es/stats/$$race_name$$/clasdata/modalidad/$$modalidad$$'

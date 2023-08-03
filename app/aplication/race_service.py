@@ -1,8 +1,8 @@
 from typing import List
-from app.aplication.DownloaderService import DownloaderService
 from app.domain.model.race import Race
 from app.domain.model.runner_race_detail import RunnerRaceDetail
 from app.domain.repository.igeneric_repository import IGenericRepository
+from app.domain.services.downloader_service import DownloaderService
 
 
 class RaceService():
