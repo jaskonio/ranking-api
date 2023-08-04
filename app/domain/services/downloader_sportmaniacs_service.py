@@ -84,7 +84,7 @@ class DownloaderSportmaniacsService(IDownloaderService):
                     runner.gender = person.gender
                     runner.photo = person.photo
                     runner.photo_url = person.photo_url
-                    continue
+                    break
 
             runners_fill.append(runner)
 

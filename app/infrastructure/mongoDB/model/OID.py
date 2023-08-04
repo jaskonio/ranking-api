@@ -10,6 +10,9 @@ class OID(str):
     @classmethod
     def validate(cls, v):
         try:
+            if '' in v:
+                return ObjectId()
+
             a = ObjectId(str(v))
             return a
         except Exception as e:
