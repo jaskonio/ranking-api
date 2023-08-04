@@ -2,14 +2,13 @@ import logging
 from collections import Counter
 from datetime import timedelta
 from typing import List
-from app.aplication.UtilsRunner import convert_string_to_timedelta, convert_timedelta_to_string
 from app.core.mapper_utils import dicts_to_class
 from app.domain.model.base_entity import BaseEntity
 from app.domain.model.race import Race
 from app.domain.model.runner import Runner
 from app.domain.model.runner_league_ranking import RunnerLeagueRanking
-from app.domain.model.runner_race_detail import RunnerRaceDetail
 from app.domain.model.runner_race_ranking import RunnerRaceRanking
+from app.domain.services.UtilsRunner import convert_string_to_timedelta, convert_timedelta_to_string
 
 
 logger = logging.getLogger(__name__)

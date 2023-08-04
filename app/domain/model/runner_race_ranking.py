@@ -11,8 +11,8 @@ class RunnerRaceRanking(RunnerRaceDetail):
                     , official_cat_pos: int = 0, official_gen_pos: int = 0
                 , real_time: str = '', real_pos: int = 0, real_avg_time: str = ''
                 , real_cat_pos: int = 0, real_gen_pos: int = 0
-                ,points:float = 0, posiciones_ant:List[int]=None, averages_ant:List[str]=None
-                ,poistion_general_ant:List[int] = None) -> None:
+                , points:float = 0, posiciones_ant:List[int]=None
+                , averages_ant:List[str]=None, position_general_ant:List[int] = None) -> None:
         super().__init__(id, first_name, last_name, nationality, gender, photo, photo_url
                 , dorsal, club
                 , category, position, finished, is_disqualified
@@ -21,4 +21,4 @@ class RunnerRaceRanking(RunnerRaceDetail):
         self.points = points
         self.posiciones_ant = [] if posiciones_ant is None else posiciones_ant
         self.averages_ant = [] if averages_ant is None else averages_ant
-        self.poistion_general_ant = [] if poistion_general_ant is None else poistion_general_ant
+        self.position_general_ant = [] if position_general_ant is None else position_general_ant

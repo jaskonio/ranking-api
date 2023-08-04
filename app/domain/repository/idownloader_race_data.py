@@ -6,8 +6,8 @@ class IDownloaderServiceHTTPOption(IDownloaderServiceOption):
     url: str
     data: str = ''
     timeout: int = 30
-    before_callback: classmethod(None)
-    after_callback: classmethod(None)
+    before_callback: classmethod(None) = None
+    after_callback: classmethod(None) = None
 
 
 class IDownloaderRaceData():

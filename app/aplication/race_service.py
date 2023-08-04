@@ -7,8 +7,10 @@ from app.domain.services.downloader_service import DownloaderService
 
 class RaceService():
 
-    def __init__(self, race_repository:IGenericRepository, downloader_service:DownloaderService):
+    def __init__(self, race_repository:IGenericRepository, person_repository:IGenericRepository
+                 , downloader_service:DownloaderService):
         self.__race_repository = race_repository
+        self.__person_repository = person_repository
         self.__downloader_service = downloader_service
 
     def get_all(self) -> List[Race]:
@@ -23,7 +25,7 @@ class RaceService():
 
     def add(self, race: Race) -> Race:
         if not race.is_sorted:
-            runners:List[RunnerRaceDetail] = self.__downloader_service.download_race_data(race.url)
+            runners:List[RunnerRaceDetail] = self.__downloader_service.download_race_data(race.url, self.__person_repository)
             race.set_ranking(runners)
 
         race_id = self.__race_repository.add(race)

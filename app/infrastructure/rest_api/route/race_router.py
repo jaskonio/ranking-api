@@ -1,8 +1,9 @@
 from fastapi import APIRouter
-from app.aplication.DownloaderService import DownloaderService
-from app.aplication.factory_downloader import FactoryDownloader
 from app.aplication.race_service import RaceService
+from app.domain.model.person import Person
 from app.domain.model.race import Race
+from app.domain.services.downloader_service import DownloaderService
+from app.domain.services.factory_downloader import FactoryDownloader
 from app.infrastructure.mongoDB.model.race_model import RaceModel
 from app.infrastructure.repository.repository_utils import load_repository_from_config
 from app.infrastructure.rest_api.controller.race_controller import RaceController
@@ -12,6 +13,7 @@ race_router = APIRouter()
 
 db = load_repository_from_config()
 controller = RaceController(RaceService(db.get_repository('Races', Race)
+                                        , db.get_repository('Persons', Person)
                                         , DownloaderService(FactoryDownloader())))
 
 @race_router.get('/')

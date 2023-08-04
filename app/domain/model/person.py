@@ -12,3 +12,6 @@ class Person(BaseEntity):
         self.gender = gender
         self.photo = photo
         self.photo_url = photo_url
+
+    def __eq__(self, other_person):
+        return self.id == other_person.id
