@@ -9,12 +9,17 @@ class PersonService():
         self.person_repository = person_repository
 
     def get_all(self) -> List[Person]:
-        persons = self.person_repository.get_all()
+        persons: List[Person] = self.person_repository.get_all()
+
+        for person in persons:
+            person.photo_url = '/person/image/' + person.id
 
         return persons
 
     def get_by_id(self, person_id) -> Person:
         person = self.person_repository.get_by_id(person_id)
+
+        person.photo_url = '/person/image/' + person.id
 
         return person
 
