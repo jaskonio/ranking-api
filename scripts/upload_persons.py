@@ -5,7 +5,9 @@ import requests
 rows = []
 
 def add_person(row):
-    url = "https://ranking-api-jpzy.onrender.com/persons"
+    # url = "https://ranking-api-jpzy.onrender.com/persons"
+    url = "http://127.0.0.1:8000/persons"
+
     person = {
         "first_name": row[1],
         "last_name": row[2]

@@ -127,7 +127,7 @@ class League(BaseEntity):
         disqualified_runners: List[Runner] = []
 
         for race in self.get_races():
-            disqualified_runners.extend(race.runnerDisqualified)
+            disqualified_runners.extend(race.get_runners_disqualified())
 
         return disqualified_runners
 

@@ -52,6 +52,15 @@ class Race(RaceBase):
         self.is_sorted = False
         self.update_ranking()
 
+    def get_runners_disqualified(self):
+        runners: List[RunnerRaceRanking] = []
+
+        for runner in self.ranking:
+            if runner.is_disqualified:
+                runners.append(runner)
+
+        return runners
+
     def update_ranking(self):
         if not self.is_sorted:
             self.__sort_runners()

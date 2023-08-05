@@ -1,4 +1,7 @@
 def dicts_to_class(class_name, dicts_to_mapper):
+    if dicts_to_mapper is None:
+        return []
+
     new_classes = []
 
     for dict_to_mapper in dicts_to_mapper:

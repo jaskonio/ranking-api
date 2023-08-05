@@ -1,8 +1,9 @@
+from typing import List
 from app.infrastructure.mongoDB.model.runner_model import RunnerModel
 
 
-class RunnerRaceDetailModel(RunnerModel):
-    position: str = ''
+class RunnerRaceDetailModel(RunnerModel):      
+    position: int = 0
     finished: bool = False
     is_disqualified: bool = False
 
@@ -15,7 +16,12 @@ class RunnerRaceDetailModel(RunnerModel):
 
     # "%H:%M:%S"
     real_time: str = ''
-    real_pos: str = ''
+    real_pos: int = 0
     real_avg_time: str = ''
     real_cat_pos: str = ''
     real_gen_pos: str = ''
+
+    points: float = 0
+    posiciones_ant: List[int] = []
+    averages_ant: List[str] = []
+    position_general_ant: List[int] = []
