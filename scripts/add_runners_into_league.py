@@ -8,7 +8,7 @@ from requests import request
 
 
 PATH_FILE = './scripts/eliTEAM - Masculino_2023.csv'
-#BASE_PATH = "https://ranking-api-jpzy.onrender.com"
+# BASE_PATH = "https://ranking-api-jpzy.onrender.com"
 BASE_PATH = "http://127.0.0.1:8000"
 
 class PersonFile():
@@ -16,7 +16,7 @@ class PersonFile():
                     ,league_name: str = '', league_id: str = ''):
         self.first_name = first_name
         self.last_name = last_name
-        self.dorsal = 0 if dorsal == "CaC" else 0
+        self.dorsal = 0 if dorsal == "CaC" else dorsal
         self.gender = gender
         self.league_name = league_name
         self.league_id = league_id
@@ -39,8 +39,8 @@ class Runner(Person):
         self.dorsal = dorsal
 
 class RunnerBody():
-    def __init__(self, id:str='', dorsal:int=0):
-        self.id = str(id)
+    def __init__(self, person_id:str='', dorsal:int=0):
+        self.person_id = str(person_id)
         self.dorsal = dorsal
 
 
@@ -87,7 +87,7 @@ def add_person_into_league(person_file:PersonFile, league_id:str, person_db:Pers
 
     url = BASE_PATH + f'/leagues/{league_id}/add_runner'
 
-    runner: RunnerBody = RunnerBody(id=person_db.id, dorsal=person_file.dorsal)
+    runner: RunnerBody = RunnerBody(person_id=person_db.id, dorsal=person_file.dorsal)
 
     payload = json.dumps(runner.__dict__)
 

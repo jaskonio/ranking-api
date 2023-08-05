@@ -66,6 +66,10 @@ class LeagueService():
 
         person:Runner = self.person_repository.get_by_id(runner.id)
 
+        if person is None:
+            self.logger.warn("Person not found. Id: " + str(runner.id))
+            return None
+
         person.dorsal = runner.dorsal
 
         league.add_runner(person)

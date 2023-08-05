@@ -13,9 +13,9 @@ class BaseMongoModel(BaseModel):
         json_encoders = {ObjectId: str}
 
 
-    def to_entity(self, entity_type):
+    def to_entity(self, entity_type, key_id=None):
         #return dict_to_class(entity_type, self.mongo())
-        return dict_to_class(entity_type, self.dict())
+        return dict_to_class(entity_type, self.dict(), key_id)
 
     @classmethod
     def from_mongo(cls, data: dict):

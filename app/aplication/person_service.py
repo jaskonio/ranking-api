@@ -23,7 +23,7 @@ class PersonService():
 
         return person
 
-    def add(self, person) -> Person:
+    def add(self, person:Person) -> Person:
         person_id = self.person_repository.add(person)
 
         person = self.person_repository.get_by_id(person_id)

@@ -38,7 +38,7 @@ def add_runners(league_id:str, new_runners: List[RunnerRequest]):
 
 @league_router.post('/{league_id}/add_runner')
 def add_runner(league_id:str, new_runner: RunnerRequest):
-    runner_entity = new_runner.to_entity(Runner)
+    runner_entity = new_runner.to_entity(Runner, 'person_id')
     return controller.add_runner(league_id, runner_entity)
 
 @league_router.post('/{league_id}/delete_runners')
