@@ -8,8 +8,8 @@ from requests import request
 
 
 PATH_FILE = './scripts/eliTEAM - Masculino_2023.csv'
-# BASE_PATH = "https://ranking-api-jpzy.onrender.com"
-BASE_PATH = "http://127.0.0.1:8000"
+BASE_PATH = "https://ranking-api-jpzy.onrender.com"
+# BASE_PATH = "http://127.0.0.1:8000"
 
 class PersonFile():
     def __init__(self, first_name: str = '', last_name:str = '', dorsal: int = 0, gender:str = ''
@@ -41,7 +41,7 @@ class Runner(Person):
 class RunnerBody():
     def __init__(self, person_id:str='', dorsal:int=0):
         self.person_id = str(person_id)
-        self.dorsal = dorsal
+        self.dorsal = int(dorsal)
 
 
 def persons_from_file(path_file):

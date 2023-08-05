@@ -56,7 +56,7 @@ class League(BaseEntity):
             if previus_runner is None:
                 current_runner.posiciones_ant.append(current_runner.position)
                 current_runner.averages_ant.append(current_runner.real_avg_time)
-                current_runner.poistion_general_ant.append(current_runner.real_pos)
+                current_runner.position_general_ant.append(current_runner.real_pos)
                 continue
 
             current_runner.posiciones_ant = previus_runner.posiciones_ant
@@ -65,8 +65,8 @@ class League(BaseEntity):
             current_runner.averages_ant = previus_runner.averages_ant
             current_runner.averages_ant.append(current_runner.real_avg_time)
 
-            current_runner.poistion_general_ant = previus_runner.poistion_general_ant
-            current_runner.poistion_general_ant.append(current_runner.real_pos)
+            current_runner.position_general_ant = previus_runner.position_general_ant
+            current_runner.position_general_ant.append(current_runner.real_pos)
 
         self.races.append(new_race)
         self.calculate_final_ranking()
@@ -105,7 +105,7 @@ class League(BaseEntity):
                 new_runner.participations = len(runner.posiciones_ant)
                 new_runner.best_position = str(min(runner.posiciones_ant)) \
                     + '(x' + str(Counter(runner.posiciones_ant)[min(runner.posiciones_ant)]) + ')'
-                new_runner.last_position_race = runner.poistion_general_ant[-1]
+                new_runner.last_position_race = runner.position_general_ant[-1]
                 new_runner.best_avegare_peace = self.__get_best_avegare_peace(
                     runner.averages_ant, "mm:ss / km")
 
