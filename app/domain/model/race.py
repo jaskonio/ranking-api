@@ -27,17 +27,9 @@ class Race(RaceBase):
         return self.ranking
 
     def set_ranking(self, ranking:List[RunnerRaceRanking]):
-        if not self.is_sorted:
-            self.__sort_runners()
-            self.set_points()
-
         self.ranking = ranking
 
     def get_runners_with_points(self):
-        if not self.is_sorted:
-            self.__sort_runners()
-            self.set_points()
-
         return [runner for runner in self.ranking if runner.points != 0]
 
     def set_runners_disqualified(self, runners:List[RunnerRaceRanking]):
@@ -45,21 +37,14 @@ class Race(RaceBase):
             self.set_runner_disqualified(runner)
 
     def set_runner_disqualified(self, current_runner:RunnerRaceRanking):
-        for runner in self.ranking:
-            if runner == current_runner:
-                runner.is_disqualified = True
+        index = self.ranking.index(current_runner)
+        self.ranking[index].is_disqualified = True
 
         self.is_sorted = False
         self.update_ranking()
 
     def get_runners_disqualified(self):
-        runners: List[RunnerRaceRanking] = []
-
-        for runner in self.ranking:
-            if runner.is_disqualified:
-                runners.append(runner)
-
-        return runners
+        return [runner for runner in self.ranking if runner.is_disqualified]
 
     def update_ranking(self):
         if not self.is_sorted:
@@ -67,16 +52,12 @@ class Race(RaceBase):
             self.set_points()
 
     def __sort_runners(self):
-        time_format = "%H:%M:%S"
+        runners_finished = [runner for runner in self.ranking if runner.finished]
+        runners_not_finished = [runner for runner in self.ranking if not runner.finished]
 
-        # Orderna los Runner primero por finished True
-        # primero False segundo, realTime y officialTime
-        runners_finished = sorted(self.ranking,
-                                    key=lambda runner: (not runner.finished,
-                                                datetime.strptime(runner.real_time, time_format)),
-                                    reverse=False)
+        runners = runners_finished.extend(runners_not_finished)
 
-        self.ranking = runners_finished
+        self.ranking = runners
 
         self.is_sorted = True
 
@@ -84,20 +65,12 @@ class Race(RaceBase):
         if not self.is_sorted:
             self.__sort_runners()
 
-        # excluir los runners descalificados
-
-        disqualified_bibs = []
-
-        for runner in self.ranking:
-            if runner.is_disqualified:
-                disqualified_bibs.append(runner.dorsal)
-
         # Asignar puntos como en la F1
         points = [25, 18, 15, 12, 10, 8, 6, 4, 2, 1, 0.75, 0.50, 0.25, 0.10, 0.05]
         point_index = 0
 
         for runner in self.ranking:
-            if runner.dorsal in disqualified_bibs:
+            if runner.is_disqualified:
                 continue
 
             if point_index < len(points):

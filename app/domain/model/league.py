@@ -131,7 +131,6 @@ class League(BaseEntity):
 
         return disqualified_runners
 
-
     def __filter_participants(self, race: Race):
         if len(self.runners) == 0:
             logging.warn("There are no participants in the League")
