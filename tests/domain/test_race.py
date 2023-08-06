@@ -185,6 +185,75 @@ class TestRace(unittest.TestCase):
 
         # Assert
         self.assertEqual(race.is_sorted, True)
-        self.assertEqual(len(current_ranking), 1)
+        self.assertEqual(len(current_ranking), 0)
 
     # Todo check set sorta and set point
+
+    def test_set_point_when_contain_all_runners(self):
+        # Setup
+        id_fake = "R001"
+        name_fake = "R001"
+        raw_ranking_fake = build_runners_race_ranking(15)
+        runners_fake = build_runners(15)
+
+        race = build_race(id=id_fake, name=name_fake, raw_ranking_fake=raw_ranking_fake, runners_fake=runners_fake)
+
+        expected_ranking_fake = copy.deepcopy(raw_ranking_fake)
+        points = [25, 18, 15, 12, 10, 8, 6, 4, 2, 1, 0.75, 0.50, 0.25, 0.10, 0.05]
+        point_index = 0
+
+        for runner in expected_ranking_fake:
+            if point_index > len(points):
+                break
+            runner.points = points[point_index]
+
+        # Act
+        current_ranking = race.get_ranking()
+
+        # Assert
+        self.assertEqual(race.is_sorted, True)
+        self.assertEqual(len(current_ranking), len(runners_fake))
+        self.assertEqual(current_ranking, expected_ranking_fake)
+
+    def test_set_point_when_contain_16_runners(self):
+        # Setup
+        id_fake = "R001"
+        name_fake = "R001"
+        raw_ranking_fake = build_runners_race_ranking(16)
+        runners_fake = build_runners(16)
+
+        race = build_race(id=id_fake, name=name_fake, raw_ranking_fake=raw_ranking_fake, runners_fake=runners_fake)
+
+        points = [25, 18, 15, 12, 10, 8, 6, 4, 2, 1, 0.75, 0.50, 0.25, 0.10, 0.05]
+
+        # Act
+        current_ranking = race.get_ranking()
+
+        # Assert
+        self.assertEqual(race.is_sorted, True)
+        self.assertEqual(len(current_ranking), 16)
+        for (runner, expected_point) in zip(current_ranking, points):
+            self.assertEqual(runner.points, expected_point)
+
+        self.assertEqual(current_ranking[15].points, 0)
+
+    def test_set_point_check_position(self):
+        # Setup
+        id_fake = "R001"
+        name_fake = "R001"
+        limit_runners = 17
+        raw_ranking_fake = build_runners_race_ranking(limit_runners)
+        runners_fake = build_runners(17)
+
+        race = build_race(id=id_fake, name=name_fake, raw_ranking_fake=raw_ranking_fake, runners_fake=runners_fake)
+
+        expected_positions = [pos for pos in range(1, limit_runners)]
+
+        # Act
+        current_ranking = race.get_ranking()
+
+        # Assert
+        self.assertEqual(race.is_sorted, True)
+        self.assertEqual(len(current_ranking), limit_runners)
+        for (runner, expected_position) in zip(current_ranking, expected_positions):
+            self.assertEqual(runner.position, expected_position)

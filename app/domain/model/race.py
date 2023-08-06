@@ -30,7 +30,6 @@ class Race(RaceBase):
 
     def ranking_process(self):
         self.__filter_raw_ranking_by_runners()
-        self.__sort_runners()
         self.__set_points()
 
         self.is_sorted = True
@@ -54,21 +53,13 @@ class Race(RaceBase):
                             and runner.finished
                             and not runner.is_disqualified]
 
-    def __sort_runners(self):
-        runners_finished = [runner for runner in self.ranking if runner.finished]
-        runners_not_finished = [runner for runner in self.ranking if not runner.finished]
-
-        runners = runners_finished + runners_not_finished
-
-        self.ranking = runners
-
     def __set_points(self):
         # Asignar puntos como en la F1
         points = [25, 18, 15, 12, 10, 8, 6, 4, 2, 1, 0.75, 0.50, 0.25, 0.10, 0.05]
         point_index = 0
 
         for runner in self.ranking:
-            if point_index < len(points):
+            if point_index <= len(points)-1:
                 runner.points = points[point_index]
 
             runner.position = point_index + 1
