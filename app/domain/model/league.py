@@ -22,33 +22,31 @@ class League(BaseEntity):
         self.ranking:List[RunnerLeagueRanking] = dicts_to_class(RunnerLeagueRanking, ranking)
         self.runners:List[Runner] = dicts_to_class(Runner, runners)
 
-    def get_races(self):
-        return sorted(self.races, key=lambda race: (race.order))
+    def add_runners(self, new_runners:List[Runner]):
+        for new_runner in new_runners:
+            self.add_runner(new_runner)
+
+    def add_runner(self, new_runner: Runner):
+        self.runners.append(new_runner)
 
     def delete_runners(self, runners:List[Runner]):
         for runner in runners:
             self.delete_runner(runner)
 
-    def delete_runner(self, current_runner: Runner):
-        new_runners = [runner for runner in self.runners if runner != current_runner]
-        self.runners = new_runners
+    def delete_runner(self, runner: Runner):
+        self.runners.remove(runner)
 
-    def add_runner(self, new_runner: Runner):
-        self.runners.append(new_runner)
-
-    def add_runners(self, new_runners:List[Runner]):
-        self.runners.extend(new_runners)
+    def add_races(self, new_races: List[Race]):
+        for race in new_races:
+            self.add_race(race)
 
     def add_race(self, new_race: Race):
-        runners_participants_race = self.__filter_participants(new_race)
-        new_race.set_runners_disqualified(self.__get_disqualified_runners())
-        new_race.ranking = runners_participants_race
+        new_race.runners = self.runners
+        runners_disqualified = self.__get_all_previus_disqualified_runners()
+        for runner in runners_disqualified:
+            new_race.disqualified_runner(runner)
 
-        new_race.set_points()
-
-        # fill another properties
-        # aqui iterar los runner para actulizar los valore acumulativos como 'posiciones_ant'
-        #runners_populate: List[RunnerModel] = []
+        new_race.ranking_process()
 
         for current_runner in new_race.get_ranking():
             previus_runner = self.__get_previus_runner(current_runner)
@@ -71,32 +69,31 @@ class League(BaseEntity):
         self.races.append(new_race)
         self.calculate_final_ranking()
 
-    def add_races(self, new_races: List[Race]):
-        for race in new_races:
-            self.add_race(race)
+    def get_races(self):
+        return sorted(self.races, key=lambda race: (race.order))
 
     def calculate_final_ranking(self):
         ranking_league = {}
 
         for race in self.get_races():
-            runners = race.get_runners_with_points()
-            for index, runner in enumerate(runners):
-                if runner.first_name + runner.last_name  not in ranking_league:
-                    ranking_league[runner.first_name + runner.last_name] = RunnerRaceRanking(**runner.to_dict())
+            runners = race.get_ranking()
+
+            for runner in runners:
+                if runner.id not in ranking_league:
+                    ranking_league[runner.id] = runner
                 else:
-                    ranking_league[runner.first_name + runner.last_name].points += runner.points
+                    ranking_league[runner.id].points += runner.points
 
         final_ranking:List[RunnerLeagueRanking] = sorted(ranking_league.values(),
                                     key=lambda runner: (runner.points),
                                     reverse=True)
+
         runner_final_ranking:List[RunnerLeagueRanking] = []
 
         for index, runner in enumerate(final_ranking):
-            new_runner = RunnerLeagueRanking(first_name=runner.first_name, last_name=runner.last_name)
-            new_runner.position = index+1
-            new_runner.photo = runner.photo
-            new_runner.points = runner.points
-            #new_runner.name = runner.name + runner.last_name
+            new_runner = RunnerLeagueRanking(id=runner.id, first_name=runner.first_name, last_name=runner.last_name,
+                                             photo=runner.photo, photo_url=runner.photo_url)
+            new_runner.position = index + 1
 
             if len(runner.posiciones_ant) != 0:
                 new_runner.pos_last_race = runner.posiciones_ant[-1]
@@ -123,27 +120,14 @@ class League(BaseEntity):
         self.__disqualify_runner(disqualified_runner, current_race)
         self.__update_subsequent_races(disqualified_runner, current_race)
 
-    def __get_disqualified_runners(self):
+    def __get_all_previus_disqualified_runners(self):
         disqualified_runners: List[Runner] = []
 
         for race in self.get_races():
-            disqualified_runners.extend(race.get_runners_disqualified())
+            race_disqualified_runners = [runner for runner in race.get_ranking() if runner.is_disqualified]
+            disqualified_runners.extend(race_disqualified_runners)
 
         return disqualified_runners
-
-    def __filter_participants(self, race: Race):
-        if len(self.runners) == 0:
-            logging.warn("There are no participants in the League")
-
-        runner_participants_in_race:List[RunnerLeagueRanking] = []
-
-        for runner in race.ranking:
-            for participant in self.runners:
-                if runner.dorsal == participant.dorsal or\
-                runner.first_name == participant.first_name + ' ' + participant.last_name:
-                    runner_participants_in_race.append(runner)
-
-        return runner_participants_in_race
 
     def __get_runner_by_bib_number(self, bib_number:int):
         return next((runner for runner in self.runners if runner.dorsal == bib_number), None)
@@ -166,7 +150,7 @@ class League(BaseEntity):
             return None
 
         for runner in previus_race.ranking:
-            if runner.dorsal == current_runner.dorsal or runner.first_name == current_runner.first_name:
+            if runner == current_runner:
                 return runner
 
         return None
