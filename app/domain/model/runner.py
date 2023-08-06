@@ -9,3 +9,9 @@ class Runner(Person):
         self.dorsal = dorsal
         self.club = club
         self.category = category
+
+    def __eq__(self, other):
+        if self.id == other.id:
+            return True
+
+        return False
