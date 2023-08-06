@@ -187,8 +187,6 @@ class TestRace(unittest.TestCase):
         self.assertEqual(race.is_sorted, True)
         self.assertEqual(len(current_ranking), 0)
 
-    # Todo check set sorta and set point
-
     def test_set_point_when_contain_all_runners(self):
         # Setup
         id_fake = "R001"
