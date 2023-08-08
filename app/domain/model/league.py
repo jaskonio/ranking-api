@@ -7,7 +7,6 @@ from app.domain.model.base_entity import BaseEntity
 from app.domain.model.race import Race
 from app.domain.model.runner import Runner
 from app.domain.model.runner_league_ranking import RunnerLeagueRanking
-from app.domain.model.runner_race_ranking import RunnerRaceRanking
 from app.domain.services.UtilsRunner import convert_string_to_timedelta, convert_timedelta_to_string
 
 
@@ -34,7 +33,8 @@ class League(BaseEntity):
             self.delete_runner(runner)
 
     def delete_runner(self, runner: Runner):
-        self.runners.remove(runner)
+        if runner in self.runners:
+            self.runners.remove(runner)
 
     def add_races(self, new_races: List[Race]):
         for race in new_races:
@@ -52,9 +52,6 @@ class League(BaseEntity):
             previus_runner = self.__get_previus_runner(current_runner)
 
             if previus_runner is None:
-                current_runner.posiciones_ant.append(current_runner.position)
-                current_runner.averages_ant.append(current_runner.real_avg_time)
-                current_runner.position_general_ant.append(current_runner.real_pos)
                 continue
 
             current_runner.posiciones_ant = previus_runner.posiciones_ant
@@ -110,14 +107,15 @@ class League(BaseEntity):
 
         self.ranking = runner_final_ranking
 
-    def disqualify_runner_process(self, bib_number:int, race_name:str):
-        disqualified_runner = self.__get_runner_by_bib_number(bib_number)
+    def disqualify_runner_process(self, runner_id:int, race_name:str):
+        disqualified_runner = [runner for runner in self.runners if runner.id == runner_id]
 
-        if not disqualified_runner:
+        if len(disqualified_runner) == 0:
             return None
 
-        current_race = self.__get_race_by_name(race_name)
-        self.__disqualify_runner(disqualified_runner, current_race)
+        current_race = [race for race in self.races if race.name == race_name][0]
+
+        current_race.disqualified_runner(disqualified_runner)
         self.__update_subsequent_races(disqualified_runner, current_race)
 
     def __get_all_previus_disqualified_runners(self):
@@ -129,19 +127,10 @@ class League(BaseEntity):
 
         return disqualified_runners
 
-    def __get_runner_by_bib_number(self, bib_number:int):
-        return next((runner for runner in self.runners if runner.dorsal == bib_number), None)
-
-    def __get_race_by_name(self, race_name: str):
-        return next((race for race in self.races if race.name == race_name), None)
-
-    def __disqualify_runner(self, runner:Runner, current_race:Race):
-        current_race.set_runner_disqualified(runner)
-
     def __update_subsequent_races(self, disqualified_runner: Runner, current_race: Race):
         subsequent_races = [race for race in self.get_races() if race.order > current_race.order]
         for race in subsequent_races:
-            race.set_runner_disqualified(disqualified_runner)
+            race.disqualified_runner(disqualified_runner)
 
     def __get_previus_runner(self, current_runner: RunnerLeagueRanking):
         previus_race = self.__get_previus_race()

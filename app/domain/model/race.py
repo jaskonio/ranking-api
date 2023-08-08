@@ -63,5 +63,8 @@ class Race(RaceBase):
                 runner.points = points[point_index]
 
             runner.position = point_index + 1
+            runner.posiciones_ant.append(runner.position)
+            runner.averages_ant.append(runner.real_avg_time)
+            runner.position_general_ant.append(runner.real_pos)
 
             point_index = point_index + 1
