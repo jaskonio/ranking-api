@@ -6,6 +6,7 @@ from app.domain.model.runner_race_ranking import RunnerRaceRanking
 
 class RaceBase(BaseEntity):
     def __init__(self, id:str='', name:str='', url: str='', raw_ranking: List[RunnerRaceRanking] = None):
+        #self.id = str(id) # pylint: disable=C0103
         self.id = str(id)
         self.name = name
         self.url = url

@@ -20,12 +20,12 @@ def build_races(limit_races, limit_raw_runners=5, limit_runners=3):
 
     return races
 
-def build_race(id="R001", name="RName001", url="R_url_001", runners_fake=[], raw_ranking_fake=[], ranking_fake=[], order=0):
+def build_race(id="R001", name="RName001", url="R_url_001", runners_fake=[], raw_ranking_fake=[], ranking_fake=[], order=0, is_sorted=False):
     return Race(
         id=id,
         name=name,
         url=url,
-        is_sorted=False,
+        is_sorted=is_sorted,
         order=order,
         raw_ranking=raw_ranking_fake,
         runners=runners_fake,

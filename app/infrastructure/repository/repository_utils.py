@@ -2,7 +2,7 @@ from pymongo import MongoClient
 from app.core.config import Settings
 from app.infrastructure.mongoDB.repository.mongo_db__repository_factory import MongoDBRepositoryFactory
 
-from app.infrastructure.mongoDB.MongoDBSession import db
+from app.infrastructure.mongoDB.mongo_db_session import db
 
 def load_repository_from_config():
     database_type = Settings.DATABASE_TYPE
