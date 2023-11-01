@@ -5,14 +5,6 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python: Debbug Program",
-            "type": "python",
-            "request": "launch",
-            "program": "main.py",
-            "console": "integratedTerminal",
-            "justMyCode": true
-        },
-        {
             "name": "Python: Module",
             "type": "python",
             "request": "launch",
