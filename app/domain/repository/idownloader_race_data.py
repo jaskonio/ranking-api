@@ -1,15 +1,21 @@
-class IDownloaderServiceOption():
-    type: str
+from enum import Enum
 
-class IDownloaderServiceHTTPOption(IDownloaderServiceOption):
+class TypeService(Enum):
+    SPORTMANIACS = 1
+    VALENCIACIUDADDELRUNNING = 2
+    TOPRUN = 3
+
+class DownloaderHTTPOptions():
+    type: TypeService
     method: str
     url: str
-    data: str = ''
+    payload: None
+    content_type: str
     timeout: int = 30
-    before_callback: classmethod(None) = None
-    after_callback: classmethod(None) = None
 
+class RaceDownloaderOptions(DownloaderHTTPOptions):
+    race_name: str
 
 class IDownloaderRaceData():
-    def get_data(self, option:IDownloaderServiceOption):
+    def get_data(self, option:DownloaderHTTPOptions):
         pass

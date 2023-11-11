@@ -1,30 +1,20 @@
 from typing import List
 from app.domain.model.person import Person
-from app.domain.repository.idownloader_race_data import IDownloaderRaceData, IDownloaderServiceHTTPOption
-from app.domain.repository.idownloader_service import IDownloaderService
-from app.domain.repository.igeneric_repository import IGenericRepository
+from app.domain.repository.imappers_service import IMapperService
 from app.domain.services.UtilsRunner import strtobool
 from app.domain.model.runner_race_detail import RunnerRaceDetail
 
-
-class DownloaderSportmaniacsService(IDownloaderService):
+class SportmaniacsMapperService(IMapperService):
     team_name = ['Redolat', 'redolatteam', 'redolat team']
-    base_url = 'https://sportmaniacs.com/es/races/rankings/'
-    def __init__(self, race_repository: IDownloaderRaceData, person_repository: IGenericRepository):
-        self.race_repository = race_repository
-        self.person_repository = person_repository
+    # base_url = 'https://sportmaniacs.com/es/races/rankings/'
 
-    def get_data(self, url:str):
-        options: IDownloaderServiceHTTPOption = IDownloaderServiceHTTPOption()
-        options.method = 'GET'
-        options.url = self.base_url + url.split('/')[-1]
-        options.data = ''
-        options.timeout = 60
+    def __init__(self):
+        pass
 
-        json_response_data = self.race_repository.get_data(options)
-        data_filtered_by_club = self.__filter_by_team_name(json_response_data.json()['data']['Rankings'])
+    def execute(self, data:any, filter_by_persons:List[Person]):
+        data_filtered_by_club = self.__filter_by_team_name(data['data']['Rankings'])
         race_data:List[RunnerRaceDetail] = self.__build_runners_model(data_filtered_by_club)
-        race_data:List[RunnerRaceDetail] = self.__fill_person_properties(race_data)
+        race_data:List[RunnerRaceDetail] = self.__fill_person_properties(race_data, filter_by_persons)
 
         return race_data
 
@@ -70,12 +60,11 @@ class DownloaderSportmaniacsService(IDownloaderService):
 
         return runner
 
-    def __fill_person_properties(self, runners: List[RunnerRaceDetail]):
-        persons: List[Person] = self.person_repository.get_all()
+    def __fill_person_properties(self, runners: List[RunnerRaceDetail], filter_by_persons):
         runners_fill: List[RunnerRaceDetail] = []
 
         for runner in runners:
-            for person in persons:
+            for person in filter_by_persons:
                 if person.first_name + ' ' + person.last_name == runner.first_name:
                     runner.id = person.id
                     runner.first_name = person.first_name

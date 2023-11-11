@@ -1,14 +1,24 @@
 import requests
-from app.domain.repository.idownloader_race_data import IDownloaderServiceOption
-from app.domain.repository.idownloader_service import IDownloaderService
+from app.domain.repository.idownloader_base import IDownloaderBase
+from app.domain.repository.idownloader_race_data import IDownloaderServiceHTTPOption
 
 
-class HTTPDownloaderService(IDownloaderService):
-    def get_data(self, option:IDownloaderServiceOption):
-        results = requests.request(option.method, option.url, data=option.data
-                                   , timeout=option.timeout)
+class HTTPDownloaderService(IDownloaderBase):
+    def get_data(self, option:IDownloaderServiceHTTPOption):
+        try:
+            if option.method.upper() == 'GET':
+                response = requests.get(option.url, timeout=option.timeout)
+            elif option.method.upper() == 'POST':
+                response = requests.post(option.url, timeout=option.timeout, data=option.payload)
 
-        if option.after_callback is not None:
-            results = option.after_callback(results)
+                response.raise_for_status()
 
-        return results
+            if option.content_type.upper() == 'JSON':
+                contenido_parseado = response.json()
+            else:
+                contenido_parseado = response.content.decode('utf-8')
+
+            return contenido_parseado
+
+        except requests.exceptions.RequestException as e:
+            return f"Error en la solicitud: {e}"
