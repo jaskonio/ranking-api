@@ -1,5 +1,4 @@
 from typing import List
-from app.domain.model.person import Person
 from app.domain.repository.imappers_service import IMapperService
 from app.domain.services.UtilsRunner import strtobool
 from app.domain.model.runner_race_detail import RunnerRaceDetail
@@ -58,5 +57,3 @@ class SportmaniacsMapperService(IMapperService):
         runner.real_gen_pos = row["realGenPos"]
 
         return runner
-
-

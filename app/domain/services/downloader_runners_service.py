@@ -1,4 +1,4 @@
-from ast import List
+from typing import List
 from app.domain.model.runner_race_detail import RunnerRaceDetail
 from app.domain.repository.idownloader_race_data import RaceDownloaderOptions
 from app.domain.services.http_downloader_service import HTTPDownloaderService
@@ -19,7 +19,7 @@ class DownloaderRunnersService:
 
         return runners
 
-    def get_runners_by_persons(self, race_options:RaceDownloaderOptions, persons:List[Person]):
+    def get_runners_by_persons(self, race_options: RaceDownloaderOptions, persons: List[Person]):
         all_runners = self.get_all_runners(race_options)
 
         runners:List[RunnerRaceDetail] = []

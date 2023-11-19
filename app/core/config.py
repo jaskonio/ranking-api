@@ -16,6 +16,4 @@ class Settings:
     if DATABASE_TYPE == 'MONGODB':
         CONNECTION_STRING = os.getenv("MONGODB_CONNECTION_STING")
 
-    TEST_USER_EMAIL = "test@example.com"
-
 settings = Settings()
