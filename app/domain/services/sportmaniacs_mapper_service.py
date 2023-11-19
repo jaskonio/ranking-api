@@ -11,10 +11,9 @@ class SportmaniacsMapperService(IMapperService):
     def __init__(self):
         pass
 
-    def execute(self, data:any, filter_by_persons:List[Person]):
+    def execute(self, data:any):
         data_filtered_by_club = self.__filter_by_team_name(data['data']['Rankings'])
         race_data:List[RunnerRaceDetail] = self.__build_runners_model(data_filtered_by_club)
-        race_data:List[RunnerRaceDetail] = self.__fill_person_properties(race_data, filter_by_persons)
 
         return race_data
 
@@ -60,21 +59,4 @@ class SportmaniacsMapperService(IMapperService):
 
         return runner
 
-    def __fill_person_properties(self, runners: List[RunnerRaceDetail], filter_by_persons):
-        runners_fill: List[RunnerRaceDetail] = []
 
-        for runner in runners:
-            for person in filter_by_persons:
-                if person.first_name + ' ' + person.last_name == runner.first_name:
-                    runner.id = person.id
-                    runner.first_name = person.first_name
-                    runner.last_name = person.last_name
-                    runner.nationality = person.nationality
-                    runner.gender = person.gender
-                    runner.photo = person.photo
-                    runner.photo_url = person.photo_url
-                    break
-
-            runners_fill.append(runner)
-
-        return runners_fill

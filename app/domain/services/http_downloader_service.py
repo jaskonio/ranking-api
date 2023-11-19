@@ -1,10 +1,10 @@
 import requests
 from app.domain.repository.idownloader_base import IDownloaderBase
-from app.domain.repository.idownloader_race_data import IDownloaderServiceHTTPOption
+from app.domain.repository.idownloader_race_data import DownloaderHTTPOptions
 
 
 class HTTPDownloaderService(IDownloaderBase):
-    def get_data(self, option:IDownloaderServiceHTTPOption):
+    def get_data(self, option:DownloaderHTTPOptions):
         try:
             if option.method.upper() == 'GET':
                 response = requests.get(option.url, timeout=option.timeout)

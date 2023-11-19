@@ -28,7 +28,7 @@ class RaceService():
         race = Race(id=0, name=race_options.race_name, url=race_options.url)
 
         if not race_options.is_sorted:
-            runners:List[RunnerRaceRanking] = self.__downloader_runners_service.download_runners(race_options, self.__person_repository)
+            runners:List[RunnerRaceRanking] = self.__downloader_runners_service.get_runners_by_persons(race_options, self.__person_repository.get_all())
             race.set_raw_ranking(runners)
 
         race_id = self.__race_repository.add(race)
