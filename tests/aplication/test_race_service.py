@@ -67,7 +67,7 @@ class TestRaceService(unittest.TestCase):
         self.assertEqual(added_race.is_sorted, False)
         self.assertEqual(added_race.order, 0)
         self.assertEqual(added_race.ranking, [])
-        self.assertEqual(added_race.runners, [])
+        self.assertEqual(added_race.participants, [])
 
     def test_add_when_is_sorted_false(self):
         # Mock the downloader service behavior
@@ -87,4 +87,4 @@ class TestRaceService(unittest.TestCase):
         self.assertEqual(added_race.is_sorted, True)
         self.assertEqual(added_race.order, 0)
         self.assertEqual(added_race.ranking, [])
-        self.assertEqual(added_race.runners, [])
+        self.assertEqual(added_race.participants, [])

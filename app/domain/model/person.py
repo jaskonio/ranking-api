@@ -14,4 +14,4 @@ class Person(BaseEntity):
         self.photo_url = photo_url
 
     def __eq__(self, other_person):
-        return self.id == other_person.id
+        return self.id == other_person.id and self.first_name == other_person.first_name and self.last_name == other_person.last_name

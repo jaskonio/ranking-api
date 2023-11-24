@@ -1,7 +1,7 @@
-from app.domain.model.runner import Runner
+from app.domain.model.runner_base import RunnerBase
 
 
-class RunnerRaceDetail(Runner):
+class RunnerRaceDetail(RunnerBase):
     def __init__(self, id:str = '', first_name: str ='', last_name:str = '', nationality: str = ''
         , gender: str = '', photo:str = '', photo_url: str = '',  dorsal:int = 0
         , club: str = 'Redolat Team', category: str = '', position:int = 0, finished:bool = True

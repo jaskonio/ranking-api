@@ -1,7 +1,7 @@
 from app.domain.model.person import Person
 
 
-class Runner(Person):
+class RunnerBase(Person):
     def __init__(self, id:str='', first_name: str = '', last_name:str = '', nationality: str = '', gender: str = ''
                 , photo:str = '', photo_url: str = '',  dorsal:int = 0, club: str = 'Redolat Team'
                 , category: str = '') -> None:

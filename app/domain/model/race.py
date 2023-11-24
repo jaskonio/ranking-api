@@ -10,21 +10,21 @@ class Race(RaceBase):
                  , order:int = 0, is_sorted: bool = False, ranking: List[RunnerRaceRanking] = None
                  , runners: List[Runner] = None):
         super().__init__(id, name, url, raw_ranking)
+        self.participants:List[Runner] = [] if runners is None else dicts_to_class(Runner, runners)
+        self.ranking:List[RunnerRaceRanking] = [] if ranking is None else dicts_to_class(RunnerRaceRanking, ranking)
         self.order = order
         self.is_sorted = is_sorted
-        self.ranking:List[RunnerRaceRanking] = [] if ranking is None else dicts_to_class(RunnerRaceRanking, ranking)
-        self.runners:List[Runner] = [] if runners is None else dicts_to_class(Runner, runners)
 
     def add_runners(self, runners:List[RunnerRaceRanking]):
         for runner in runners:
             self.add_runner(runner)
 
     def add_runner(self, runner):
-        self.runners.append(runner)
+        self.participants.append(runner)
         self.is_sorted = False
 
     def update_runner(self, runner):
-        self.runners.remove(runner)
+        self.participants.remove(runner)
 
         self.add_runner(runner)
 
@@ -49,7 +49,7 @@ class Race(RaceBase):
 
     def __filter_raw_ranking_by_runners(self):
         self.ranking = [runner for runner in self.raw_ranking
-                        if runner in self.runners
+                        if runner in self.participants
                             and runner.finished
                             and not runner.is_disqualified]
 

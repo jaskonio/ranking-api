@@ -32,8 +32,8 @@ class TestRace(unittest.TestCase):
         # Assert
         self.assertEqual(race.is_sorted, False)
 
-        self.assertEqual(len(race.runners), 1)
-        self.assertEqual(race.runners[0], runner_fake)
+        self.assertEqual(len(race.participants), 1)
+        self.assertEqual(race.participants[0], runner_fake)
 
     def test_add_runners(self):
         # Setup
@@ -47,8 +47,8 @@ class TestRace(unittest.TestCase):
         # Assert
         self.assertEqual(race.is_sorted, False)
 
-        self.assertEqual(len(race.runners), len(runners_fake))
-        self.assertEqual(race.runners, runners_fake)
+        self.assertEqual(len(race.participants), len(runners_fake))
+        self.assertEqual(race.participants, runners_fake)
 
     def test_update_runner(self):
         # Setup
@@ -65,8 +65,8 @@ class TestRace(unittest.TestCase):
         # Assert
         self.assertEqual(race.is_sorted, False)
 
-        self.assertEqual(len(race.runners), len(expected_runners))
-        self.assertEqual(race.runners, expected_runners)
+        self.assertEqual(len(race.participants), len(expected_runners))
+        self.assertEqual(race.participants, expected_runners)
 
     def test_add_runners_when_race_contain_one_runner(self):
         # Setup
@@ -83,8 +83,8 @@ class TestRace(unittest.TestCase):
         # Assert
         self.assertEqual(race.is_sorted, False)
 
-        self.assertEqual(len(race.runners), len(expected_runners))
-        self.assertEqual(race.runners, expected_runners)
+        self.assertEqual(len(race.participants), len(expected_runners))
+        self.assertEqual(race.participants, expected_runners)
 
     def test_disqualified_runner(self):
         # Setup

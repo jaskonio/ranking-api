@@ -148,7 +148,7 @@ class TestLeague(unittest.TestCase):
 
         # Assert
         self.assertEqual(len(races), 1)
-        self.assertEqual(len(races[0].runners), 0)
+        self.assertEqual(len(races[0].participants), 0)
         self.assertEqual(len(races[0].ranking), 0)
         self.assertEqual(len(league_fake.ranking), 0)
         self.assertEqual(len(league_fake.runners), 0)
@@ -170,7 +170,7 @@ class TestLeague(unittest.TestCase):
         self.assertEqual(len(races), 1)
         self.assertEqual(len(races[0].raw_ranking), 0)
         self.assertEqual(len(races[0].ranking), 0)
-        self.assertEqual(len(races[0].runners), len(runners_fake))
+        self.assertEqual(len(races[0].participants), len(runners_fake))
         self.assertEqual(len(league_fake.ranking), 0)
         self.assertEqual(len(league_fake.runners), len(runners_fake))
 
@@ -190,7 +190,7 @@ class TestLeague(unittest.TestCase):
         self.assertEqual(len(races), 1)
         self.assertEqual(len(races[0].raw_ranking), len(raw_ranking_fake))
         self.assertEqual(len(races[0].ranking), 0)
-        self.assertEqual(len(races[0].runners), 0)
+        self.assertEqual(len(races[0].participants), 0)
         self.assertEqual(len(league_fake.ranking), 0)
         self.assertEqual(len(league_fake.runners), 0)
         

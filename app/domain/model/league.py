@@ -41,7 +41,7 @@ class League(BaseEntity):
             self.add_race(race)
 
     def add_race(self, new_race: Race):
-        new_race.runners = self.runners
+        new_race.participants = self.runners
         runners_disqualified = self.__get_all_previus_disqualified_runners()
         for runner in runners_disqualified:
             new_race.disqualified_runner(runner)
