@@ -2,7 +2,7 @@ import logging
 from typing import List
 from app.aplication.league_service import LeagueService
 from app.domain.model.league import League
-from app.domain.model.runner import Runner
+from app.domain.model.runner_base import RunnerBase
 
 
 class LeagueController():
@@ -41,7 +41,7 @@ class LeagueController():
             self.logger.error("Error saving: %s", exception_error)
             raise TypeError('An error occurred while saving.') from None
 
-    def add_runners(self, league_id:str, new_runners:List[Runner]):
+    def add_runners(self, league_id:str, new_runners:List[RunnerBase]):
         try:
             league = self.__league_service.add_runners(league_id, new_runners)
 
@@ -53,7 +53,7 @@ class LeagueController():
             self.logger.error("Error saving: %s", exception_error)
             raise TypeError('An error occurred while saving.') from None
 
-    def add_runner(self, league_id:str, new_runner:Runner):
+    def add_runner(self, league_id:str, new_runner:RunnerBase):
         try:
             league = self.__league_service.add_runner(league_id, new_runner)
 
@@ -65,7 +65,7 @@ class LeagueController():
             self.logger.error("Error saving: %s", exception_error)
             raise TypeError('An error occurred while saving.') from None
 
-    def delete_runners(self, league_id:str, runners:List[Runner]):
+    def delete_runners(self, league_id:str, runners:List[RunnerBase]):
         try:
             league = self.__league_service.delete_runners(league_id, runners)
 
@@ -77,7 +77,7 @@ class LeagueController():
             self.logger.error("Error saving: %s", exception_error)
             raise TypeError('An error occurred while saving.') from None
 
-    def delete_runner(self, league_id:str, runner:Runner):
+    def delete_runner(self, league_id:str, runner:RunnerBase):
         try:
             league = self.__league_service.delete_runner(league_id, runner)
 
