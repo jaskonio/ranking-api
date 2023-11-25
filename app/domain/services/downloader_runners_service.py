@@ -25,17 +25,7 @@ class DownloaderRunnersService:
         runners:List[RunnerRaceRanking] = []
 
         for runner in all_runners:
-            for person in persons:
-                if person.first_name + ' ' + person.last_name == runner.first_name:
-                    runner.id = person.id
-                    runner.first_name = person.first_name
-                    runner.last_name = person.last_name
-                    runner.nationality = person.nationality
-                    runner.gender = person.gender
-                    runner.photo = person.photo
-                    runner.photo_url = person.photo_url
-                    break
-
-            runners.append(runner)
+            if runner in persons:
+                runners.append(runner)
 
         return runners

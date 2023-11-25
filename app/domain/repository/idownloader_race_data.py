@@ -6,6 +6,9 @@ class TypeService(Enum):
     TOPRUN = 3
 
 class DownloaderHTTPOptions():
+    def __init__(self):
+        pass
+
     type: TypeService
     method: str
     url: str

@@ -55,7 +55,7 @@ class RunnerRaceRanking(RunnerBase):
         return datetime.strptime(self.real_time, time_format) >= datetime.strptime(other.real_time, time_format)
 
     def __ne__(self, other):
-        return (self.id != other.id and self.first_name != other.first_name and self.last_name != other.last_name)
+        return (self.first_name != other.first_name and self.last_name != other.last_name)
 
     def __eq__(self, other):
-        return (self.id == other.id and self.first_name == other.first_name and self.last_name == other.last_name)
+        return (self.first_name == other.first_name and self.last_name == other.last_name)

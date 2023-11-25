@@ -6,17 +6,12 @@ class MappeRunnersFactory:
         print("Factory Mapper. Type:" + str(http_options.type))
 
         if http_options.type == TypeService.SPORTMANIACS:
-            print("Platform: Sportmaniacs")
-            mapper = SportmaniacsMapperService()
+            return SportmaniacsMapperService()
 
         if http_options.type == TypeService.VALENCIACIUDADDELRUNNING:
-            print("Platform: valenciaciudaddelrunning")
-            #mapper = Valenciaciudaddelrunning(url_race)
+            pass
 
         if http_options.type == TypeService.TOPRUN:
-            print("Platform: toprun")
-            #mapper = TopRun(url_race)
-        else:
-            print("Platform not compatible")
+            pass
 
-        return mapper
+        raise ValueError("Servicion no soportado.")

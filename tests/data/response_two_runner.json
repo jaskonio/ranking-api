@@ -1,0 +1,103 @@
+{
+    "data": {
+        "Rankings": [
+            {
+                "dorsal": "2129",
+                "name": "ALBERTO LOPEZ BARCELO ",
+                "club": "SERRANO CLUB ATLETISMO",
+                "nationality": "",
+                "category_id": "5c35e37a-1a74-4215-ae3c-229dac1f0b2e",
+                "finishedRace": true,
+                "gender": "gender_0",
+                "officialTime": "00:18:07",
+                "realTime": "00:18:08",
+                "pos": "1",
+                "catPos": "1",
+                "genPos": "1",
+                "average": "02m 52s \/ km",
+                "comments": "",
+                "user_id": 0,
+                "category": "Senior M",
+                "realPos": "1",
+                "realCatPos": "1",
+                "realGenPos": "1",
+                "averageNet": "02m 52s \/ km",
+                "defaultImage": true,
+                "photos": {
+                    "sm": "https:\/\/s3.eu-west-1.amazonaws.com\/sm-fotos.sportmaniacs.com\/back\/avatar_boy.png"
+                },
+                "externalPhotos": false,
+                "externalVideos": false,
+                "externalDiploma": false,
+                "Points": [
+                    {
+                        "split_id": "5c35e37a-8720-4b0b-b38e-229dac1f0b2e",
+                        "officialTime": "00:18:07",
+                        "realTime": "00:18:08",
+                        "legTime": "00:18:08",
+                        "pos": "1",
+                        "catPos": "1",
+                        "genPos": "1",
+                        "realPos": "1",
+                        "average": "02m 52s \/ km",
+                        "averageNet": "02m 52s \/ km",
+                        "offset": 0,
+                        "catOffset": 0,
+                        "genOffset": 0,
+                        "videoRepeat": ""
+                    }
+                ],
+                "pos_5c35e37a-8720-4b0b-b38e-229dac1f0b2e": "1"
+            },
+            {
+                "dorsal": "2489",
+                "name": "ZACARIA EL MAATAOUI ",
+                "club": "MEDITERRANEA VALNEA",
+                "nationality": "",
+                "category_id": "5c35e37a-1a74-4215-ae3c-229dac1f0b2e",
+                "finishedRace": true,
+                "gender": "gender_0",
+                "officialTime": "00:18:16",
+                "realTime": "00:18:17",
+                "pos": "2",
+                "catPos": "2",
+                "genPos": "2",
+                "average": "02m 53s \/ km",
+                "comments": "",
+                "user_id": 0,
+                "category": "Senior M",
+                "realPos": "2",
+                "realCatPos": "2",
+                "realGenPos": "2",
+                "averageNet": "02m 53s \/ km",
+                "defaultImage": true,
+                "photos": {
+                    "sm": "https:\/\/s3.eu-west-1.amazonaws.com\/sm-fotos.sportmaniacs.com\/back\/avatar_boy.png"
+                },
+                "externalPhotos": false,
+                "externalVideos": false,
+                "externalDiploma": false,
+                "Points": [
+                    {
+                        "split_id": "5c35e37a-8720-4b0b-b38e-229dac1f0b2e",
+                        "officialTime": "00:18:16",
+                        "realTime": "00:18:17",
+                        "legTime": "00:18:17",
+                        "pos": "2",
+                        "catPos": "2",
+                        "genPos": "2",
+                        "realPos": "2",
+                        "average": "02m 53s \/ km",
+                        "averageNet": "02m 53s \/ km",
+                        "offset": 0,
+                        "catOffset": 0,
+                        "genOffset": 0,
+                        "videoRepeat": ""
+                    }
+                ],
+                "pos_5c35e37a-8720-4b0b-b38e-229dac1f0b2e": "2"
+            }            
+        ]
+    },
+    "status": "ok"
+}
