@@ -4,7 +4,7 @@ from app.domain.model.league import League
 from app.domain.model.person import Person
 from app.domain.model.race import Race
 from app.domain.model.race_base import RaceBase
-from app.domain.model.runner import Runner
+from app.domain.model.runner_base import RunnerBase
 from app.domain.repository.igeneric_repository import IGenericRepository
 
 
@@ -35,18 +35,18 @@ class LeagueService():
 
         return league
 
-    def add_runners(self, league_id:str, runners:List[Runner]):
+    def add_runners(self, league_id:str, runners:List[RunnerBase]):
         league:League = self.league_repository.get_by_id(league_id)
 
         if league is None:
             self.logger.error("League not found.")
             return None
 
-        new_runners:List[Runner] = []
+        new_runners:List[RunnerBase] = []
 
         for runner in runners:
             person:Person = self.person_repository.get_by_id(runner.id)
-            new_runner = Runner(person.to_dict())
+            new_runner = RunnerBase(person.to_dict())
             new_runner.dorsal = runner.dorsal
             new_runners.append(new_runner)
 
@@ -57,14 +57,14 @@ class LeagueService():
 
         return league
 
-    def add_runner(self, league_id:str, runner:Runner):
+    def add_runner(self, league_id:str, runner:RunnerBase):
         league:League = self.league_repository.get_by_id(league_id)
 
         if league is None:
             self.logger.error("League not found.")
             return None
 
-        person:Runner = self.person_repository.get_by_id(runner.id)
+        person:RunnerBase = self.person_repository.get_by_id(runner.id)
 
         if person is None:
             self.logger.warn("Person not found. Id: " + str(runner.id))
@@ -79,7 +79,7 @@ class LeagueService():
 
         return league
 
-    def delete_runners(self, league_id:str, runners:List[Runner]):
+    def delete_runners(self, league_id:str, runners:List[RunnerBase]):
         league:League = self.league_repository.get_by_id(league_id)
 
         if league is None:
@@ -93,7 +93,7 @@ class LeagueService():
 
         return league
 
-    def delete_runner(self, league_id:str, runner:Runner):
+    def delete_runner(self, league_id:str, runner:RunnerBase):
         league:League = self.league_repository.get_by_id(league_id)
 
         if league is None:

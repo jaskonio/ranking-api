@@ -1,16 +1,16 @@
 from typing import List
 from app.core.mapper_utils import dicts_to_class
 from app.domain.model.race_base import RaceBase
-from app.domain.model.runner import Runner
+from app.domain.model.runner_base import RunnerBase
 from app.domain.model.runner_race_ranking import RunnerRaceRanking
 
 
 class Race(RaceBase):
     def __init__(self, id, name: str='', url: str='', raw_ranking: List[RunnerRaceRanking] = None
                  , order:int = 0, is_sorted: bool = False, ranking: List[RunnerRaceRanking] = None
-                 , runners: List[Runner] = None):
+                 , participants: List[RunnerBase] = None):
         super().__init__(id, name, url, raw_ranking)
-        self.participants:List[Runner] = [] if runners is None else dicts_to_class(Runner, runners)
+        self.participants:List[RunnerBase] = [] if participants is None else dicts_to_class(RunnerBase, participants)
         self.ranking:List[RunnerRaceRanking] = [] if ranking is None else dicts_to_class(RunnerRaceRanking, ranking)
         self.order = order
         self.is_sorted = is_sorted

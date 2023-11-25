@@ -1,6 +1,5 @@
 from typing import List
 from app.domain.model.race import Race
-from app.domain.model.runner_race_detail import RunnerRaceDetail
 from app.domain.model.runner_race_ranking import RunnerRaceRanking
 from app.domain.repository.idownloader_race_data import RaceDownloaderOptions
 from app.domain.repository.igeneric_repository import IGenericRepository
@@ -39,7 +38,7 @@ class RaceService():
 
     def update_by_id(self, race_id:str, new_race):
         if not new_race.is_sorted:
-            runners:List[RunnerRaceDetail] = self.__downloader_runners_service.download_race_data(new_race.url, self.__person_repository)
+            runners:List[RunnerRaceRanking] = self.__downloader_runners_service.download_race_data(new_race.url, self.__person_repository)
             new_race.set_ranking(runners)
 
         status = self.__race_repository.update_by_id(race_id, new_race)

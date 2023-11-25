@@ -5,7 +5,7 @@ from typing import List
 from app.core.mapper_utils import dicts_to_class
 from app.domain.model.base_entity import BaseEntity
 from app.domain.model.race import Race
-from app.domain.model.runner import Runner
+from app.domain.model.runner_base import RunnerBase
 from app.domain.model.runner_league_ranking import RunnerLeagueRanking
 from app.domain.services.UtilsRunner import convert_string_to_timedelta, convert_timedelta_to_string
 
@@ -14,34 +14,34 @@ logger = logging.getLogger(__name__)
 
 class League(BaseEntity):
     def __init__(self, id:str='0', name:str='', races: List[Race] = None, ranking:List[RunnerLeagueRanking] = None
-                 , runners: List[Runner] = None ):
+                 , participants: List[RunnerBase] = None ):
         self.id = str(id)
         self.name = name
         self.races:List[Race] = dicts_to_class(Race, races)
         self.ranking:List[RunnerLeagueRanking] = dicts_to_class(RunnerLeagueRanking, ranking)
-        self.runners:List[Runner] = dicts_to_class(Runner, runners)
+        self.participants:List[RunnerBase] = dicts_to_class(RunnerBase, participants)
 
-    def add_runners(self, new_runners:List[Runner]):
+    def add_runners(self, new_runners:List[RunnerBase]):
         for new_runner in new_runners:
             self.add_runner(new_runner)
 
-    def add_runner(self, new_runner: Runner):
-        self.runners.append(new_runner)
+    def add_runner(self, new_runner: RunnerBase):
+        self.participants.append(new_runner)
 
-    def delete_runners(self, runners:List[Runner]):
+    def delete_runners(self, runners:List[RunnerBase]):
         for runner in runners:
             self.delete_runner(runner)
 
-    def delete_runner(self, runner: Runner):
-        if runner in self.runners:
-            self.runners.remove(runner)
+    def delete_runner(self, runner: RunnerBase):
+        if runner in self.participants:
+            self.participants.remove(runner)
 
     def add_races(self, new_races: List[Race]):
         for race in new_races:
             self.add_race(race)
 
     def add_race(self, new_race: Race):
-        new_race.participants = self.runners
+        new_race.participants = self.participants
         runners_disqualified = self.__get_all_previus_disqualified_runners()
         for runner in runners_disqualified:
             new_race.disqualified_runner(runner)
@@ -108,7 +108,7 @@ class League(BaseEntity):
         self.ranking = runner_final_ranking
 
     def disqualify_runner_process(self, runner_id:int, race_name:str):
-        disqualified_runner = [runner for runner in self.runners if runner.id == runner_id]
+        disqualified_runner = [runner for runner in self.participants if runner.id == runner_id]
 
         if len(disqualified_runner) == 0:
             return None
@@ -119,7 +119,7 @@ class League(BaseEntity):
         self.__update_subsequent_races(disqualified_runner, current_race)
 
     def __get_all_previus_disqualified_runners(self):
-        disqualified_runners: List[Runner] = []
+        disqualified_runners: List[RunnerBase] = []
 
         for race in self.get_races():
             race_disqualified_runners = [runner for runner in race.get_ranking() if runner.is_disqualified]
@@ -127,7 +127,7 @@ class League(BaseEntity):
 
         return disqualified_runners
 
-    def __update_subsequent_races(self, disqualified_runner: Runner, current_race: Race):
+    def __update_subsequent_races(self, disqualified_runner: RunnerBase, current_race: Race):
         subsequent_races = [race for race in self.get_races() if race.order > current_race.order]
         for race in subsequent_races:
             race.disqualified_runner(disqualified_runner)
