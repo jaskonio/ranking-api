@@ -1,5 +1,5 @@
 from typing import List
-from app.domain.model.runner_race_detail import RunnerRaceDetail
+from app.domain.model.runner_race_ranking import RunnerRaceRanking
 from app.domain.repository.idownloader_race_data import RaceDownloaderOptions
 from app.domain.services.http_downloader_service import HTTPDownloaderService
 from app.domain.services.mappe_runners_factory import MappeRunnersFactory
@@ -22,7 +22,7 @@ class DownloaderRunnersService:
     def get_runners_by_persons(self, race_options: RaceDownloaderOptions, persons: List[Person]):
         all_runners = self.get_all_runners(race_options)
 
-        runners:List[RunnerRaceDetail] = []
+        runners:List[RunnerRaceRanking] = []
 
         for runner in all_runners:
             for person in persons:

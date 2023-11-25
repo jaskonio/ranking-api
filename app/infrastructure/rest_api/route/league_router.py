@@ -4,7 +4,7 @@ from app.aplication.league_service import LeagueService
 from app.domain.model.league import League
 from app.domain.model.person import Person
 from app.domain.model.race import Race
-from app.domain.model.runner import Runner
+from app.domain.model.runner_base import RunnerBase
 from app.infrastructure.repository.repository_utils import load_repository_from_config
 from app.infrastructure.rest_api.controller.league_controller import LeagueController
 from app.infrastructure.rest_api.model.legaue_request import LeagueRequest
@@ -33,12 +33,12 @@ def add(race: LeagueRequest):
 
 @league_router.post('/{league_id}/add_runners')
 def add_runners(league_id:str, new_runners: List[RunnerRequest]):
-    runners_entities = [runner.to_entity(Runner) for runner in new_runners]
+    runners_entities = [runner.to_entity(RunnerBase) for runner in new_runners]
     return controller.add_runners(league_id, runners_entities)
 
 @league_router.post('/{league_id}/add_runner')
 def add_runner(league_id:str, new_runner: RunnerRequest):
-    runner_entity = new_runner.to_entity(Runner, 'person_id')
+    runner_entity = new_runner.to_entity(RunnerBase, 'person_id')
     return controller.add_runner(league_id, runner_entity)
 
 @league_router.post('/{league_id}/delete_runners')

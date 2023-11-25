@@ -1,7 +1,7 @@
 from typing import List
 from app.domain.repository.imappers_service import IMapperService
 from app.domain.services.UtilsRunner import strtobool
-from app.domain.model.runner_race_detail import RunnerRaceDetail
+from app.domain.model.runner_race_ranking import RunnerRaceRanking
 
 class SportmaniacsMapperService(IMapperService):
     team_name = ['Redolat', 'redolatteam', 'redolat team']
@@ -12,7 +12,7 @@ class SportmaniacsMapperService(IMapperService):
 
     def execute(self, data:any):
         data_filtered_by_club = self.__filter_by_team_name(data['data']['Rankings'])
-        race_data:List[RunnerRaceDetail] = self.__build_runners_model(data_filtered_by_club)
+        race_data:List[RunnerRaceRanking] = self.__build_runners_model(data_filtered_by_club)
 
         return race_data
 
@@ -35,7 +35,7 @@ class SportmaniacsMapperService(IMapperService):
         return new_runners
 
     def __build_runner_model(self, row):
-        runner = RunnerRaceDetail()
+        runner = RunnerRaceRanking()
         runner.first_name = row["name"]
         runner.dorsal = row["dorsal"]
         runner.club = row["club"]
