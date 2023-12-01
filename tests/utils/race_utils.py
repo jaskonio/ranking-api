@@ -25,9 +25,9 @@ def build_race(id="R001", name="RName001", url="R_url_001", runners_fake=[], raw
         id=id,
         name=name,
         url=url,
-        is_sorted=is_sorted,
-        order=order,
         raw_ranking=raw_ranking_fake,
-        runners=runners_fake,
-        ranking=ranking_fake
+        order=order,
+        is_sorted=is_sorted,
+        ranking=ranking_fake,
+        participants=runners_fake
         )

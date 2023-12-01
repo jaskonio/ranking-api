@@ -7,5 +7,5 @@ def build_league(id="L001", name="LN001", races=[], ranking=[], runners=[]):
         name=name,
         races=races,
         ranking=ranking,
-        runners=runners
+        participants=runners
         )
