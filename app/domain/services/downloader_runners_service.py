@@ -11,13 +11,16 @@ class DownloaderRunnersService:
         self.__mapper_runners_factory = mapper_runners_factory
 
     def get_all_runners(self, race_options:RaceDownloaderOptions):
-        response = self.__http_service.get_data(race_options)
+        try:
+            response = self.__http_service.get_data(race_options)
 
-        mapper = self.__mapper_runners_factory.factory_method(race_options.type)
+            mapper = self.__mapper_runners_factory.factory_method(race_options.type)
 
-        runners = mapper.execute(response)
+            runners = mapper.execute(response)
 
-        return runners
+            return runners
+        except Exception as e:
+            return []
 
     def get_runners_by_persons(self, race_options: RaceDownloaderOptions, persons: List[Person]):
         all_runners = self.get_all_runners(race_options)

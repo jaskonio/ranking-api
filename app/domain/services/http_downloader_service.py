@@ -21,4 +21,4 @@ class HTTPDownloaderService(IDownloaderBase):
             return contenido_parseado
 
         except requests.exceptions.RequestException as e:
-            return f"Error en la solicitud: {e}"
+            raise e
