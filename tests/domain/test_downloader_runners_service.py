@@ -7,6 +7,7 @@ from app.domain.repository.idownloader_race_data import RaceDownloaderOptions
 from app.domain.services.downloader_runners_service import DownloaderRunnersService
 from app.domain.services.http_downloader_service import HTTPDownloaderService
 from app.domain.services.mappe_runners_factory import MappeRunnersFactory
+from app.domain.services.race_downloader_options_factory import RaceDownloaderOptionsFactory
 from app.domain.services.sportmaniacs_mapper_service import SportmaniacsMapperService
 
 
@@ -14,10 +15,12 @@ class TestDownloaderRunnersService(unittest.TestCase):
     def setUp(self):
         self.http_service_mock = MagicMock(spec=HTTPDownloaderService)
         self.mapper_runners_factory_mock = MagicMock(spec=MappeRunnersFactory)
+        self.race_downloader_options_factory = MagicMock(spec=RaceDownloaderOptionsFactory)
 
         self.downloader_service = DownloaderRunnersService(
             http_service=self.http_service_mock,
-            mapper_runners_factory=self.mapper_runners_factory_mock
+            mapper_runners_factory=self.mapper_runners_factory_mock,
+            race_downloader_options_factory=self.race_downloader_options_factory
         )
 
     def test_get_all_runners_return_empty_list(self):

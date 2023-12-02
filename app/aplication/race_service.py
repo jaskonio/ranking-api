@@ -23,24 +23,30 @@ class RaceService():
 
         return race
 
-    def add(self, race_options: RaceDownloaderOptions) -> Race:
-        race = Race(id=0, name=race_options.race_name, url=race_options.url)
-
-        if not race_options.is_sorted:
-            runners:List[RunnerRaceRanking] = self.__downloader_runners_service.get_runners_by_persons(race_options, self.__person_repository.get_all())
-            race.set_raw_ranking(runners)
-
-        race_id = self.__race_repository.add(race)
+    def add(self, new_race: Race) -> Race:
+        # race = Race(id=0, name=race_options.race_name, url=race_options.url)
+        race_id = self.__race_repository.add(new_race)
 
         race = self.__race_repository.get_by_id(race_id)
 
         return race
 
-    def update_by_id(self, race_id:str, new_race):
-        if not new_race.is_sorted:
-            runners:List[RunnerRaceRanking] = self.__downloader_runners_service.download_race_data(new_race.url, self.__person_repository)
-            new_race.set_ranking(runners)
+    def processed_runners(self, race_id:str):
+        race:Race = self.__race_repository.get_by_id(race_id)
 
+        runners:List[RunnerRaceRanking] = self.__downloader_runners_service.get_runners_by_persons(race, self.__person_repository.get_all())
+
+        race.set_raw_ranking(runners)
+
+        status = self.__race_repository.update_by_id(race.id, race)
+
+        if status:
+            race = self.__race_repository.get_by_id(race.id)
+            return race
+        else:
+            return None
+
+    def update_by_id(self, race_id:str, new_race):
         status = self.__race_repository.update_by_id(race_id, new_race)
 
         if status:

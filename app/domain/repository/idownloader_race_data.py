@@ -5,6 +5,11 @@ class TypeService(Enum):
     VALENCIACIUDADDELRUNNING = 2
     TOPRUN = 3
 
+class TypePlatformInscriptions(Enum):
+    SPORTMANIACS_LATEST = 1
+    VALENCIACIUDADDELRUNNING_LATEST = 2
+    TOPRUN_LATEST = 3
+
 class DownloaderHTTPOptions():
     def __init__(self):
         pass

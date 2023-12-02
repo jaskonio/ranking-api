@@ -3,13 +3,14 @@ from app.core.mapper_utils import dicts_to_class
 from app.domain.model.race_base import RaceBase
 from app.domain.model.runner_base import RunnerBase
 from app.domain.model.runner_race_ranking import RunnerRaceRanking
+from app.domain.repository.idownloader_race_data import TypePlatformInscriptions
 
 
 class Race(RaceBase):
-    def __init__(self, id, name: str='', url: str='', raw_ranking: List[RunnerRaceRanking] = None
+    def __init__(self, id, name: str='', url: str='', raw_ranking: List[RunnerRaceRanking] = None, platform_inscriptions:TypePlatformInscriptions = None
                  , order:int = 0, is_sorted: bool = False, ranking: List[RunnerRaceRanking] = None
                  , participants: List[RunnerBase] = None):
-        super().__init__(id, name, url, raw_ranking)
+        super().__init__(id, name, url, raw_ranking, platform_inscriptions)
         self.participants:List[RunnerBase] = [] if participants is None else dicts_to_class(RunnerBase, participants)
         self.ranking:List[RunnerRaceRanking] = [] if ranking is None else dicts_to_class(RunnerRaceRanking, ranking)
         self.order = order

@@ -20,8 +20,6 @@ class TestMapperRunnersFactory(unittest.TestCase):
         http_options = DownloaderHTTPOptions()
         http_options.type = ''
 
-        # result = self.factory.factory_method(http_options)
-
         with self.assertRaises(ValueError):
             self.factory.factory_method(http_options)
 
