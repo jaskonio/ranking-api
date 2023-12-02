@@ -24,4 +24,4 @@ jobs:
         pip install -r requirements.txt
     - name: Coverage the code
       run: |
-        coverage run -m unittest && coverage report --include app\* && coverage html --include app\* -d reports\coverage
+        coverage run -m unittest && coverage report --include app/* && coverage html --include app/* -d reports/coverage
