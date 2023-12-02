@@ -11,3 +11,9 @@ pymongo==3.10.1
 pyyaml==6.0
 pylint==2.17.4
 dnspython==1.16.0
+PyJWT==2.7.0
+python-jose[cryptography]
+Pillow==9.5.0
+fastapi-utils==0.2.1
+coverage
+pytest-html==4.1.1

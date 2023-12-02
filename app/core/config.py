@@ -9,9 +9,11 @@ class Settings:
     PROJECT_NAME: str = "Ranking Redolat Team"
     PROJECT_VERSION: str = "1.0.0"
 
-    MONGODB_URI: str = os.getenv("MONGODB_URI")
-    MONGODB_DATABASE: str = os.getenv("MONGODB_DATABASE")
+    DATABASE_TYPE: str = os.getenv("DATABASE_TYPE")
+    DATABASE_NAME: str = os.getenv("DATABASE_NAME")
+    CONNECTION_STRING: str = ''
 
-    TEST_USER_EMAIL = "test@example.com"
+    if DATABASE_TYPE == 'MONGODB':
+        CONNECTION_STRING = os.getenv("MONGODB_CONNECTION_STING")
 
 settings = Settings()
