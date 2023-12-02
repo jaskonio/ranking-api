@@ -11,10 +11,10 @@ class Race(RaceBase):
                  , order:int = 0, is_sorted: bool = False, ranking: List[RunnerRaceRanking] = None
                  , participants: List[RunnerBase] = None):
         super().__init__(id, name, url, raw_ranking, platform_inscriptions)
-        self.participants:List[RunnerBase] = [] if participants is None else dicts_to_class(RunnerBase, participants)
-        self.ranking:List[RunnerRaceRanking] = [] if ranking is None else dicts_to_class(RunnerRaceRanking, ranking)
         self.order = order
         self.is_sorted = is_sorted
+        self.ranking:List[RunnerRaceRanking] = ranking
+        self.participants:List[RunnerBase] = participants
 
     def add_runners(self, runners:List[RunnerRaceRanking]):
         for runner in runners:

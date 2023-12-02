@@ -72,7 +72,7 @@ Second, turn the coverage data into a report:
 To generate the coverage report in HTML format, you change the option of the coverage module to HTML like this:
 
 ```cmd
-    coverage html --include app\*
+    coverage html --include app\* -d reports\coverage
 ```
 
 ```cmd

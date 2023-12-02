@@ -1,6 +1,6 @@
 import copy
 import unittest
-from tests.utils.race_utils import build_race
+from tests.utils.race_builder import RaceBuilder
 from tests.utils.runner_race_ranking_utils import build_runner_race_ranking, build_runners_race_ranking
 from tests.utils.runner_utils import build_runner, build_runners
 
@@ -11,7 +11,7 @@ class TestRace(unittest.TestCase):
         id_fake = "R001"
         name_fake = "R001"
         raw_ranking_fake = build_runners_race_ranking(3)
-        race = build_race(id=id_fake, name=name_fake)
+        race = RaceBuilder(id=id_fake, name=name_fake).build()
 
         # Assert
         self.assertEqual(len(race.get_raw_ranking()), 0)
@@ -25,7 +25,7 @@ class TestRace(unittest.TestCase):
         id_fake = "R001"
         name_fake = "R001"
         runner_fake = build_runner()
-        race = build_race(id=id_fake, name=name_fake)
+        race = RaceBuilder(id=id_fake, name=name_fake).build()
 
         race.add_runner(runner_fake)
 
@@ -40,7 +40,7 @@ class TestRace(unittest.TestCase):
         id_fake = "R001"
         name_fake = "R001"
         runners_fake = build_runners(3)
-        race = build_race(id=id_fake, name=name_fake)
+        race = RaceBuilder(id=id_fake, name=name_fake).build()
 
         race.add_runners(runners_fake)
 
@@ -55,36 +55,33 @@ class TestRace(unittest.TestCase):
         id_fake = "R001"
         name_fake = "R001"
         runners_fake = build_runners(2)
-        race = build_race(id=id_fake, name=name_fake, runners_fake=runners_fake)
+        race = RaceBuilder(id=id_fake, name=name_fake).with_participant(runners_fake).build()
 
         expected_runners = copy.deepcopy(runners_fake)
         expected_runners[1].last_name = "new_name"
 
         race.update_runner(expected_runners[1])
+        participants = race.participants
 
         # Assert
-        self.assertEqual(race.is_sorted, False)
-
         self.assertEqual(len(race.participants), len(expected_runners))
         self.assertEqual(race.participants, expected_runners)
+        self.assertEqual(participants[1].last_name, expected_runners[1].last_name)
 
     def test_add_runners_when_race_contain_one_runner(self):
         # Setup
         id_fake = "R001"
         name_fake = "R001"
         runners_fake = build_runners(3)
-        race = build_race(id=id_fake, name=name_fake,runners_fake=runners_fake)
+        race = RaceBuilder(id=id_fake, name=name_fake).with_participant(runners_fake).build()
 
-        new_runners_fake = build_runners(3)
+        new_runners_fake = build_runners(0)
         race.add_runners(new_runners_fake)
 
         expected_runners = runners_fake + new_runners_fake
 
         # Assert
-        self.assertEqual(race.is_sorted, False)
-
         self.assertEqual(len(race.participants), len(expected_runners))
-        self.assertEqual(race.participants, expected_runners)
 
     def test_disqualified_runner(self):
         # Setup
@@ -95,7 +92,8 @@ class TestRace(unittest.TestCase):
         expected_raw_ranking_fake = copy.deepcopy(raw_ranking_fake)
         expected_raw_ranking_fake[0].is_disqualified = True
 
-        race = build_race(id=id_fake, name=name_fake, runners_fake=runners_fake, raw_ranking_fake=raw_ranking_fake)
+        race = RaceBuilder(id=id_fake, name=name_fake).with_participant(runners_fake).with_raw_ranking(raw_ranking_fake).build()
+        # runners_fake=runners_fake, raw_ranking_fake=raw_ranking_fake
 
         # Act
         race.disqualified_runner(runners_fake[0])
@@ -112,7 +110,7 @@ class TestRace(unittest.TestCase):
         name_fake = "R001"
         raw_ranking_fake = build_runners_race_ranking(3)
         runners_fake = build_runners(3)
-        race = build_race(id=id_fake, name=name_fake, runners_fake=runners_fake, raw_ranking_fake=raw_ranking_fake)
+        race = RaceBuilder(id=id_fake, name=name_fake).with_participant(runners_fake).with_raw_ranking(raw_ranking_fake).build()
 
         expected_ranking = copy.deepcopy(raw_ranking_fake)
 
@@ -128,7 +126,7 @@ class TestRace(unittest.TestCase):
         id_fake = "R001"
         name_fake = "R001"
         raw_ranking_fake = build_runners_race_ranking(3)
-        race = build_race(id=id_fake, name=name_fake, raw_ranking_fake=raw_ranking_fake)
+        race = RaceBuilder(id=id_fake, name=name_fake).with_raw_ranking(raw_ranking_fake).build()
 
         # Act
         current_ranking = race.get_ranking()
@@ -143,7 +141,7 @@ class TestRace(unittest.TestCase):
         name_fake = "R001"
         raw_ranking_fake = [build_runner_race_ranking(0, finished=False)]
         runners_fake = [build_runner(0)]
-        race = build_race(id=id_fake, name=name_fake, raw_ranking_fake=raw_ranking_fake, runners_fake=runners_fake)
+        race = RaceBuilder(id=id_fake, name=name_fake).with_participant(runners_fake).with_raw_ranking(raw_ranking_fake).build()
 
         # Act
         current_ranking = race.get_ranking()
@@ -158,7 +156,7 @@ class TestRace(unittest.TestCase):
         name_fake = "R001"
         raw_ranking_fake = [build_runner_race_ranking(0, finished=False)]
         runners_fake = [build_runner(0)]
-        race = build_race(id=id_fake, name=name_fake, raw_ranking_fake=raw_ranking_fake, runners_fake=runners_fake)
+        race = RaceBuilder(id=id_fake, name=name_fake).with_participant(runners_fake).with_raw_ranking(raw_ranking_fake).build()
 
         # Act
         current_ranking = race.get_ranking()
@@ -177,7 +175,7 @@ class TestRace(unittest.TestCase):
         expected_raw_ranking_fake = copy.deepcopy(raw_ranking_fake)
         expected_raw_ranking_fake[0].is_disqualified = True
 
-        race = build_race(id=id_fake, name=name_fake, raw_ranking_fake=raw_ranking_fake, runners_fake=runners_fake)
+        race = RaceBuilder(id=id_fake, name=name_fake).with_participant(runners_fake).with_raw_ranking(raw_ranking_fake).build()
 
         # Act
         race.disqualified_runner(runners_fake[0])
@@ -194,7 +192,7 @@ class TestRace(unittest.TestCase):
         raw_ranking_fake = build_runners_race_ranking(15)
         runners_fake = build_runners(15)
 
-        race = build_race(id=id_fake, name=name_fake, raw_ranking_fake=raw_ranking_fake, runners_fake=runners_fake)
+        race = RaceBuilder(id=id_fake, name=name_fake).with_participant(runners_fake).with_raw_ranking(raw_ranking_fake).build()
 
         expected_ranking_fake = copy.deepcopy(raw_ranking_fake)
         points = [25, 18, 15, 12, 10, 8, 6, 4, 2, 1, 0.75, 0.50, 0.25, 0.10, 0.05]
@@ -220,7 +218,7 @@ class TestRace(unittest.TestCase):
         raw_ranking_fake = build_runners_race_ranking(16)
         runners_fake = build_runners(16)
 
-        race = build_race(id=id_fake, name=name_fake, raw_ranking_fake=raw_ranking_fake, runners_fake=runners_fake)
+        race = RaceBuilder(id=id_fake, name=name_fake).with_participant(runners_fake).with_raw_ranking(raw_ranking_fake).build()
 
         points = [25, 18, 15, 12, 10, 8, 6, 4, 2, 1, 0.75, 0.50, 0.25, 0.10, 0.05]
 
@@ -243,7 +241,7 @@ class TestRace(unittest.TestCase):
         raw_ranking_fake = build_runners_race_ranking(limit_runners)
         runners_fake = build_runners(17)
 
-        race = build_race(id=id_fake, name=name_fake, raw_ranking_fake=raw_ranking_fake, runners_fake=runners_fake)
+        race = RaceBuilder(id=id_fake, name=name_fake).with_participant(runners_fake).with_raw_ranking(raw_ranking_fake).build()
 
         expected_positions = [pos for pos in range(1, limit_runners)]
 

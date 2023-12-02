@@ -14,9 +14,9 @@ class RaceBuilder:
         self.participants = participants if participants is not None else []
 
     def with_raw_ranking(self, runner):
-        self.raw_ranking.append(runner)
+        self.raw_ranking = runner
         return self
-    
+
     def with_platform_inscriptions(self, platform_inscriptions):
         self.platform_inscriptions = platform_inscriptions
         return self
@@ -34,7 +34,7 @@ class RaceBuilder:
         return self
 
     def with_participant(self, runner):
-        self.participants.append(runner)
+        self.participants = runner
         return self
 
     def build(self):
