@@ -76,7 +76,7 @@ To generate the coverage report in HTML format, you change the option of the cov
 ```
 
 ```cmd
-    coverage run -m unittest && coverage report && coverage report
+    coverage run -m unittest && coverage report --include app\* && coverage html --include app\* -d reports\coverage
 ```
 
 ## Style
@@ -84,5 +84,5 @@ To generate the coverage report in HTML format, you change the option of the cov
 Check pylint
 
 ```cmd
-pylint ./app/
+    pylint ./app/
 ```
