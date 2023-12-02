@@ -50,28 +50,33 @@ Execute unittest:
     python -m unittest discover -s tests/ -p 'test*.py' -v --locals
 ```
 
+
+```cmd
+    pytest .\tests\ --html=reports\execution\report_execution_test.html
+```
+
 ## Coverage Code
 
 First, run the coverage module to generate the coverage data:
 
 ```cmd
-coverage run -m unittest
+    coverage run -m unittest
 ```
 
 Second, turn the coverage data into a report:
 
 ```cmd
-coverage report
+    coverage report --include app\*
 ```
 
 To generate the coverage report in HTML format, you change the option of the coverage module to HTML like this:
 
 ```cmd
-coverage html
+    coverage html --include app\*
 ```
 
 ```cmd
-coverage run -m unittest && coverage report && coverage report
+    coverage run -m unittest && coverage report && coverage report
 ```
 
 ## Style

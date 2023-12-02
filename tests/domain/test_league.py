@@ -2,7 +2,7 @@ import copy
 import unittest
 
 from tests.utils.league_utils import build_league
-from tests.utils.race_utils import build_race, build_races
+from tests.utils.race_utils import build_races
 from tests.utils.runner_race_ranking_utils import build_runners_race_ranking
 from tests.utils.runner_utils import build_runner, build_runners
 

@@ -16,3 +16,4 @@ python-jose[cryptography]
 Pillow==9.5.0
 fastapi-utils==0.2.1
 coverage
+pytest-html==4.1.1
