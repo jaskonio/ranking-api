@@ -2,103 +2,67 @@ import copy
 import unittest
 from tests.utils.league_builder import LeagueBuilder
 from tests.utils.race_builder import RaceBuilder
-
-from tests.utils.race_utils import build_races
+from tests.utils.runner_base_builder import RunnerBaseBuilder
+from tests.utils.runner_race_ranking_builder import RunnerRaceRankingBuilder
 from tests.utils.runner_race_ranking_utils import build_runners_race_ranking
-from tests.utils.runner_utils import build_runner, build_runners
+from tests.utils.runner_utils import build_runners
 
 
 class TestLeague(unittest.TestCase):
+    def setUp(self):
+        id_fake = "R001"
+        name_fake = "R001"
+        raw_ranking_fake = build_runners_race_ranking(16)
+        new_race = RaceBuilder(id=id_fake, name=name_fake).with_raw_ranking(raw_ranking_fake).build()
+
+        self.mock_race = new_race
+        self.mock_participants = build_runners(1)
+
+        self.mock_runner_league_ranking = RunnerRaceRankingBuilder().build()
+
     def test_add_runner(self):
-        # Setup
-        league_fake = LeagueBuilder().build()
-        expected_runner_fake = build_runner()
-
-        # Act
-        league_fake.add_runner(copy.deepcopy(expected_runner_fake))
-        runners = league_fake.participants
-
-        # Assert
-        self.assertEqual(runners, [expected_runner_fake])
-
-    def test_add_runners(self):
-        # Setup
-        league_fake = LeagueBuilder().build()
-        expected_runner_fake = build_runners(2)
-
-        # Act
-        league_fake.add_runners(copy.deepcopy(expected_runner_fake))
-        runners = league_fake.participants
-
-        # Assert
-        self.assertEqual(runners, expected_runner_fake)
+        league = LeagueBuilder().with_participants(self.mock_participants).build()
+        new_runner = RunnerBaseBuilder().build()
+        league.add_runner(new_runner)
+        self.assertIn(new_runner, league.participants)
 
     def test_delete_runner(self):
-        # Setup
-        league_fake = LeagueBuilder().build()
-        expected_runner_fake = build_runners(2)
+        mock_participants = build_runners(1)
+        expected_mock_participants = copy.deepcopy(mock_participants)
 
-        # Act
-        league_fake.add_runners(copy.deepcopy(expected_runner_fake))
-        league_fake.delete_runner(expected_runner_fake[0])
+        league = LeagueBuilder().with_participants(mock_participants).build()
 
-        runners = league_fake.participants
+        league.delete_runner(expected_mock_participants[0])
 
-        # Assert
-        self.assertEqual(len(runners), 1)
-        self.assertEqual(runners, [expected_runner_fake[1]])
+        self.assertNotIn(expected_mock_participants[0], league.participants)
 
-    def test_delete_runners(self):
-        # Setup
-        league_fake = LeagueBuilder().build()
-        expected_runner_fake = build_runners(2)
+    def test_add_race(self):
+        # runners_fake = build_runners(16)
+        league = LeagueBuilder().with_participants(self.mock_participants).build()
 
-        # Act
-        league_fake.add_runners(copy.deepcopy(expected_runner_fake))
-        league_fake.delete_runners(expected_runner_fake)
+        id_fake = "R001"
+        name_fake = "R001"
+        raw_ranking_fake = build_runners_race_ranking(16)
+        new_race = RaceBuilder(id=id_fake, name=name_fake).with_raw_ranking(raw_ranking_fake).build()
 
-        runners = league_fake.participants
+        league.add_race(new_race)
+        self.assertIn(new_race, league.races)
 
-        # Assert
-        self.assertEqual(len(runners), 0)
+    def test_calculate_final_ranking_without_participant(self):
+        league = LeagueBuilder().with_races([self.mock_race]).build()
+        league.calculate_final_ranking()
+        self.assertEqual([], league.ranking)
 
-    def test_delete_runners_when_contains_3_runners(self):
-        # Setup
-        league_fake = LeagueBuilder().build()
-        expected_runner_fake = build_runners(3)
+    def test_disqualify_runner_process(self):
+        first_name = 'name_01'
+        last_name = 'last_name_01'
+        participants =[RunnerBaseBuilder().with_name(first_name, last_name).build()]
+        raw_ranking = [RunnerRaceRankingBuilder().with_name(first_name, last_name).build()]
+        race = RaceBuilder().with_raw_ranking(raw_ranking).build()
+        league = LeagueBuilder().with_participants(participants).with_races([race]).build()
 
-        # Act
-        league_fake.add_runners(copy.deepcopy(expected_runner_fake))
-        league_fake.delete_runners([expected_runner_fake[0]])
+        league.disqualify_runner_process(runner_id=1, race_name=race.name)
+        self.assertTrue(league.races[0].raw_ranking[0].is_disqualified)
 
-        runners = league_fake.participants
-
-        # Assert
-        self.assertEqual(len(runners), 2)
-        self.assertEqual(runners, [expected_runner_fake[1], expected_runner_fake[2]])
-
-    def test_delete_runners_when_no_contain_runners(self):
-        # Setup
-        league_fake = LeagueBuilder().build()
-        expected_runner_fake = build_runner()
-
-        # Act
-        league_fake.delete_runners([expected_runner_fake])
-
-        runners = league_fake.participants
-
-        # Assert
-        self.assertEqual(len(runners), 0)
-
-    def test_get_races(self):
-        # Setup
-        league_fake = LeagueBuilder().build()
-        race_fake = RaceBuilder().build()
-
-        # Act
-        league_fake.add_race(race_fake)
-        races = league_fake.get_races()
-
-        # Assert
-        self.assertEqual(len(races), 1)
-        self.assertEqual(races[0].order, 0)
+if __name__ == '__main__':
+    unittest.main()

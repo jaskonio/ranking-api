@@ -2,7 +2,6 @@ import logging
 from collections import Counter
 from datetime import timedelta
 from typing import List
-from app.core.mapper_utils import dicts_to_class
 from app.domain.model.base_entity import BaseEntity
 from app.domain.model.race import Race
 from app.domain.model.runner_base import RunnerBase
@@ -17,9 +16,9 @@ class League(BaseEntity):
                  , participants: List[RunnerBase] = None ):
         self.id = str(id)
         self.name = name
-        self.races:List[Race] = dicts_to_class(Race, races)
-        self.ranking:List[RunnerLeagueRanking] = dicts_to_class(RunnerLeagueRanking, ranking)
-        self.participants:List[RunnerBase] = dicts_to_class(RunnerBase, participants)
+        self.races:List[Race] = [] if races is None else races
+        self.ranking:List[RunnerLeagueRanking] = [] if ranking is None else ranking
+        self.participants:List[RunnerBase] = [] if participants is None else participants
 
     def add_runners(self, new_runners:List[RunnerBase]):
         for new_runner in new_runners:
@@ -42,7 +41,9 @@ class League(BaseEntity):
 
     def add_race(self, new_race: Race):
         new_race.participants = self.participants
+
         runners_disqualified = self.__get_all_previus_disqualified_runners()
+
         for runner in runners_disqualified:
             new_race.disqualified_runner(runner)
 
@@ -108,14 +109,14 @@ class League(BaseEntity):
         self.ranking = runner_final_ranking
 
     def disqualify_runner_process(self, runner_id:int, race_name:str):
-        disqualified_runner = [runner for runner in self.participants if runner.id == runner_id]
+        disqualified_runner = [runner for runner in self.participants if runner.id == str(runner_id)]
 
         if len(disqualified_runner) == 0:
             return None
 
         current_race = [race for race in self.races if race.name == race_name][0]
 
-        current_race.disqualified_runner(disqualified_runner)
+        current_race.disqualified_runner(disqualified_runner[0])
         self.__update_subsequent_races(disqualified_runner, current_race)
 
     def __get_all_previus_disqualified_runners(self):
