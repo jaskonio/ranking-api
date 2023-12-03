@@ -1,7 +1,5 @@
-import copy
 import unittest
-from unittest.mock import MagicMock, patch
-from typing import List
+from unittest.mock import MagicMock
 from app.aplication.league_service import LeagueService
 from app.domain.model.league import League
 from app.domain.model.person import Person

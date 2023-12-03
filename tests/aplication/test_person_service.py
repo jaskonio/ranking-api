@@ -102,6 +102,3 @@ class TestPersonService(unittest.TestCase):
         # Assertions
         self.assertFalse(result)
         self.person_repository_mock.delete_by_id.assert_called_once_with(1)
-
-if __name__ == '__main__':
-    unittest.main()

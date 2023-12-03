@@ -3,7 +3,6 @@ import unittest
 from unittest.mock import Mock
 from app.aplication.race_service import RaceService
 from app.domain.model.runner_race_ranking import RunnerRaceRanking
-from app.domain.repository.idownloader_race_data import RaceDownloaderOptions
 from app.domain.repository.igeneric_repository import IGenericRepository
 from app.domain.services.downloader_runners_service import DownloaderRunnersService
 from tests.utils.race_builder import RaceBuilder

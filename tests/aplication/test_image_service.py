@@ -1,9 +1,5 @@
 import unittest
-from unittest.mock import MagicMock, patch
-import base64
-from PIL import Image
-from io import BytesIO
-from fastapi.responses import StreamingResponse
+from unittest.mock import MagicMock
 from app.aplication.image_service import ImageService
 from app.domain.repository.igeneric_repository import IGenericRepository
 
