@@ -1,5 +1,4 @@
 from typing import List
-from app.core.mapper_utils import dicts_to_class
 from app.domain.model.race_base import RaceBase
 from app.domain.model.runner_base import RunnerBase
 from app.domain.model.runner_race_ranking import RunnerRaceRanking

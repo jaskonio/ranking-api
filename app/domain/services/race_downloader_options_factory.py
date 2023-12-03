@@ -9,9 +9,15 @@ class RaceDownloaderOptionsFactory():
         options = RaceDownloaderOptions()
 
         if race.platform_inscriptions_type == TypePlatformInscriptions.SPORTMANIACS_LATEST:
+            race_url_splitted = race.url.split('/')
+            race_id = 'default_race_id'
+
+            if len(race_url_splitted) >= 1:
+                race_id = race_url_splitted[-1]
+
             options.type = TypeService.SPORTMANIACS
             options.method = 'GET'
-            options.url = 'https://sportmaniacs.com/es/races/rankings/' + race.url.split('/')[-1]
+            options.url = 'https://sportmaniacs.com/es/races/rankings/' + race_id
             options.race_name = race.name
 
             return options
