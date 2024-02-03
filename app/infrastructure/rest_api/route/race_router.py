@@ -5,6 +5,7 @@ from app.domain.model.race import Race
 from app.domain.services.downloader_runners_service import DownloaderRunnersService
 from app.domain.services.http_downloader_service import HTTPDownloaderService
 from app.domain.services.mappe_runners_factory import MappeRunnersFactory
+from app.domain.services.race_downloader_options_factory import RaceDownloaderOptionsFactory
 from app.infrastructure.mongoDB.model.race_model import RaceModel
 from app.infrastructure.repository.repository_utils import load_repository_from_config
 from app.infrastructure.rest_api.controller.race_controller import RaceController
@@ -15,7 +16,7 @@ race_router = APIRouter()
 db = load_repository_from_config()
 controller = RaceController(RaceService(db.get_repository('Races', Race)
                                         , db.get_repository('Persons', Person)
-                                        , DownloaderRunnersService(HTTPDownloaderService(), MappeRunnersFactory())))
+                                        , DownloaderRunnersService(HTTPDownloaderService(), MappeRunnersFactory(), RaceDownloaderOptionsFactory())))
 
 @race_router.get('/')
 def get_all():
