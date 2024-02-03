@@ -58,7 +58,7 @@ class Race(RaceBase):
         points = [25, 18, 15, 12, 10, 8, 6, 4, 2, 1, 0.75, 0.50, 0.25, 0.10, 0.05]
         point_index = 0
 
-        for runner in self.ranking:
+        for runner in self.ranking.sort():
             if point_index <= len(points)-1:
                 runner.points = points[point_index]
 
