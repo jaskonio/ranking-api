@@ -50,7 +50,6 @@ Execute unittest:
     python -m unittest discover -s tests/ -p 'test*.py' -v --locals
 ```
 
-
 ```cmd
     pytest .\tests\ --html=reports\execution\report_execution_test.html
 ```

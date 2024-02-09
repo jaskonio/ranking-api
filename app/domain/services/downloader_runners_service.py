@@ -12,6 +12,8 @@ class DownloaderRunnersService:
         self.__mapper_runners_factory = mapper_runners_factory
         self.__race_downloader_options_factory = race_downloader_options_factory
 
+        self.team_name = ['Redolat', 'redolatteam', 'redolat team']
+
     def get_all_runners(self, race: Race):
         try:
             race_options = self.__race_downloader_options_factory.factory_method(race)
@@ -22,7 +24,9 @@ class DownloaderRunnersService:
 
             runners = mapper.execute(response)
 
-            return runners
+            runners_filtered_by_team = self.__filter_by_team_name(runners)
+
+            return runners_filtered_by_team
         except Exception as e:
             return []
 
@@ -36,3 +40,12 @@ class DownloaderRunnersService:
                 runners.append(runner)
 
         return runners
+
+    def __filter_by_team_name(self, runners:List[RunnerRaceRanking]):
+        rankings_by_club_list = []
+
+        for runner in runners:
+            if runner.club in self.team_name:
+                rankings_by_club_list.append(runner)
+
+        return rankings_by_club_list

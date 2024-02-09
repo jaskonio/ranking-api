@@ -4,7 +4,6 @@ from app.domain.services.UtilsRunner import strtobool
 from app.domain.model.runner_race_ranking import RunnerRaceRanking
 
 class SportmaniacsMapperService(IMapperService):
-    team_name = ['Redolat', 'redolatteam', 'redolat team']
     # base_url = 'https://sportmaniacs.com/es/races/rankings/'
 
     def __init__(self):
@@ -17,19 +16,9 @@ class SportmaniacsMapperService(IMapperService):
         if 'Rankings' not in data['data']:
             return []
 
-        data_filtered_by_club = self.__filter_by_team_name(data['data']['Rankings'])
-        race_data:List[RunnerRaceRanking] = self.__build_runners_model(data_filtered_by_club)
+        race_data:List[RunnerRaceRanking] = self.__build_runners_model(data['data']['Rankings'])
 
         return race_data
-
-    def __filter_by_team_name(self, rankings):
-        rankings_by_club_list = []
-        for row in rankings:
-            if 'club' in row:
-                if row['club'].lower() in self.team_name:
-                    rankings_by_club_list.append(row)
-
-        return rankings_by_club_list
 
     def __build_runners_model(self, runners):
         new_runners = []
