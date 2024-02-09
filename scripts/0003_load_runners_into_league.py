@@ -7,9 +7,13 @@ from typing import List
 from requests import request
 
 
-PATH_FILE = './scripts/eliTEAM - Masculino_2023.csv'
-BASE_PATH = "https://ranking-api-jpzy.onrender.com"
-# BASE_PATH = "http://127.0.0.1:8000"
+PATH_FILE = './scripts/resources/2023/eliTEAM - Masculino.csv'
+# BASE_PATH = "https://ranking-api-jpzy.onrender.com"
+
+BASE_PATH = "http://localhost:8000"
+PERSON_ENDPOINT = BASE_PATH + "/persons"
+LEAGUE_ENDPOINT = BASE_PATH + "/leagues/"
+ADD_RUNNER_INTO_LEAGUE_ENDPOINT = BASE_PATH + "/leagues/$$LEAGUE_ID$$/add_runner"
 
 class PersonFile():
     def __init__(self, first_name: str = '', last_name:str = '', dorsal: int = 0, gender:str = ''
@@ -43,7 +47,6 @@ class RunnerBody():
         self.person_id = str(person_id)
         self.dorsal = int(dorsal)
 
-
 def persons_from_file(path_file):
     with open(path_file, newline='') as csvfile:
         reader = csv.reader(csvfile, delimiter=';',)
@@ -60,12 +63,11 @@ def persons_from_file(path_file):
         return persons
 
 def get_league_by_name(league_name):
-    url = BASE_PATH + "/leagues"
     headers = {
         'Content-Type': 'application/json'
     }
 
-    response = request("GET", url, headers=headers, timeout=60)
+    response = request("GET", LEAGUE_ENDPOINT, headers=headers, timeout=60)
 
     for league in response.json():
         if league['name'] == league_name:
@@ -74,18 +76,16 @@ def get_league_by_name(league_name):
     return None
 
 def get_all_person():
-    url = BASE_PATH + "/persons"
     headers = {
         'Content-Type': 'application/json'
     }
 
-    response = request("GET", url, headers=headers, timeout=60)
+    response = request("GET", PERSON_ENDPOINT, headers=headers, timeout=60)
 
     return [Person(**item) for item in response.json()]
 
 def add_person_into_league(person_file:PersonFile, league_id:str, person_db:Person):
-
-    url = BASE_PATH + f'/leagues/{league_id}/add_runner'
+    url = ADD_RUNNER_INTO_LEAGUE_ENDPOINT.replace("$$LEAGUE_ID$$", league_id)
 
     runner: RunnerBody = RunnerBody(person_id=person_db.id, dorsal=person_file.dorsal)
 
@@ -124,11 +124,6 @@ if __name__ == '__main__':
         equal_person_db:Person = Person()
 
         for person_db in all_person_db:
-            # print("db")
-            # print(person_db.id, person_db.first_name, person_db.last_name)
-            # print("file")
-            # print(person_file.first_name, person_file.last_name)
-
             if person_db.first_name + person_db.last_name == person_file.first_name + person_file.last_name:
                 equal_person_db = person_db
                 break

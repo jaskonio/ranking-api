@@ -6,4 +6,4 @@ class LeagueRequest(BaseMongoModel):
     name: str
     races:List[dict] = []
     ranking:List[dict] = []
-    runners:List[dict] = []
+    participants:List[dict] = []

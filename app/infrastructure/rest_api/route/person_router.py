@@ -1,3 +1,4 @@
+from typing import List
 from fastapi import APIRouter
 from app.domain.model.person import Person
 from app.infrastructure.repository.repository_utils import load_repository_from_config
@@ -20,9 +21,13 @@ def get_by_id(person_id:str):
     return controller.get_by_id(person_id)
 
 @person_router.post('/')
-def add(person: PersonRequest):
-    person_model = person.to_entity(Person)
-    return controller.add(person_model)
+def adds(persons: List[PersonRequest]):
+    results = []
+    for person in persons:
+        person_model = person.to_entity(Person)
+        results.append(controller.add(person_model))
+
+    return results
 
 @person_router.put('/{person_id}')
 def update_by_id(person_id: str, person: PersonRequest):

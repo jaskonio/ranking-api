@@ -27,9 +27,13 @@ def get_by_id(league_id:str):
     return controller.get_by_id(league_id)
 
 @league_router.post('/')
-def add(race: LeagueRequest):
-    race_entity = race.to_entity(League)
-    return controller.add(race_entity)
+def add(leagues: List[LeagueRequest]):
+    results = []
+    for league in leagues:
+        league_model = league.to_entity(League)
+        results.append(controller.add(league_model))
+
+    return results
 
 @league_router.post('/{league_id}/add_runners')
 def add_runners(league_id:str, new_runners: List[RunnerRequest]):
