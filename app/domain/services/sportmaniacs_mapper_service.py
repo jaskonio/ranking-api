@@ -32,10 +32,10 @@ class SportmaniacsMapperService(IMapperService):
 
     def __build_runner_model(self, row):
         runner = RunnerRaceRanking()
-        runner.first_name = row["name"] if "name" in row else None
-        runner.dorsal = row["dorsal"] if "name" in row else None
-        runner.club = row["club"] if "name" in row else None
-        runner.nationality = row["nationality"] if "name" in row else None
+        runner.first_name = " ".join(row["name"].split()) if "name" in row else None
+        runner.dorsal = row["dorsal"] if "dorsal" in row else None
+        runner.club = row["club"] if "club" in row else None
+        runner.nationality = row["nationality"] if "nationality" in row else None
         runner.finished = strtobool(row["finishedRace"]) if "finishedRace" in row else None
         runner.gender = self.__convert_to_gender(row["gender"]) if "gender" in row else None
         runner.category = row["category"] if "category" in row else None

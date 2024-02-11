@@ -154,7 +154,7 @@ class LeagueService():
         league.id = league_id
         league.name = new_league.name
 
-        league.add_runners(new_league.runners)
+        league.add_runners(new_league.participants)
         league.add_races(new_league.races)
 
         status = self.league_repository.update_by_id(league_id, league)

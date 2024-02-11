@@ -4,11 +4,11 @@ from app.domain.repository.idownloader_race_data import RaceDownloaderOptions, T
 
 class RaceDownloaderOptionsFactory():
     def factory_method(self, race:Race):
-        print("Factory Mapper. Type:" + str(race.platform_inscriptions_type))
+        print("Factory Mapper. Type:" + str(race.platform_inscriptions))
 
         options = RaceDownloaderOptions()
-
-        if race.platform_inscriptions_type == TypePlatformInscriptions.SPORTMANIACS_LATEST:
+        platform_inscriptions = TypePlatformInscriptions(race.platform_inscriptions)
+        if platform_inscriptions == TypePlatformInscriptions.SPORTMANIACS_LATEST:
             race_url_splitted = race.url.split('/')
             race_id = 'default_race_id'
 
@@ -19,15 +19,16 @@ class RaceDownloaderOptionsFactory():
             options.method = 'GET'
             options.url = 'https://sportmaniacs.com/es/races/rankings/' + race_id
             options.race_name = race.name
+            options.content_type = "JSON"
 
             return options
 
-        if race.platform_inscriptions_type == TypePlatformInscriptions.VALENCIACIUDADDELRUNNING_LATEST:
+        if race.platform_inscriptions == TypePlatformInscriptions.VALENCIACIUDADDELRUNNING_LATEST:
             options.type = TypeService.VALENCIACIUDADDELRUNNING
 
             return options
 
-        if race.platform_inscriptions_type == TypePlatformInscriptions.TOPRUN_LATEST:
+        if race.platform_inscriptions == TypePlatformInscriptions.TOPRUN_LATEST:
             options.type = TypeService.TOPRUN
 
             return options

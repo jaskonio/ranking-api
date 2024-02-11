@@ -6,7 +6,7 @@ from app.domain.repository.idownloader_race_data import TypePlatformInscriptions
 
 
 class Race(RaceBase):
-    def __init__(self, id, name: str='', url: str='', raw_ranking: List[RunnerRaceRanking] = None, platform_inscriptions:TypePlatformInscriptions = None
+    def __init__(self, id, name: str='', url: str='', raw_ranking: List[RunnerRaceRanking] = None, platform_inscriptions:TypePlatformInscriptions = 1
                  , order:int = 0, is_sorted: bool = False, ranking: List[RunnerRaceRanking] = None
                  , participants: List[RunnerBase] = None):
         super().__init__(id, name, url, raw_ranking, platform_inscriptions)

@@ -16,6 +16,9 @@ class ImageService():
         if person is None:
             return None
 
+        if person.photo == "":
+            return None
+
         binary = person.photo.split(',')[1]
 
         image_stream = self.__resize_base64_image(binary, 90 ,90)

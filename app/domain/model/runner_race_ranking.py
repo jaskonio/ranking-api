@@ -58,4 +58,4 @@ class RunnerRaceRanking(RunnerBase):
         return (self.first_name != other.first_name and self.last_name != other.last_name)
 
     def __eq__(self, other):
-        return (self.first_name == other.first_name and self.last_name == other.last_name)
+        return (self.first_name == other.first_name + " " + other.last_name) or (self.first_name == other.first_name and self.last_name == other.last_name)

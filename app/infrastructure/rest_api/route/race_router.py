@@ -2,13 +2,14 @@ from fastapi import APIRouter
 from app.aplication.race_service import RaceService
 from app.domain.model.person import Person
 from app.domain.model.race import Race
+from app.domain.model.race_base import RaceBase
 from app.domain.services.downloader_runners_service import DownloaderRunnersService
 from app.domain.services.http_downloader_service import HTTPDownloaderService
 from app.domain.services.mappe_runners_factory import MappeRunnersFactory
 from app.domain.services.race_downloader_options_factory import RaceDownloaderOptionsFactory
-from app.infrastructure.mongoDB.model.race_model import RaceModel
 from app.infrastructure.repository.repository_utils import load_repository_from_config
 from app.infrastructure.rest_api.controller.race_controller import RaceController
+from app.infrastructure.rest_api.model.race_request import RaceRequest
 
 
 race_router = APIRouter()
@@ -27,13 +28,13 @@ def get_by_id(race_id:str):
     return controller.get_by_id(race_id)
 
 @race_router.post('/')
-def add(race: RaceModel):
-    race_entity = race.to_entity(Race)
+def add(race: RaceRequest):
+    race_entity = race.to_entity(RaceBase)
     return controller.add(race_entity)
 
 @race_router.put('/{race_id}')
-def update_by_id(race_id: str, race: RaceModel):
-    race_entity = race.to_entity(Race)
+def update_by_id(race_id: str, race: RaceRequest):
+    race_entity = race.to_entity(RaceBase)
     return controller.update_by_id(race_id, race_entity)
 
 @race_router.delete('/{race_id}')

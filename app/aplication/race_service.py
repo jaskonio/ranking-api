@@ -45,7 +45,10 @@ class RaceService():
         else:
             return None
 
-    def update_by_id(self, race_id:str, new_race):
+    def update_by_id(self, race_id:str, new_race:Race):
+        runners:List[RunnerRaceRanking] = self.__downloader_runners_service.get_runners_by_persons(new_race, self.__person_repository.get_all())
+        new_race.set_raw_ranking(runners)
+
         status = self.__race_repository.update_by_id(race_id, new_race)
 
         if status:

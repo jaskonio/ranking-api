@@ -12,7 +12,7 @@ class DownloaderRunnersService:
         self.__mapper_runners_factory = mapper_runners_factory
         self.__race_downloader_options_factory = race_downloader_options_factory
 
-        self.team_name = ['Redolat', 'redolatteam', 'redolat team']
+        self.team_name = ['redolat', 'redolatteam', 'redolat team']
 
     def get_all_runners(self, race: Race):
         try:
@@ -20,7 +20,7 @@ class DownloaderRunnersService:
 
             response = self.__http_service.get_data(race_options)
 
-            mapper = self.__mapper_runners_factory.factory_method(race_options.type)
+            mapper = self.__mapper_runners_factory.factory_method(race_options)
 
             runners = mapper.execute(response)
 
@@ -45,7 +45,7 @@ class DownloaderRunnersService:
         rankings_by_club_list = []
 
         for runner in runners:
-            if runner.club in self.team_name:
+            if runner.club.lower() in self.team_name:
                 rankings_by_club_list.append(runner)
 
         return rankings_by_club_list

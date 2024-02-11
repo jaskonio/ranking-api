@@ -3,7 +3,7 @@ from app.domain.services.sportmaniacs_mapper_service import SportmaniacsMapperSe
 
 class MappeRunnersFactory:
     def factory_method(self, http_options: DownloaderHTTPOptions):
-        print("Factory Mapper. Type:" + str(http_options.type))
+        print("Factory Mapper. Type:" + str(http_options.type.name))
 
         if http_options.type == TypeService.SPORTMANIACS:
             return SportmaniacsMapperService()
