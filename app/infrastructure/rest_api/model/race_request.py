@@ -8,3 +8,4 @@ class RaceRequest(BaseMongoModel):
     url: str
     raw_ranking: List[dict] = Field(default_factory=list)
     platform_inscriptions:int = 1
+    processed:bool = False

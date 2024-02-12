@@ -61,3 +61,15 @@ class RaceController():
         except Exception as exception_error:
             self.logger.error("Error deleting: %s", exception_error)
             raise TypeError('An error occurred while deleting.') from None
+
+    def run(self, race_id):
+        try:
+            status = self.__race_service.process(race_id)
+
+            if status:
+                return status
+
+            return {}
+        except Exception as exception_error:
+            self.logger.error("Error deleting: %s", exception_error)
+            raise TypeError('An error occurred while deleting.') from None

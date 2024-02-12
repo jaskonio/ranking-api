@@ -1,5 +1,5 @@
 from typing import List
-from app.domain.model.race import Race
+from app.domain.model.race_base import RaceBase
 from app.domain.model.runner_race_ranking import RunnerRaceRanking
 from app.domain.repository.igeneric_repository import IGenericRepository
 from app.domain.services.downloader_runners_service import DownloaderRunnersService
@@ -12,26 +12,25 @@ class RaceService():
         self.__person_repository = person_repository
         self.__downloader_runners_service = downloader_runners_service
 
-    def get_all(self) -> List[Race]:
+    def get_all(self) -> List[RaceBase]:
         races = self.__race_repository.get_all()
 
         return races
 
-    def get_by_id(self, race_id) -> Race:
+    def get_by_id(self, race_id) -> RaceBase:
         race = self.__race_repository.get_by_id(race_id)
 
         return race
 
-    def add(self, new_race: Race) -> Race:
-        # race = Race(id=0, name=race_options.race_name, url=race_options.url)
+    def add(self, new_race: RaceBase) -> RaceBase:
         race_id = self.__race_repository.add(new_race)
 
         race = self.__race_repository.get_by_id(race_id)
 
         return race
 
-    def processed_runners(self, race_id:str):
-        race:Race = self.__race_repository.get_by_id(race_id)
+    def process(self, race_id:str):
+        race:RaceBase = self.__race_repository.get_by_id(race_id)
 
         runners:List[RunnerRaceRanking] = self.__downloader_runners_service.get_runners_by_persons(race, self.__person_repository.get_all())
 
@@ -45,10 +44,7 @@ class RaceService():
         else:
             return None
 
-    def update_by_id(self, race_id:str, new_race:Race):
-        runners:List[RunnerRaceRanking] = self.__downloader_runners_service.get_runners_by_persons(new_race, self.__person_repository.get_all())
-        new_race.set_raw_ranking(runners)
-
+    def update_by_id(self, race_id:str, new_race:RaceBase):
         status = self.__race_repository.update_by_id(race_id, new_race)
 
         if status:

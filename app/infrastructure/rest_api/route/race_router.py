@@ -1,7 +1,6 @@
 from fastapi import APIRouter
 from app.aplication.race_service import RaceService
 from app.domain.model.person import Person
-from app.domain.model.race import Race
 from app.domain.model.race_base import RaceBase
 from app.domain.services.downloader_runners_service import DownloaderRunnersService
 from app.domain.services.http_downloader_service import HTTPDownloaderService
@@ -15,13 +14,17 @@ from app.infrastructure.rest_api.model.race_request import RaceRequest
 race_router = APIRouter()
 
 db = load_repository_from_config()
-controller = RaceController(RaceService(db.get_repository('Races', Race)
+controller = RaceController(RaceService(db.get_repository('Races', RaceBase)
                                         , db.get_repository('Persons', Person)
                                         , DownloaderRunnersService(HTTPDownloaderService(), MappeRunnersFactory(), RaceDownloaderOptionsFactory())))
 
 @race_router.get('/')
 def get_all():
     return controller.get_all()
+
+@race_router.get('/run/{race_id}')
+def run(race_id:str):
+    return controller.run(race_id)
 
 @race_router.get('/{race_id}')
 def get_by_id(race_id:str):
