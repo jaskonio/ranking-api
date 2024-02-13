@@ -6,10 +6,10 @@ from app.domain.repository.idownloader_race_data import TypePlatformInscriptions
 
 
 class Race(RaceBase):
-    def __init__(self, id, name: str='', url: str='', raw_ranking: List[RunnerRaceRanking] = None, platform_inscriptions:TypePlatformInscriptions = 1
+    def __init__(self, id, name: str='', url: str='', raw_ranking: List[RunnerRaceRanking] = None, platform_inscriptions:TypePlatformInscriptions = 1, processed: bool = False
                  , order:int = 0, is_sorted: bool = False, ranking: List[RunnerRaceRanking] = None
                  , participants: List[RunnerBase] = None):
-        super().__init__(id, name, url, raw_ranking, platform_inscriptions)
+        super().__init__(id, name, url, raw_ranking, platform_inscriptions, processed)
         self.order = order
         self.is_sorted = is_sorted
         self.ranking:List[RunnerRaceRanking] = ranking
@@ -30,6 +30,7 @@ class Race(RaceBase):
 
     def ranking_process(self):
         self.__filter_raw_ranking_by_runners()
+        self.__order_ranking()
         self.__set_points()
 
         self.is_sorted = True
@@ -53,12 +54,15 @@ class Race(RaceBase):
                             and runner.finished
                             and not runner.is_disqualified]
 
+    def __order_ranking(self):
+        self.ranking = sorted(self.ranking, key=lambda item: item.real_pos, reverse=False)
+
     def __set_points(self):
         # Asignar puntos como en la F1
         points = [25, 18, 15, 12, 10, 8, 6, 4, 2, 1, 0.75, 0.50, 0.25, 0.10, 0.05]
         point_index = 0
 
-        for runner in self.ranking.sort():
+        for runner in self.ranking:
             if point_index <= len(points)-1:
                 runner.points = points[point_index]
 

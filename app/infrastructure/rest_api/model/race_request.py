@@ -1,11 +1,10 @@
 from typing import List
 from pydantic import Field
-from app.infrastructure.mongoDB.model.base_mongo_model import BaseMongoModel
+from app.infrastructure.rest_api.model.race_base_request import RaceBaseRequest
 
 
-class RaceRequest(BaseMongoModel):
-    name: str
-    url: str
-    raw_ranking: List[dict] = Field(default_factory=list)
-    platform_inscriptions:int = 1
-    processed:bool = False
+class RaceRequest(RaceBaseRequest):
+    order: int = 0
+    is_sorted: bool = False
+    ranking: List[dict] = Field(default_factory=list)
+    participants = []

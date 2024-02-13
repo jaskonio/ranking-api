@@ -7,8 +7,8 @@ from app.domain.model.race import Race
 from app.domain.model.runner_base import RunnerBase
 from app.infrastructure.repository.repository_utils import load_repository_from_config
 from app.infrastructure.rest_api.controller.league_controller import LeagueController
-from app.infrastructure.rest_api.model.legaue_request import LeagueRequest
-from app.infrastructure.rest_api.model.runner_request import RunnerRequest
+from app.infrastructure.rest_api.model.league_request import LeagueRequest
+from app.infrastructure.rest_api.model.runner_request import RunnerBaseRequest
 
 
 league_router = APIRouter()
@@ -36,21 +36,21 @@ def add(leagues: List[LeagueRequest]):
     return results
 
 @league_router.post('/{league_id}/add_runners')
-def add_runners(league_id:str, new_runners: List[RunnerRequest]):
+def add_runners(league_id:str, new_runners: List[RunnerBaseRequest]):
     runners_entities = [runner.to_entity(RunnerBase) for runner in new_runners]
     return controller.add_runners(league_id, runners_entities)
 
 @league_router.post('/{league_id}/add_runner')
-def add_runner(league_id:str, new_runner: RunnerRequest):
+def add_runner(league_id:str, new_runner: RunnerBaseRequest):
     runner_entity = new_runner.to_entity(RunnerBase, 'person_id')
     return controller.add_runner(league_id, runner_entity)
 
 @league_router.post('/{league_id}/delete_runners')
-def delete_runners(league_id:str, runners: List[RunnerRequest]):
+def delete_runners(league_id:str, runners: List[RunnerBaseRequest]):
     return controller.delete_runners(league_id, runners)
 
 @league_router.post('/{league_id}/delete_runner')
-def delete_runner(league_id:str, new_runner: RunnerRequest):
+def delete_runner(league_id:str, new_runner: RunnerBaseRequest):
     return controller.delete_runner(league_id, new_runner)
 
 @league_router.get('/{league_id}/add_race/{race_id}/order/{order_race}')

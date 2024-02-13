@@ -8,7 +8,7 @@ from app.domain.services.mappe_runners_factory import MappeRunnersFactory
 from app.domain.services.race_downloader_options_factory import RaceDownloaderOptionsFactory
 from app.infrastructure.repository.repository_utils import load_repository_from_config
 from app.infrastructure.rest_api.controller.race_controller import RaceController
-from app.infrastructure.rest_api.model.race_request import RaceRequest
+from app.infrastructure.rest_api.model.race_base_request import RaceBaseRequest
 
 
 race_router = APIRouter()
@@ -31,12 +31,12 @@ def get_by_id(race_id:str):
     return controller.get_by_id(race_id)
 
 @race_router.post('/')
-def add(race: RaceRequest):
+def add(race: RaceBaseRequest):
     race_entity = race.to_entity(RaceBase)
     return controller.add(race_entity)
 
 @race_router.put('/{race_id}')
-def update_by_id(race_id: str, race: RaceRequest):
+def update_by_id(race_id: str, race: RaceBaseRequest):
     race_entity = race.to_entity(RaceBase)
     return controller.update_by_id(race_id, race_entity)
 

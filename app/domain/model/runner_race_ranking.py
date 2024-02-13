@@ -38,22 +38,6 @@ class RunnerRaceRanking(RunnerBase):
         self.averages_ant = [] if averages_ant is None else averages_ant
         self.position_general_ant = [] if position_general_ant is None else position_general_ant
 
-    def __lt__(self, other):
-        time_format = "%H:%M:%S"
-        return datetime.strptime(self.real_time, time_format) < datetime.strptime(other.real_time, time_format)
-
-    def __gt__(self, other):
-        time_format = "%H:%M:%S"
-        return datetime.strptime(self.real_time, time_format) > datetime.strptime(other.real_time, time_format)
-
-    def __le__(self, other):
-        time_format = "%H:%M:%S"
-        return datetime.strptime(self.real_time, time_format) <= datetime.strptime(other.real_time, time_format)
-
-    def __ge__(self, other):
-        time_format = "%H:%M:%S"
-        return datetime.strptime(self.real_time, time_format) >= datetime.strptime(other.real_time, time_format)
-
     def __ne__(self, other):
         return (self.first_name != other.first_name and self.last_name != other.last_name)
 

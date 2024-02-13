@@ -8,3 +8,9 @@ class PersonRequest(BaseMongoModel):
     gender: str = ''
     photo: str = ''
     photo_url: str = ''
+
+
+class RunnerBaseRequest(PersonRequest):
+    dorsal:int = 0
+    club:str = ''
+    category:str = ''

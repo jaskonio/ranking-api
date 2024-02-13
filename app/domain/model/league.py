@@ -2,6 +2,7 @@ import logging
 from collections import Counter
 from datetime import timedelta
 from typing import List
+from app.core.mapper_utils import dicts_to_class
 from app.domain.model.base_entity import BaseEntity
 from app.domain.model.race import Race
 from app.domain.model.runner_base import RunnerBase
@@ -16,9 +17,9 @@ class League(BaseEntity):
                  , participants: List[RunnerBase] = None ):
         self.id = str(id)
         self.name = name
-        self.races:List[Race] = [] if races is None else races
-        self.ranking:List[RunnerLeagueRanking] = [] if ranking is None else ranking
-        self.participants:List[RunnerBase] = [] if participants is None else participants
+        self.races:List[Race] = [] if races is None else dicts_to_class(Race, races)
+        self.ranking:List[RunnerLeagueRanking] = [] if ranking is None else dicts_to_class(RunnerLeagueRanking, ranking)
+        self.participants:List[RunnerBase] = [] if participants is None else dicts_to_class(RunnerBase, participants)
 
     def add_runners(self, new_runners:List[RunnerBase]):
         for new_runner in new_runners:

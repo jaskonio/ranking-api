@@ -39,18 +39,41 @@ class SportmaniacsMapperService(IMapperService):
         runner.finished = strtobool(row["finishedRace"]) if "finishedRace" in row else None
         runner.gender = self.__convert_to_gender(row["gender"]) if "gender" in row else None
         runner.category = row["category"] if "category" in row else None
-        runner.position = row["position"] if "position" in row else None
 
-        runner.official_time = row["official_time"] if "official_time" in row else None
-        runner.official_avg_time = row["official_avg_time"] if "official_avg_time" in row else None
-        runner.official_cat_pos = row["official_cat_pos"] if "official_cat_pos" in row else None
-        runner.official_gen_pos = row["official_gen_pos"] if "official_gen_pos" in row else None
+        if "pos" in row:
+            if row["pos"] != '':
+                runner.position = int(row["pos"])
 
-        runner.real_time = row["real_time"] if "real_time" in row else None
-        runner.real_avg_time = row["real_avg_time"] if "real_avg_time" in row else None
-        runner.real_pos = row["real_pos"] if "real_pos" in row else None
-        runner.real_cat_pos = row["real_cat_pos"] if "real_cat_pos" in row else None
-        runner.real_gen_pos = row["real_gen_pos"] if "real_gen_pos" in row else None
+        runner.official_time = row["officialTime"] if "officialTime" in row else None
+        runner.official_avg_time = row["average"] if "average" in row else None
+
+        if "pos" in row:
+            if row["pos"] != '':
+                runner.official_pos = int(row["pos"])
+
+        if "catPos" in row:
+            if row["catPos"] != '':
+                runner.official_cat_pos = int(row["catPos"])
+
+        if "genPos" in row:
+            if row["genPos"] != '':
+                runner.official_gen_pos = int(row["genPos"])
+
+
+        runner.real_time = row["realTime"] if "realTime" in row else None
+        runner.real_avg_time = row["averageNet"] if "averageNet" in row else None
+
+        if "realPos" in row:
+            if row["realPos"] != '':
+                runner.real_pos = int(row["realPos"])
+
+        if "realCatPos" in row:
+            if row["realCatPos"] != '':
+                runner.real_cat_pos = int(row["realCatPos"])
+
+        if "realGenPos" in row:
+            if row["realGenPos"] != '':
+                runner.real_gen_pos = int(row["realGenPos"])
 
         return runner
 
