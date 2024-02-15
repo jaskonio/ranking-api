@@ -42,15 +42,7 @@ class LeagueService():
             self.logger.error("League not found.")
             return None
 
-        new_runners:List[RunnerBase] = []
-
-        for runner in runners:
-            person:Person = self.person_repository.get_by_id(runner.id)
-            new_runner = RunnerBase(person.to_dict())
-            new_runner.dorsal = runner.dorsal
-            new_runners.append(new_runner)
-
-        league.add_runners(new_runners)
+        league.add_runners(runners)
 
         self.league_repository.update_by_id(league_id, league)
         self.logger.info("Runner added successfully.")
