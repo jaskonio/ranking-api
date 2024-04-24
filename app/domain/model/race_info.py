@@ -13,3 +13,14 @@ class RaceInfo(BaseEntity):
         self.platform = platform_inscriptions
         self.processed = processed
         self.data = data
+
+class RaceInfoSimplified(BaseEntity):
+    def __init__(self, id, name: str='', url: str='', platform_inscriptions:TypePlatformInscriptions = 1, processed: bool = False
+                 , race_data_id: str = ''):
+        self.id = id
+        self.name = name
+        self.url = url
+        self.platform = platform_inscriptions
+        self.processed = processed
+        self.race_data_id = race_data_id
+        

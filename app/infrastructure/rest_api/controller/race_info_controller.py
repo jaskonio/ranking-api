@@ -1,5 +1,7 @@
 import logging
+from typing import List
 from app.aplication.race_info_service import RaceInfoService
+from app.infrastructure.rest_api.model.race_info import RaceInfoSimplified
 
 
 class RaceInfoController():
@@ -7,36 +9,43 @@ class RaceInfoController():
         self.__race_info_service = race_info_service
         self.logger = logging.getLogger(__name__)
 
-    def get_all(self):
+    def get_all_raw(self):
         try:
-            return self.__race_info_service.get_all()
+            return self.__race_info_service.get_all_raw()
         except Exception as exception_error:
             self.logger.error("Error retrieving all items: %s", exception_error)
             raise TypeError('An error occurred while retrieving all items.') from None
 
-    # def get_by_id(self, race_id):
-    #     try:
-    #         race = self.__race_info_service.get_by_id(race_id)
+    def get_all_simplified(self):
+        try:
+            return self.__race_info_service.get_all_simplified()
+        except Exception as exception_error:
+            self.logger.error("Error retrieving all items: %s", exception_error)
+            raise TypeError('An error occurred while retrieving all items.') from None
 
-    #         if race:
-    #             return race
+    def get_simplified_by_id(self, race_id):
+        try:
+            race = self.__race_info_service.get_simplified_by_id(race_id)
 
-    #         return {}
-    #     except Exception as exception_error:
-    #         self.logger.error("Error retrieving item: %s", exception_error)
-    #         raise TypeError('An error occurred while retrieving item.') from None
+            if race:
+                return race
 
-    # def add(self, race):
-    #     try:
-    #         race = self.__race_info_service.add(race)
+            return {}
+        except Exception as exception_error:
+            self.logger.error("Error retrieving item: %s", exception_error)
+            raise TypeError('An error occurred while retrieving item.') from None
 
-    #         if race:
-    #             return race
+    def add_simplified(self, race:RaceInfoSimplified):
+        try:
+            race = self.__race_info_service.add_simplified(race)
 
-    #         return {}
-    #     except Exception as exception_error:
-    #         self.logger.error("Error saving: %s", exception_error)
-    #         raise TypeError('An error occurred while saving.') from None
+            if race:
+                return race
+
+            return {}
+        except Exception as exception_error:
+            self.logger.error("Error saving: %s", exception_error)
+            raise TypeError('An error occurred while saving.') from None
 
     # def update_by_id(self, race_id:str, new_race):
     #     try:

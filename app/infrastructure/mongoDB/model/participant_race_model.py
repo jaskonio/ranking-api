@@ -1,7 +1,7 @@
-from app.infrastructure.mongoDB.model.base_mongo_model import BaseMongoModel
 
 
-class ParticipantRaceModel(BaseMongoModel):
+
+class ParticipantRaceModel(EntityBaseMongoModel):
     first_name: str
     last_name: str = ''
     gender: str = ''

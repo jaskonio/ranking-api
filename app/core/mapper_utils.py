@@ -25,5 +25,5 @@ def dict_to_class(class_name, data:dict, key_id:str =None):
         elif 'id' in data:
             new_id = data.pop('id', None)
 
-    new_class = class_name(**dict(data, id=new_id))
+    new_class = class_name(**dict(data, id=str(new_id)))
     return new_class

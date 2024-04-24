@@ -1,27 +1,35 @@
 from typing import List
 from app.domain.model.race_info import RaceInfo
 from app.infrastructure.mongoDB.repository.race_info_repository import RaceInfoRepository
+from app.infrastructure.rest_api.model.race_info import RaceInfoSimplified
+
 
 class RaceInfoService():
 
     def __init__(self):
         self.__race_info_repository = RaceInfoRepository()
+        # db = load_repository_from_config()
+        # self.__race_data_repository = db.get_repository('race_data', RaceDataModel)
 
-    def get_all(self) -> List[RaceInfo]:
-        all_races_info = self.__race_info_repository.get_all()
+    def get_all_raw(self) -> List[RaceInfo]:
+        all_races_info = self.__race_info_repository.get_all_raw()
 
         return all_races_info
 
-    # def get_by_id(self, race_id) -> RaceBase:
-    #     race = self.__race_repository.get_by_id(race_id)
-    #     return race
+    def get_all_simplified(self) -> List[RaceInfoSimplified]:
+        all_races_info = self.__race_info_repository.get_all_simplified()
+        return all_races_info
 
-    # def add(self, new_race: RaceBase) -> RaceBase:
-    #     race_id = self.__race_repository.add(new_race)
+    def get_simplified_by_id(self, race_id) -> RaceInfoSimplified:
+        race = self.__race_info_repository.get_simplified_by_id(race_id)
+        return race
 
-    #     race = self.__race_repository.get_by_id(race_id)
+    def add_simplified(self, new_race: RaceInfoSimplified) -> RaceInfoSimplified:
+        race_id = self.__race_info_repository.add_simplified(new_race)
 
-    #     return race
+        race = self.__race_info_repository.get_simplified_by_id(race_id)
+
+        return race
 
     # def process(self, race_id:str):
     #     race:RaceBase = self.__race_repository.get_by_id(race_id)

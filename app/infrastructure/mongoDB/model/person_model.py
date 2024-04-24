@@ -1,7 +1,7 @@
-from app.infrastructure.mongoDB.model.base_mongo_model import BaseMongoModel
+from app.infrastructure.mongoDB.model.entity_base_mongo_model import EntityBaseMongoModel
 
 
-class PersonModel(BaseMongoModel):
+class PersonModel(EntityBaseMongoModel):
     first_name: str
     last_name: str = ''
     gender: str = ''

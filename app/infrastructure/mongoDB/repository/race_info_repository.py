@@ -11,6 +11,7 @@ from app.domain.repository.igeneric_repository import IGenericRepository
 from app.infrastructure.mongoDB.model.race_data_model import RaceDataModel
 from app.infrastructure.mongoDB.model.race_info_model import RaceInfoModel
 from app.infrastructure.repository.repository_utils import load_repository_from_config
+from app.infrastructure.rest_api.model.race_info import RaceInfoSimplified
 
 
 logger = logging.getLogger(__name__)
@@ -21,7 +22,7 @@ class RaceInfoRepository(IGenericRepository):
         self.race_info_repository = db.get_repository('race_info', RaceInfoModel)
         self.race_data_repository = db.get_repository('race_data', RaceDataModel)
 
-    def get_all(self) -> List[RaceInfo]:
+    def get_all_raw(self) -> List[RaceInfo]:
         try:
             all_race_info: List[RaceInfoModel] = self.race_info_repository.get_all()
             all_race_data: List[RaceDataModel] = self.race_data_repository.get_all()
@@ -43,23 +44,32 @@ class RaceInfoRepository(IGenericRepository):
             logger.error("Error al obtener todos los registros: %s", str(exception))
             return []
 
-    # def get_by_id(self, entity_id:str):
-    #     try:
-    #         entity = self.collection.find_one({"_id": ObjectId(entity_id)})
-    #         return dict_to_class(self.entity_type,entity) if entity else None
-    #     except Exception as exception:
-    #         logger.error("Error al obtener el registro con ID %s: %s"
-    #                      , str(entity_id), str(exception))
-    #         return None
+    def get_all_simplified(self) -> List[RaceInfoSimplified]:
+        try:
+            all_race_info: List[RaceInfoSimplified] = self.race_info_repository.get_all()
+            return all_race_info
+        except Exception as exception:
+            logger.error("Error al obtener todos los registros: %s", str(exception))
+            return []
 
-    # def add(self, new_entity: BaseEntity):
-    #     try:
-    #         entity_id = self.collection.insert_one(new_entity.to_dict()).inserted_id
+    def get_simplified_by_id(self, entity_id:str):
+        try:
+            entity:RaceInfoModel = self.race_info_repository.get_by_id(entity_id)
+            return dict_to_class(RaceInfoSimplified, entity.to_dict()) if entity else None
+        except Exception as exception:
+            logger.error("Error al obtener el registro con ID %s: %s"
+                         , str(entity_id), str(exception))
+            return None
 
-    #         return str(entity_id)
-    #     except Exception as exception:
-    #         logger.error("Error al agregar un nuevo registro: %s", str(exception))
-    #         return ""
+    def add_simplified(self, new_model: RaceInfoSimplified):
+        try:
+            entity:RaceInfoModel = new_model.to_entity(RaceInfoModel)
+            entity_id = self.race_info_repository.add(entity)
+
+            return str(entity_id)
+        except Exception as exception:
+            logger.error("Error al agregar un nuevo registro: %s", str(exception))
+            return ""
 
     # def update_by_id(self, entity_id, new_entity):
     #     try:

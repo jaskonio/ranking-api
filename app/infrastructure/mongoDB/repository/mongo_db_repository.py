@@ -2,9 +2,9 @@ import logging
 from bson import ObjectId
 from pymongo import collection
 from pymongo.database import Database
-from app.domain.model.base_entity import BaseEntity
 from app.core.mapper_utils import dict_to_class, dicts_to_class
 from app.domain.repository.igeneric_repository import IGenericRepository
+from app.infrastructure.mongoDB.model.entity_base_mongo_model import EntityBaseMongoModel
 
 
 logger = logging.getLogger(__name__)
@@ -28,15 +28,18 @@ class MongoDBRepository(IGenericRepository):
     def get_by_id(self, entity_id:str):
         try:
             entity = self.collection.find_one({"_id": ObjectId(entity_id)})
-            return dict_to_class(self.entity_type,entity) if entity else None
+            if entity is not None:
+                entity = self.entity_type(**dict(entity, id=str(entity['_id'])))
+
+            return entity
         except Exception as exception:
             logger.error("Error al obtener el registro con ID %s: %s"
                          , str(entity_id), str(exception))
             return None
 
-    def add(self, new_entity: BaseEntity):
+    def add(self, new_entity: EntityBaseMongoModel):
         try:
-            entity_id = self.collection.insert_one(new_entity.to_dict()).inserted_id
+            entity_id = self.collection.insert_one(new_entity.to_mongo()).inserted_id
 
             return str(entity_id)
         except Exception as exception:

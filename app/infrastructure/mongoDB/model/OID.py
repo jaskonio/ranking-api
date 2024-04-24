@@ -1,5 +1,5 @@
 from bson import ObjectId
-# import pydantic
+import pydantic
 
 class OID(str):
     @classmethod
@@ -18,5 +18,5 @@ class OID(str):
             raise ValueError("Not a valid ObjectId")
 
 # # fix ObjectId & FastApi conflict
-# pydantic.json.ENCODERS_BY_TYPE[ObjectId]=str
-# pydantic.json.ENCODERS_BY_TYPE[OID]=str
+pydantic.json.ENCODERS_BY_TYPE[ObjectId]=str
+pydantic.json.ENCODERS_BY_TYPE[OID]=str
