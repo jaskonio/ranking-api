@@ -14,7 +14,6 @@ class BaseMongoModel(BaseModel):
 
 
     def to_entity(self, entity_type, key_id=None):
-        #return dict_to_class(entity_type, self.mongo())
         return dict_to_class(entity_type, self.dict(), key_id)
 
     @classmethod
@@ -25,26 +24,7 @@ class BaseMongoModel(BaseModel):
         return cls(**dict(data, id=new_id))
 
     def mongo(self):
-        # exclude_unset = kwargs.pop('exclude_unset', True)
-        # by_alias = kwargs.pop('by_alias', True)
-
-        # parsed = self.dict(
-        #     exclude_unset=exclude_unset,
-        #     by_alias=by_alias,
-        #     **kwargs,
-        # )
-
-        #parsed = self.dict(exclude_unset=exclude_unset, exclude_defaults=True)
-        #parsed = self.dict(exclude_defaults=True)
         parsed = self.dict()
-        #parsed = {}
-        #parsed =  vars(self)
-        #parsed = self.__dict__
-        #parsed = class_to_dict(self)
-
-        # Mongo uses `_id` as default key. We should stick to that as well.
-        #if '_id' not in parsed and 'id' in parsed:
-            #parsed['_id'] = parsed.pop('id')
 
         parsed.pop('id')
 
