@@ -3,3 +3,4 @@ disable=
     C0111, # missing-module-docstring
     C0301, # line-too-long
     C0103
+extension-pkg-allow-list=pydantic

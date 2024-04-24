@@ -1,6 +1,5 @@
 from bson import ObjectId
-from pydantic import InvalidDiscriminator
-import pydantic
+# import pydantic
 
 class OID(str):
     @classmethod
@@ -18,6 +17,6 @@ class OID(str):
         except Exception as e:
             raise ValueError("Not a valid ObjectId")
 
-# fix ObjectId & FastApi conflict
-pydantic.json.ENCODERS_BY_TYPE[ObjectId]=str
-pydantic.json.ENCODERS_BY_TYPE[OID]=str
+# # fix ObjectId & FastApi conflict
+# pydantic.json.ENCODERS_BY_TYPE[ObjectId]=str
+# pydantic.json.ENCODERS_BY_TYPE[OID]=str

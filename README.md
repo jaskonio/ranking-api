@@ -1,5 +1,11 @@
 # ranking-api
 
+## Install python version
+
+```bash
+3.11.4
+```
+
 ## Prepare virual environment in Linux
 
 ```cmd
@@ -11,9 +17,9 @@ pip3 install -r requirements.txt
 ## Prepare virual environment in Windows
 
 ```cmd
-python3 -m  venv env
+python -m  venv env
 .\env\Scripts\Activate.ps1
-pip3 install -r requirements.txt
+pip install -r requirements.txt
 ```
 
 ## Development
@@ -84,4 +90,57 @@ Check pylint
 
 ```cmd
     pylint ./app/
+```
+
+## Install Docker
+
+[Guide to install docker](https://docs.docker.com/engine/install/ubuntu/)
+
+Create MongoDB Container
+
+```bash
+docker run -d --name ranking-db-mongo \
+-v ./data:/data/db \
+-p 27017:27017 \
+-e MONGO_INITDB_ROOT_USERNAME=admin \
+-e MONGO_INITDB_ROOT_PASSWORD=admin \
+-e MONGO_INITDB_DATABASE=rankings \
+mongo:5.0.24
+```
+
+Active admin user:
+
+```bash
+docker exec -it ranking-db-mongo bash
+mongo -u admin
+use rankings
+db.createUser(
+    {
+        user: "admin",
+        pwd: "admin",
+        roles: [
+            {
+                role: "readWrite",
+                db: "rankings"
+            }
+        ]
+    }
+);
+db.createCollection("test");
+```
+
+Start/Stop mongoDB
+
+```bash
+docker start ranking-db-mongo
+docker stop ranking-db-mongo
+docker rm ranking-db-mongo
+```
+
+## Config file
+
+```bash
+DATABASE_TYPE=MONGODB
+DATABASE_NAME=rankings
+MONGODB_CONNECTION_STING=mongodb://admin:admin@localhost/
 ```
