@@ -2,7 +2,7 @@ from fastapi import APIRouter
 from app.aplication.race_info_service import RaceInfoService
 from app.infrastructure.repository.repository_utils import load_repository_from_config
 from app.infrastructure.rest_api.controller.race_info_controller import RaceInfoController
-from app.infrastructure.rest_api.model.race_info import RaceInfoSimplified
+from app.infrastructure.rest_api.model.race_info import RaceInfoSimplifiedRequest
 
 
 race_info_router = APIRouter()
@@ -23,13 +23,12 @@ def get_simplified_by_id(race_id:str):
     return controller.get_simplified_by_id(race_id)
 
 @race_info_router.post('/')
-def add_simplified(race: RaceInfoSimplified):
+def add_simplified(race: RaceInfoSimplifiedRequest):
     return controller.add_simplified(race)
 
-
-# @race_info_router.get('/run/{race_id}')
-# def run(race_id:str):
-#     return controller.run(race_id)
+@race_info_router.get('/run_process/{race_id}')
+def run_process(race_id:str):
+    return controller.run_process(race_id)
 
 # @race_info_router.put('/{race_id}')
 # def update_by_id(race_id: str, race: RaceBaseRequest):

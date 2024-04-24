@@ -1,15 +1,16 @@
-from app.domain.model.race import Race
+from app.domain.model.race_info import Platform
 from app.domain.repository.idownloader_race_data import RaceDownloaderOptions, TypePlatformInscriptions, TypeService
+from app.infrastructure.rest_api.model.race_info import RaceInfoSimplified
 
 
 class RaceDownloaderOptionsFactory():
-    def factory_method(self, race:Race):
-        print("Factory Mapper. Type:" + str(race.platform_inscriptions))
+    def factory_method(self, race_info_model: RaceInfoSimplified):
+        print("Factory Mapper. Type:" + str(race_info_model.platform))
 
         options = RaceDownloaderOptions()
-        platform_inscriptions = TypePlatformInscriptions(race.platform_inscriptions)
-        if platform_inscriptions == TypePlatformInscriptions.SPORTMANIACS_LATEST:
-            race_url_splitted = race.url.split('/')
+
+        if race_info_model.platform == Platform.SPORTMANIACS_LATEST:
+            race_url_splitted = race_info_model.url.split('/')
             race_id = 'default_race_id'
 
             if len(race_url_splitted) >= 1:
@@ -18,17 +19,17 @@ class RaceDownloaderOptionsFactory():
             options.type = TypeService.SPORTMANIACS
             options.method = 'GET'
             options.url = 'https://sportmaniacs.com/es/races/rankings/' + race_id
-            options.race_name = race.name
+            options.race_name = race_info_model.name
             options.content_type = "JSON"
 
             return options
 
-        if race.platform_inscriptions == TypePlatformInscriptions.VALENCIACIUDADDELRUNNING_LATEST:
+        if race_info_model.platform == Platform.VALENCIACIUDADDELRUNNING_LATEST:
             options.type = TypeService.VALENCIACIUDADDELRUNNING
 
             return options
 
-        if race.platform_inscriptions == TypePlatformInscriptions.TOPRUN_LATEST:
+        if race_info_model.platform == Platform.TOPRUN_LATEST:
             options.type = TypeService.TOPRUN
 
             return options

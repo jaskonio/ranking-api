@@ -1,7 +1,8 @@
+from pydantic import BaseModel
 from app.infrastructure.mongoDB.model.entity_base_mongo_model import EntityBaseMongoModel
 
 
-class RunnerRaceDataModel(EntityBaseMongoModel):
+class RunnerRaceDataModel(BaseModel):
     first_name: str = ''
     last_name: str = ''
     nationality: str = ''

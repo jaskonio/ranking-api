@@ -1,7 +1,6 @@
 import logging
-from typing import List
 from app.aplication.race_info_service import RaceInfoService
-from app.infrastructure.rest_api.model.race_info import RaceInfoSimplified
+from app.infrastructure.rest_api.model.race_info import RaceInfoSimplified, RaceInfoSimplifiedRequest
 
 
 class RaceInfoController():
@@ -35,7 +34,7 @@ class RaceInfoController():
             self.logger.error("Error retrieving item: %s", exception_error)
             raise TypeError('An error occurred while retrieving item.') from None
 
-    def add_simplified(self, race:RaceInfoSimplified):
+    def add_simplified(self, race:RaceInfoSimplifiedRequest):
         try:
             race = self.__race_info_service.add_simplified(race)
 
@@ -46,6 +45,18 @@ class RaceInfoController():
         except Exception as exception_error:
             self.logger.error("Error saving: %s", exception_error)
             raise TypeError('An error occurred while saving.') from None
+
+    def run_process(self, race_id):
+        try:
+            status = self.__race_info_service.process(race_id)
+
+            if status:
+                return status
+
+            return {}
+        except Exception as exception_error:
+            self.logger.error("Error deleting: %s", exception_error)
+            raise TypeError('An error occurred while deleting.') from None
 
     # def update_by_id(self, race_id:str, new_race):
     #     try:
@@ -71,14 +82,4 @@ class RaceInfoController():
     #         self.logger.error("Error deleting: %s", exception_error)
     #         raise TypeError('An error occurred while deleting.') from None
 
-    # def run(self, race_id):
-    #     try:
-    #         status = self.__race_info_service.process(race_id)
 
-    #         if status:
-    #             return status
-
-    #         return {}
-    #     except Exception as exception_error:
-    #         self.logger.error("Error deleting: %s", exception_error)
-    #         raise TypeError('An error occurred while deleting.') from None

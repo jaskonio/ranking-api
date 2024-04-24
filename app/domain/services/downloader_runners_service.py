@@ -1,10 +1,12 @@
+import logging
 from typing import List
 from app.domain.model.race import Race
-from app.domain.model.runner_race_ranking import RunnerRaceRanking
+from app.domain.model.runner_race_data import RunnerRaceData
 from app.domain.services.http_downloader_service import HTTPDownloaderService
 from app.domain.services.mappe_runners_factory import MappeRunnersFactory
 from app.domain.model.person import Person
 from app.domain.services.race_downloader_options_factory import RaceDownloaderOptionsFactory
+from app.infrastructure.rest_api.model.race_info import RaceInfoSimplified
 
 class DownloaderRunnersService:
     def __init__(self, http_service: HTTPDownloaderService, mapper_runners_factory: MappeRunnersFactory, race_downloader_options_factory:RaceDownloaderOptionsFactory):
@@ -13,10 +15,11 @@ class DownloaderRunnersService:
         self.__race_downloader_options_factory = race_downloader_options_factory
 
         self.team_name = ['redolat', 'redolatteam', 'redolat team']
+        self.logger = logging.getLogger(__name__)
 
-    def get_all_runners(self, race: Race):
+    def get_all_runners(self, race_info_simplified_model: RaceInfoSimplified) -> List[RunnerRaceData]:
         try:
-            race_options = self.__race_downloader_options_factory.factory_method(race)
+            race_options = self.__race_downloader_options_factory.factory_method(race_info_simplified_model)
 
             response = self.__http_service.get_data(race_options)
 
@@ -27,13 +30,14 @@ class DownloaderRunnersService:
             runners_filtered_by_team = self.__filter_by_team_name(runners)
 
             return runners_filtered_by_team
-        except Exception as e:
-            return []
+        except Exception as exception_error:
+            self.logger.error("Error retrieving item: %s", exception_error)
+            raise TypeError('An error occurred while get_all_runners') from None
 
-    def get_runners_by_persons(self, race: Race, persons: List[Person]):
-        all_runners = self.get_all_runners(race)
+    def get_runners_by_persons(self, race_info_simplified_model: RaceInfoSimplified, persons: List[Person]):
+        all_runners = self.get_all_runners(race_info_simplified_model)
 
-        runners:List[RunnerRaceRanking] = []
+        runners:List[RunnerRaceData] = []
 
         for runner in all_runners:
             if runner in persons:
@@ -41,7 +45,7 @@ class DownloaderRunnersService:
 
         return runners
 
-    def __filter_by_team_name(self, runners:List[RunnerRaceRanking]):
+    def __filter_by_team_name(self, runners:List[RunnerRaceData]):
         rankings_by_club_list = []
 
         for runner in runners:

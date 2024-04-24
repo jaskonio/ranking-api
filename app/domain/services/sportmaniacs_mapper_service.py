@@ -1,7 +1,8 @@
 from typing import List
+from app.domain.model.runner_race_data import RunnerRaceData
 from app.domain.repository.imappers_service import IMapperService
 from app.domain.services.UtilsRunner import strtobool
-from app.domain.model.runner_race_ranking import RunnerRaceRanking
+
 
 class SportmaniacsMapperService(IMapperService):
     # base_url = 'https://sportmaniacs.com/es/races/rankings/'
@@ -16,7 +17,7 @@ class SportmaniacsMapperService(IMapperService):
         if 'Rankings' not in data['data']:
             return []
 
-        race_data:List[RunnerRaceRanking] = self.__build_runners_model(data['data']['Rankings'])
+        race_data:List[RunnerRaceData] = self.__build_runners_model(data['data']['Rankings'])
 
         return race_data
 
@@ -31,25 +32,21 @@ class SportmaniacsMapperService(IMapperService):
         return new_runners
 
     def __build_runner_model(self, row):
-        runner = RunnerRaceRanking()
+        runner = RunnerRaceData()
         runner.first_name = " ".join(row["name"].split()) if "name" in row else None
+        runner.gender = self.__convert_to_gender(row["gender"]) if "gender" in row else None
         runner.dorsal = row["dorsal"] if "dorsal" in row else None
+        runner.category = row["category"] if "category" in row else None
         runner.club = row["club"] if "club" in row else None
         runner.nationality = row["nationality"] if "nationality" in row else None
         runner.finished = strtobool(row["finishedRace"]) if "finishedRace" in row else None
-        runner.gender = self.__convert_to_gender(row["gender"]) if "gender" in row else None
-        runner.category = row["category"] if "category" in row else None
-
-        if "pos" in row:
-            if row["pos"] != '':
-                runner.position = int(row["pos"])
-
-        runner.official_time = row["officialTime"] if "officialTime" in row else None
-        runner.official_avg_time = row["average"] if "average" in row else None
 
         if "pos" in row:
             if row["pos"] != '':
                 runner.official_pos = int(row["pos"])
+
+        runner.official_time = row["officialTime"] if "officialTime" in row else None
+        runner.official_avg_time = row["average"] if "average" in row else None
 
         if "catPos" in row:
             if row["catPos"] != '':

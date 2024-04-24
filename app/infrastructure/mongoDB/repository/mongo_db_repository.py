@@ -2,7 +2,7 @@ import logging
 from bson import ObjectId
 from pymongo import collection
 from pymongo.database import Database
-from app.core.mapper_utils import dict_to_class, dicts_to_class
+from app.core.mapper_utils import dict_to_class, dict_to_entity, dicts_to_class, dicts_to_entity
 from app.domain.repository.igeneric_repository import IGenericRepository
 from app.infrastructure.mongoDB.model.entity_base_mongo_model import EntityBaseMongoModel
 
@@ -20,7 +20,7 @@ class MongoDBRepository(IGenericRepository):
         try:
             results = self.collection.find({})
 
-            return dicts_to_class(self.entity_type, list(results ))
+            return dicts_to_entity(self.entity_type, list(results ))
         except Exception as exception:
             logger.error("Error al obtener todos los registros: %s", str(exception))
             return []
@@ -29,7 +29,7 @@ class MongoDBRepository(IGenericRepository):
         try:
             entity = self.collection.find_one({"_id": ObjectId(entity_id)})
             if entity is not None:
-                entity = self.entity_type(**dict(entity, id=str(entity['_id'])))
+                entity = dict_to_entity(self.entity_type, entity)
 
             return entity
         except Exception as exception:
@@ -46,10 +46,10 @@ class MongoDBRepository(IGenericRepository):
             logger.error("Error al agregar un nuevo registro: %s", str(exception))
             return ""
 
-    def update_by_id(self, entity_id, new_entity):
+    def update_by_id(self, entity_id, new_entity:EntityBaseMongoModel):
         try:
             result = self.collection.update_one({"_id": ObjectId(entity_id)},
-                                                {"$set": new_entity.to_dict()})
+                                                {"$set": new_entity.to_mongo()})
             return result.modified_count > 0
         except Exception as exception:
             logger.error("Error al actualizar el registro con ID %s: %s"

@@ -30,6 +30,11 @@ class EntityBaseMongoModel(BaseModel):
     def to_entity(self, entity_type, key_id=None):
         return dict_to_class(entity_type, self.dict(), key_id)
 
+    def to_class_model(self, class_model):
+        data = self.to_dict()
+        new_class = class_model(**dict(data))
+        return new_class
+
     def to_dict(self):
         # Si el objeto es una instancia de dict, simplemente lo devolvemos
         if isinstance(self, dict):

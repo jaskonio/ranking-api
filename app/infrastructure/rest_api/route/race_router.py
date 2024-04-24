@@ -8,7 +8,6 @@ from app.domain.services.mappe_runners_factory import MappeRunnersFactory
 from app.domain.services.race_downloader_options_factory import RaceDownloaderOptionsFactory
 from app.infrastructure.repository.repository_utils import load_repository_from_config
 from app.infrastructure.rest_api.controller.race_controller import RaceController
-from app.infrastructure.rest_api.model.race_base_request import RaceBaseRequest
 
 
 race_router = APIRouter()

@@ -11,7 +11,7 @@ from app.domain.repository.igeneric_repository import IGenericRepository
 from app.infrastructure.mongoDB.model.race_data_model import RaceDataModel
 from app.infrastructure.mongoDB.model.race_info_model import RaceInfoModel
 from app.infrastructure.repository.repository_utils import load_repository_from_config
-from app.infrastructure.rest_api.model.race_info import RaceInfoSimplified
+from app.infrastructure.rest_api.model.race_info import RaceInfoSimplified, RaceInfoSimplifiedRequest
 
 
 logger = logging.getLogger(__name__)
@@ -30,7 +30,7 @@ class RaceInfoRepository(IGenericRepository):
             all_race_info_model: List[RaceInfo] = []
 
             for race_info_entity in all_race_info:
-                race_info_model:RaceInfo = dict_to_class(RaceInfo, race_info_entity)
+                race_info_model:RaceInfo = race_info_entity.to_class_model(RaceInfo)
 
                 if race_info_entity.race_data_id != '':
                     for race_data_entity in all_race_data:
@@ -61,9 +61,9 @@ class RaceInfoRepository(IGenericRepository):
                          , str(entity_id), str(exception))
             return None
 
-    def add_simplified(self, new_model: RaceInfoSimplified):
+    def add_simplified(self, new_model: RaceInfoSimplifiedRequest):
         try:
-            entity:RaceInfoModel = new_model.to_entity(RaceInfoModel)
+            entity:RaceInfoModel = new_model.to_class_entity(RaceInfoModel)
             entity_id = self.race_info_repository.add(entity)
 
             return str(entity_id)
@@ -71,15 +71,14 @@ class RaceInfoRepository(IGenericRepository):
             logger.error("Error al agregar un nuevo registro: %s", str(exception))
             return ""
 
-    # def update_by_id(self, entity_id, new_entity):
-    #     try:
-    #         result = self.collection.update_one({"_id": ObjectId(entity_id)},
-    #                                             {"$set": new_entity.to_dict()})
-    #         return result.modified_count > 0
-    #     except Exception as exception:
-    #         logger.error("Error al actualizar el registro con ID %s: %s"
-    #                      , str(entity_id), str(exception))
-    #         return False
+    def update_by_id(self, entity_id, new_entity: RaceInfoSimplified) -> bool:
+        try:
+            result = self.race_info_repository.update_by_id(entity_id, new_entity.to_class_entity(RaceInfoModel))
+            return result
+        except Exception as exception:
+            logger.error("Error al actualizar el registro con ID %s: %s"
+                         , str(entity_id), str(exception))
+            return False
 
     # def delete_by_id(self, entity_id:str):
     #     try:
