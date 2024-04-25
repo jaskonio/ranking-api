@@ -5,6 +5,6 @@ from app.infrastructure.mongoDB.model.runner_race_data_entity_property import Ru
 
 
 class RaceLeagueEntity(BaseMongoEntity):
-    data: List[RunnerRaceDataEntityProperty] = []
     race_row_id: str = ''
-    race_participant: list[ParticipantRaceEntityProperty] = []
+    ranking: List[RunnerRaceDataEntityProperty] = []
+    participant: List[ParticipantRaceEntityProperty] = []

@@ -4,6 +4,7 @@ from fastapi import APIRouter
 # from app.infrastructure.rest_api.route.race_router import race_router
 # from app.infrastructure.rest_api.route.league_router import league_router
 from app.infrastructure.rest_api.route.race_info_router import race_info_router
+from app.infrastructure.rest_api.route.season_router import season_router
 
 
 def get_routers():
@@ -15,5 +16,6 @@ def get_routers():
     # api_router.include_router(league_router, prefix="/leagues", tags=["leagues"])
 
     api_router.include_router(race_info_router, prefix="/raceinfo")
+    api_router.include_router(season_router, prefix="/season")
 
     return api_router
