@@ -28,14 +28,13 @@ class RaceInfoService():
         all_race_info_model: List[RaceInfoModel] = []
 
         for race_info_entity in all_race_info_entity:
-            # race_info_model = race_info_entity.to_class_model(RaceInfoModel)
-            race_info_model = RaceInfoModel.parse_obj(race_info_entity.to_dict())
+            race_info_model = race_info_entity.to_domain_model(RaceInfoModel)
 
             if race_info_entity.race_data_id != '':
                 for race_data_entity in all_race_data_entity:
                     if race_info_entity.race_data_id == race_data_entity.id:
-                        data = race_data_entity.to_dict()
-                        race_info_model.data = RaceDataModel.parse_obj(data)
+                        data = race_data_entity.to_domain_model(RaceDataModel)
+                        race_info_model.data = data
 
             all_race_info_model.append(race_info_model)
 
@@ -44,27 +43,28 @@ class RaceInfoService():
     # Simplified
     def get_all_simplified(self) -> List[RaceInfoSimplifiedModel]:
         all_race_info_entity: List[RaceInfoEntity] = self.__race_info_repository.get_all()
-        all_race_info_model = [RaceInfoSimplifiedModel.parse_obj(race_info_entity.to_dict()) for race_info_entity in all_race_info_entity]
+        all_race_info_model = [race_info_entity.to_domain_model(RaceInfoSimplifiedModel) for race_info_entity in all_race_info_entity]
+
         return all_race_info_model
 
     def get_simplified_by_id(self, race_id) -> RaceInfoSimplifiedModel:
         result:RaceInfoEntity = self.__race_info_repository.get_by_id(race_id)
-        return result.to_class_model(RaceInfoSimplifiedModel)
+        return result.to_domain_model(RaceInfoSimplifiedModel)
 
     def add_simplified(self, race_model: RaceInfoSimplifiedModel) -> RaceInfoSimplifiedModel:
-        new_race_entity = race_model.to_entity(RaceInfoEntity)
+        new_race_entity = RaceInfoEntity().create_by_domain_model(race_model)
 
         race_id = self.__race_info_repository.add(new_race_entity)
 
         race:RaceInfoEntity = self.__race_info_repository.get_by_id(race_id)
 
-        return race.to_class_model(RaceInfoSimplifiedModel)
+        return race.to_domain_model(RaceInfoSimplifiedModel)
 
     # Common
-    def process(self, race_id:str):
+    def process(self, race_id:str) -> RaceInfoSimplifiedModel:
         race_info_entity:RaceInfoEntity = self.__race_info_repository.get_by_id(race_id)
 
-        race_info_model: RaceInfoSimplifiedModel = race_info_entity.to_class_model(RaceInfoSimplifiedModel)
+        race_info_model: RaceInfoSimplifiedModel = race_info_entity.to_domain_model(RaceInfoSimplifiedModel)
 
         if race_info_entity.race_data_id != '':
             self.__race_data_repository.delete_by_id(race_info_entity.race_data_id)
@@ -72,16 +72,17 @@ class RaceInfoService():
         runners_race_data_model:List[RunnerRaceDataModel] = self.__downloader_runners_service.get_all_runners(race_info_model)
 
         new_race_data_entity = RaceDataEntity()
-        new_race_data_entity.data = [RunnerRaceDataEntityProperty(runner_race_data_model.to_dict()) for runner_race_data_model in runners_race_data_model]
+        new_race_data_entity.data = [RunnerRaceDataEntityProperty().create_by_domain_model(runner_race_data_model) for runner_race_data_model in runners_race_data_model]
 
         new_race_data_id = self.__race_data_repository.add(new_race_data_entity)
 
-        race_info_model.race_data_id = new_race_data_id
-        race_info_model.processed = True
+        race_info_entity.race_data_id = new_race_data_id
+        race_info_entity.processed = True
 
-        status = self.__race_info_repository.update_by_id(race_info_model.id, race_info_model)
-
-        return race_info_model
+        status = self.__race_info_repository.update_by_id(race_info_entity.id, race_info_entity)
+        race_info_entity = self.__race_info_repository.get_by_id(race_info_entity.id)
+        
+        return race_info_entity.to_domain_model(RaceInfoSimplifiedModel)
 
     def update_by_id(self, race_id:str, race_model:RaceInfoSimplifiedModel):
         new_race_entity = race_model.to_entity(RaceInfoEntity)

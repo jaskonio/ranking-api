@@ -13,45 +13,48 @@ class BaseMongoEntity(BaseModel):
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
 
-    @classmethod
-    def from_mongo(cls, data: dict):
-        if not data:
-            return data
-        new_id = data.pop('_id', None)
-        return cls(**dict(data, id=new_id))
+    def create_by_domain_model(self, domain_data: BaseModel):
+        data_dict = domain_data.dict()
 
-    def to_mongo(self):
+        new_id = ObjectId() if 'id' not in data_dict or data_dict['id'] == '' else ObjectId(data_dict['id'])
+        data_dict['id'] = new_id
+
+        data = self.parse_obj(data_dict)
+
+        return data
+
+    def to_dict_db(self):
         parsed = self.dict()
 
         parsed.pop('id')
 
         return parsed
 
-    def to_entity(self, entity_type, key_id=None):
-        return dict_to_class(entity_type, self.dict(), key_id)
-
-    def to_class_model(self, class_model):
-        data = self.to_dict()
-        new_class = class_model(**dict(data))
+    def to_domain_model(self, class_model:BaseModel):
+        data = self.dict()
+        new_class = class_model.parse_obj(data)
         return new_class
 
     def to_dict(self):
-        # Si el objeto es una instancia de dict, simplemente lo devolvemos
-        if isinstance(self, dict):
-            return self
+        return self.dict()
 
-        # Si el objeto es una instancia de una clase personalizada, convertimos sus atributos
-        if hasattr(self, '__dict__'):
-            obj_dict = vars(self)
+    # def to_dict(self):
+    #     # Si el objeto es una instancia de dict, simplemente lo devolvemos
+    #     if isinstance(self, dict):
+    #         return self
 
-            # Convertir recursivamente los atributos que también sean objetos
-            for key, value in obj_dict.items():
-                if isinstance(value, (list, tuple)):
-                    obj_dict[key] = [item.to_dict() if hasattr(item, '__dict__') else item for item in value]
-                elif hasattr(value, '__dict__'):
-                    obj_dict[key] = value.to_dict
+    #     # Si el objeto es una instancia de una clase personalizada, convertimos sus atributos
+    #     if hasattr(self, '__dict__'):
+    #         obj_dict = vars(self)
 
-            return obj_dict
+    #         # Convertir recursivamente los atributos que también sean objetos
+    #         for key, value in obj_dict.items():
+    #             if isinstance(value, (list, tuple)):
+    #                 obj_dict[key] = [item.to_dict() if hasattr(item, '__dict__') else item for item in value]
+    #             elif hasattr(value, '__dict__'):
+    #                 obj_dict[key] = value.to_dict
 
-        # Si el objeto no es una instancia de una clase personalizada, simplemente lo devolvemos
-        return self
+    #         return obj_dict
+
+    #     # Si el objeto no es una instancia de una clase personalizada, simplemente lo devolvemos
+    #     return self

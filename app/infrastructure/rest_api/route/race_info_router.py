@@ -24,11 +24,11 @@ def get_simplified_by_id(race_id:str) -> RaceInfoSimplifiedResponse:
     return controller.get_simplified_by_id(race_id)
 
 @race_info_router.post('/')
-def add_simplified(race: RaceInfoSimplifiedRequest):
+def add_simplified(race: RaceInfoSimplifiedRequest) -> RaceInfoSimplifiedResponse:
     return controller.add_simplified(race)
 
 @race_info_router.get('/run_process/{race_id}')
-def run_process(race_id:str):
+def run_process(race_id:str) -> RaceInfoSimplifiedResponse:
     return controller.run_process(race_id)
 
 # @race_info_router.put('/{race_id}')

@@ -39,7 +39,7 @@ class MongoDBRepository(IGenericRepository):
 
     def add(self, new_entity: BaseMongoEntity):
         try:
-            entity_id = self.collection.insert_one(new_entity.to_mongo()).inserted_id
+            entity_id = self.collection.insert_one(new_entity.to_dict_db()).inserted_id
 
             return str(entity_id)
         except Exception as exception:
@@ -49,7 +49,7 @@ class MongoDBRepository(IGenericRepository):
     def update_by_id(self, entity_id, new_entity:BaseMongoEntity):
         try:
             result = self.collection.update_one({"_id": ObjectId(entity_id)},
-                                                {"$set": new_entity.to_mongo()})
+                                                {"$set": new_entity.to_dict_db()})
             return result.modified_count > 0
         except Exception as exception:
             logger.error("Error al actualizar el registro con ID %s: %s"

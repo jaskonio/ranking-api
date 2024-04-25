@@ -6,6 +6,3 @@ from app.domain.model.runner_race_data_model import RunnerRaceDataModel
 class RaceDataModel(BaseObjectModel):
     id: str = ''
     data:List[RunnerRaceDataModel] = []
-
-    # def __init__(self, data: List[RunnerRaceDataModel] = []):
-    #     self.data = data

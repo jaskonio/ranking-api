@@ -2,6 +2,8 @@ from logging.config import BaseConfigurator
 from pydantic import BaseModel
 from bson import ObjectId
 
+from app.domain.model.base_object_model import BaseObjectModel
+
 
 class BaseAPI_Model(BaseModel):
     class Config(BaseConfigurator):
@@ -15,9 +17,10 @@ class BaseAPI_Model(BaseModel):
 
         return data
 
-    def to_class_entity(self, class_entity):
+    def to_domain_model(self, domain_class_name:BaseObjectModel):
         data = self.dict()
         new_id = ObjectId() if 'id' not in data or data['id'] == '' else ObjectId(data['id'])
-        data['id'] = new_id
-        new_entity = class_entity(**dict(data))
-        return new_entity
+        data['id'] = str(new_id)
+        new_model = domain_class_name.parse_obj(data)
+
+        return new_model

@@ -1,8 +1,8 @@
-from app.infrastructure.mongoDB.model.base_mongo_entity import BaseMongoEntity
+from app.infrastructure.mongoDB.model.base_entity_property import BaseEntityProperty
 
 
-class ParticipantRankingEntityProperty(BaseMongoEntity):
-    first_name: str
+class ParticipantRankingEntityProperty(BaseEntityProperty):
+    first_name: str = ''
     last_name: str = ''
     gender: str = ''
     photo_url: str = ''
