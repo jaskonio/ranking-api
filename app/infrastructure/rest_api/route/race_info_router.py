@@ -15,6 +15,10 @@ controller = RaceInfoController(RaceInfoService())
 def get_all_raw() -> List[RaceInfoRAW_Response]:
     return controller.get_all_raw()
 
+@race_info_router.get('/raw/{race_id}')
+def get_raw_by_id(race_id:str) -> RaceInfoRAW_Response:
+    return controller.get_raw_by_id(race_id)
+
 @race_info_router.get('/')
 def get_all_simplified() -> List[RaceInfoSimplifiedResponse]:
     return controller.get_all_simplified()

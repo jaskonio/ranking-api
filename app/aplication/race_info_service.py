@@ -40,6 +40,23 @@ class RaceInfoService():
 
         return all_race_info_model
 
+    def get_raw_by_id(self, race_id: str) -> RaceInfoModel:
+        race_info_entity: RaceInfoEntity = self.__race_info_repository.get_by_id(race_id)
+
+        if race_info_entity.race_data_id == '':
+            return None
+
+        race_data_entity: RaceDataEntity = self.__race_data_repository.get_by_id(race_info_entity.race_data_id)
+
+        if race_data_entity is None:
+            return None
+
+        race_info_model:RaceInfoModel = race_info_entity.to_domain_model(RaceInfoModel)
+
+        race_info_model.data = race_data_entity.to_domain_model(RaceDataModel)
+
+        return race_info_model
+
     # Simplified
     def get_all_simplified(self) -> List[RaceInfoSimplifiedModel]:
         all_race_info_entity: List[RaceInfoEntity] = self.__race_info_repository.get_all()

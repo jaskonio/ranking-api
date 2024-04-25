@@ -1,7 +1,7 @@
 import logging
 from typing import List
 from app.aplication.race_info_service import RaceInfoService
-from app.domain.model.race_info_model import RaceInfoSimplifiedModel
+from app.domain.model.race_info_model import RaceInfoModel, RaceInfoSimplifiedModel
 from app.infrastructure.rest_api.model.race_info import RaceInfoRAW_Response, RaceInfoSimplifiedRequest, RaceInfoSimplifiedResponse
 
 
@@ -14,6 +14,16 @@ class RaceInfoController():
         try:
             results = self.__race_info_service.get_all_raw()
             data_response: List[RaceInfoRAW_Response] = [RaceInfoRAW_Response().create_by_domain_model(result) for result in results]
+
+            return data_response
+        except Exception as exception_error:
+            self.logger.error("Error retrieving all items: %s", exception_error)
+            raise TypeError('An error occurred while retrieving all items.') from None
+
+    def get_raw_by_id(self, race_id: str) -> RaceInfoRAW_Response:
+        try:
+            result:RaceInfoModel = self.__race_info_service.get_raw_by_id(race_id)
+            data_response = RaceInfoRAW_Response().create_by_domain_model(result)
 
             return data_response
         except Exception as exception_error:
