@@ -2,130 +2,60 @@ import logging
 from typing import List
 from app.aplication.league_service import LeagueService
 from app.domain.model.league_model import LeagueModel
-from app.domain.model.deprecated.runner_base import RunnerBase
+from app.infrastructure.mongoDB.model.league_entity import LeagueEntity
+from app.infrastructure.rest_api.model.league_model import LeagueRequest, LeagueResponse
 
 
 class LeagueController():
     def __init__(self, league_service:LeagueService):
-        self.__league_service = league_service
         self.logger = logging.getLogger(__name__)
+        self.__league_service = league_service
 
-    def get_all(self):
+    def get_all(self) -> List[LeagueResponse]:
         try:
-            return self.__league_service.get_all()
+            models: List[LeagueEntity] = self.__league_service.get_all()
+            return [LeagueResponse().create_by_domain_model(model) for model in models]
         except Exception as exception_error:
             self.logger.error("Error retrieving all items: %s", exception_error)
             raise TypeError('An error occurred while retrieving all items.') from None
 
-    def get_by_id(self, league_id):
+    def get_by_id(self, league_id:str) -> LeagueResponse:
         try:
-            league = self.__league_service.get_by_id(league_id)
+            league_model = self.__league_service.get_by_id(league_id)
 
-            if league:
-                return league
+            if league_model:
+                return LeagueResponse().create_by_domain_model(league_model)
 
             return {}
         except Exception as exception_error:
             self.logger.error("Error retrieving item: %s", exception_error)
             raise TypeError('An error occurred while retrieving item.') from None
 
-    def add(self, league: LeagueModel):
+    def add(self, league: LeagueRequest) -> LeagueResponse:
         try:
-            league = self.__league_service.add(league)
+            league_model:LeagueModel = self.__league_service.add(league.to_domain_model(LeagueModel))
 
-            if league:
-                return league
+            if league_model:
+                return LeagueResponse().create_by_domain_model(league_model)
 
             return {}
         except Exception as exception_error:
             self.logger.error("Error saving: %s", exception_error)
             raise TypeError('An error occurred while saving.') from None
 
-    def add_runners(self, league_id:str, new_runners:List[RunnerBase]):
+    def update_by_id(self, league_id:str, new_league: LeagueRequest) -> LeagueResponse:
         try:
-            league = self.__league_service.add_runners(league_id, new_runners)
+            league_model = self.__league_service.update_by_id(league_id, new_league.to_domain_model(LeagueModel))
 
-            if league:
-                return league
-
-            return {}
-        except Exception as exception_error:
-            self.logger.error("Error saving: %s", exception_error)
-            raise TypeError('An error occurred while saving.') from None
-
-    def add_runner(self, league_id:str, new_runner:RunnerBase):
-        try:
-            league = self.__league_service.add_runner(league_id, new_runner)
-
-            if league:
-                return league
-
-            return {}
-        except Exception as exception_error:
-            self.logger.error("Error saving: %s", exception_error)
-            raise TypeError('An error occurred while saving.') from None
-
-    def delete_runners(self, league_id:str, runners:List[RunnerBase]):
-        try:
-            league = self.__league_service.delete_runners(league_id, runners)
-
-            if league:
-                return league
-
-            return {}
-        except Exception as exception_error:
-            self.logger.error("Error saving: %s", exception_error)
-            raise TypeError('An error occurred while saving.') from None
-
-    def delete_runner(self, league_id:str, runner:RunnerBase):
-        try:
-            league = self.__league_service.delete_runner(league_id, runner)
-
-            if league:
-                return league
-
-            return {}
-        except Exception as exception_error:
-            self.logger.error("Error saving: %s", exception_error)
-            raise TypeError('An error occurred while saving.') from None
-
-    def add_race(self, league_id, race_id:str, order_race:int):
-        try:
-            league = self.__league_service.add_race(league_id, race_id, order_race)
-
-            if league:
-                return league
-
-            return {}
-        except Exception as exception_error:
-            self.logger.error("Error saving: %s", exception_error)
-            raise TypeError('An error occurred while saving.') from None
-
-    def disqualify_runner(self, league_id:int, race_name:str, bib_number):
-        try:
-            league = self.__league_service.disqualify_runner(league_id, race_name, bib_number)
-
-            if league:
-                return league
-
-            return {}
-        except Exception as exception_error:
-            self.logger.error("Error saving: %s", exception_error)
-            raise TypeError('An error occurred while saving.') from None
-
-    def update_by_id(self, league_id:str, new_league: LeagueModel):
-        try:
-            league = self.__league_service.update_by_id(league_id, new_league)
-
-            if league:
-                return league
+            if league_model:
+                return LeagueResponse().create_by_domain_model(league_model)
 
             return {}
         except Exception as exception_error:
             self.logger.error("Error updating: %s", exception_error)
             raise TypeError('An error occurred while updating.') from None
 
-    def delete_by_id(self, league_id):
+    def delete_by_id(self, league_id) -> bool:
         try:
             status = self.__league_service.delete_by_id(league_id)
 
@@ -136,3 +66,75 @@ class LeagueController():
         except Exception as exception_error:
             self.logger.error("Error deleting: %s", exception_error)
             raise TypeError('An error occurred while deleting.') from None
+
+    # def add_runners(self, league_id:str, new_runners:List[RunnerBase]):
+    #     try:
+    #         league = self.__league_service.add_runners(league_id, new_runners)
+
+    #         if league:
+    #             return league
+
+    #         return {}
+    #     except Exception as exception_error:
+    #         self.logger.error("Error saving: %s", exception_error)
+    #         raise TypeError('An error occurred while saving.') from None
+
+    # def add_runner(self, league_id:str, new_runner:RunnerBase):
+    #     try:
+    #         league = self.__league_service.add_runner(league_id, new_runner)
+
+    #         if league:
+    #             return league
+
+    #         return {}
+    #     except Exception as exception_error:
+    #         self.logger.error("Error saving: %s", exception_error)
+    #         raise TypeError('An error occurred while saving.') from None
+
+    # def delete_runners(self, league_id:str, runners:List[RunnerBase]):
+    #     try:
+    #         league = self.__league_service.delete_runners(league_id, runners)
+
+    #         if league:
+    #             return league
+
+    #         return {}
+    #     except Exception as exception_error:
+    #         self.logger.error("Error saving: %s", exception_error)
+    #         raise TypeError('An error occurred while saving.') from None
+
+    # def delete_runner(self, league_id:str, runner:RunnerBase):
+    #     try:
+    #         league = self.__league_service.delete_runner(league_id, runner)
+
+    #         if league:
+    #             return league
+
+    #         return {}
+    #     except Exception as exception_error:
+    #         self.logger.error("Error saving: %s", exception_error)
+    #         raise TypeError('An error occurred while saving.') from None
+
+    # def add_race(self, league_id, race_id:str, order_race:int):
+    #     try:
+    #         league = self.__league_service.add_race(league_id, race_id, order_race)
+
+    #         if league:
+    #             return league
+
+    #         return {}
+    #     except Exception as exception_error:
+    #         self.logger.error("Error saving: %s", exception_error)
+    #         raise TypeError('An error occurred while saving.') from None
+
+    # def disqualify_runner(self, league_id:int, race_name:str, bib_number):
+    #     try:
+    #         league = self.__league_service.disqualify_runner(league_id, race_name, bib_number)
+
+    #         if league:
+    #             return league
+
+    #         return {}
+    #     except Exception as exception_error:
+    #         self.logger.error("Error saving: %s", exception_error)
+    #         raise TypeError('An error occurred while saving.') from None

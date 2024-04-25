@@ -1,8 +1,12 @@
+import logging
 from typing import List
-from app.infrastructure.mongoDB.model.base_mongo_entity import BaseMongoEntity
+from app.domain.model.base_object_model import BaseModel
 
 
-class LeagueEntity(BaseMongoEntity):
+logger = logging.getLogger(__name__)
+
+class LeagueModel(BaseModel):
+    id:str = ''
     name: str = ''
     order: int = 0
     race_ids: List[str] = []
