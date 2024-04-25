@@ -7,7 +7,6 @@ class RunnerRaceDataEntityProperty(BaseEntityProperty):
     nationality: str = ''
     gender: str = ''
 
-    photo: str = ''
     photo_url: str = ''
     dorsal: int = 0
     club: str = ''

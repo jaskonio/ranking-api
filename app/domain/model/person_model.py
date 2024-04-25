@@ -7,7 +7,6 @@ class PersonModel(BaseObjectModel):
     last_name:str = ''
     nationality: str = ''
     gender: str = ''
-    photo:str = ''
     photo_url: str = ''
 
     def __eq__(self, other_person):
