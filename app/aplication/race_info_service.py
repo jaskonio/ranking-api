@@ -6,8 +6,8 @@ from app.domain.services.downloader_runners_service import DownloaderRunnersServ
 from app.domain.services.http_downloader_service import HTTPDownloaderService
 from app.domain.services.mappe_runners_factory import MappeRunnersFactory
 from app.domain.services.race_downloader_options_factory import RaceDownloaderOptionsFactory
-from app.infrastructure.mongoDB.model.race_data_model import RaceDataModel
-from app.infrastructure.mongoDB.model.runner_race_data_model import RunnerRaceDataModel
+from app.infrastructure.mongoDB.model.race_data_entity import RaceDataModel
+from app.infrastructure.mongoDB.model.runner_race_data_entity_property import RunnerRaceDataEntityProperty
 from app.infrastructure.mongoDB.repository.race_info_repository import RaceInfoRepository
 from app.infrastructure.repository.repository_utils import load_repository_from_config
 from app.infrastructure.rest_api.model.race_info import RaceInfoSimplified, RaceInfoSimplifiedRequest
@@ -49,7 +49,7 @@ class RaceInfoService():
 
         runners_race_data:List[RunnerRaceData] = self.__downloader_runners_service.get_all_runners(race_info_model)
 
-        runners_race_data_entity = dicts_to_objects(RunnerRaceDataModel, runners_race_data)
+        runners_race_data_entity = dicts_to_objects(RunnerRaceDataEntityProperty, runners_race_data)
         # new_race_data_entity = RaceDataModel(data=runners_race_data_dict)
         new_race_data_entity = RaceDataModel()
         new_race_data_entity.data = runners_race_data_entity

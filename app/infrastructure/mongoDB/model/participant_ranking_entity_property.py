@@ -1,7 +1,7 @@
-from app.infrastructure.mongoDB.model.entity_base_mongo_model import EntityBaseMongoModel
+from app.infrastructure.mongoDB.model.base_mongo_entity import BaseMongoEntity
 
 
-class ParticipantRankingModel(EntityBaseMongoModel):
+class ParticipantRankingEntityProperty(BaseMongoEntity):
     first_name: str
     last_name: str = ''
     gender: str = ''

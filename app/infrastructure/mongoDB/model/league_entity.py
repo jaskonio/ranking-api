@@ -1,8 +1,8 @@
 from typing import List
-from app.infrastructure.mongoDB.model.entity_base_mongo_model import EntityBaseMongoModel
+from app.infrastructure.mongoDB.model.base_mongo_entity import BaseMongoEntity
 
 
-class LeagueModel(EntityBaseMongoModel):
+class LeagueEntity(BaseMongoEntity):
     name: str
     order: int = 0
     race_ids: List[str] = []

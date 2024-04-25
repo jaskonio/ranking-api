@@ -5,7 +5,7 @@ from app.core.mapper_utils import dict_to_class
 from bson import ObjectId
 
 
-class EntityBaseMongoModel(BaseModel):
+class BaseMongoEntity(BaseModel):
     id: OID = Field(default_factory=OID)
 
     class Config(BaseConfigurator):

@@ -4,7 +4,7 @@ from pymongo import collection
 from pymongo.database import Database
 from app.core.mapper_utils import dict_to_class, dict_to_entity, dicts_to_class, dicts_to_entity
 from app.domain.repository.igeneric_repository import IGenericRepository
-from app.infrastructure.mongoDB.model.entity_base_mongo_model import EntityBaseMongoModel
+from app.infrastructure.mongoDB.model.base_mongo_entity import BaseMongoEntity
 
 
 logger = logging.getLogger(__name__)
@@ -37,7 +37,7 @@ class MongoDBRepository(IGenericRepository):
                          , str(entity_id), str(exception))
             return None
 
-    def add(self, new_entity: EntityBaseMongoModel):
+    def add(self, new_entity: BaseMongoEntity):
         try:
             entity_id = self.collection.insert_one(new_entity.to_mongo()).inserted_id
 
@@ -46,7 +46,7 @@ class MongoDBRepository(IGenericRepository):
             logger.error("Error al agregar un nuevo registro: %s", str(exception))
             return ""
 
-    def update_by_id(self, entity_id, new_entity:EntityBaseMongoModel):
+    def update_by_id(self, entity_id, new_entity:BaseMongoEntity):
         try:
             result = self.collection.update_one({"_id": ObjectId(entity_id)},
                                                 {"$set": new_entity.to_mongo()})

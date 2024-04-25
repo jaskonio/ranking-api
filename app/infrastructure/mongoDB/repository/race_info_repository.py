@@ -8,8 +8,8 @@ from app.core.mapper_utils import dict_to_class, dicts_to_class
 from app.domain.model.race_data import RaceData
 from app.domain.model.race_info import RaceInfo
 from app.domain.repository.igeneric_repository import IGenericRepository
-from app.infrastructure.mongoDB.model.race_data_model import RaceDataModel
-from app.infrastructure.mongoDB.model.race_info_model import RaceInfoModel
+from app.infrastructure.mongoDB.model.race_data_entity import RaceDataModel
+from app.infrastructure.mongoDB.model.race_info_entity import RaceInfoEntity
 from app.infrastructure.repository.repository_utils import load_repository_from_config
 from app.infrastructure.rest_api.model.race_info import RaceInfoSimplified, RaceInfoSimplifiedRequest
 
@@ -19,12 +19,12 @@ logger = logging.getLogger(__name__)
 class RaceInfoRepository(IGenericRepository):
     def __init__(self):
         db = load_repository_from_config()
-        self.race_info_repository = db.get_repository('race_info', RaceInfoModel)
+        self.race_info_repository = db.get_repository('race_info', RaceInfoEntity)
         self.race_data_repository = db.get_repository('race_data', RaceDataModel)
 
     def get_all_raw(self) -> List[RaceInfo]:
         try:
-            all_race_info: List[RaceInfoModel] = self.race_info_repository.get_all()
+            all_race_info: List[RaceInfoEntity] = self.race_info_repository.get_all()
             all_race_data: List[RaceDataModel] = self.race_data_repository.get_all()
 
             all_race_info_model: List[RaceInfo] = []
@@ -54,7 +54,7 @@ class RaceInfoRepository(IGenericRepository):
 
     def get_simplified_by_id(self, entity_id:str):
         try:
-            entity:RaceInfoModel = self.race_info_repository.get_by_id(entity_id)
+            entity:RaceInfoEntity = self.race_info_repository.get_by_id(entity_id)
             return dict_to_class(RaceInfoSimplified, entity.to_dict()) if entity else None
         except Exception as exception:
             logger.error("Error al obtener el registro con ID %s: %s"
@@ -63,7 +63,7 @@ class RaceInfoRepository(IGenericRepository):
 
     def add_simplified(self, new_model: RaceInfoSimplifiedRequest):
         try:
-            entity:RaceInfoModel = new_model.to_class_entity(RaceInfoModel)
+            entity:RaceInfoEntity = new_model.to_class_entity(RaceInfoEntity)
             entity_id = self.race_info_repository.add(entity)
 
             return str(entity_id)
@@ -73,7 +73,7 @@ class RaceInfoRepository(IGenericRepository):
 
     def update_by_id(self, entity_id, new_entity: RaceInfoSimplified) -> bool:
         try:
-            result = self.race_info_repository.update_by_id(entity_id, new_entity.to_class_entity(RaceInfoModel))
+            result = self.race_info_repository.update_by_id(entity_id, new_entity.to_class_entity(RaceInfoEntity))
             return result
         except Exception as exception:
             logger.error("Error al actualizar el registro con ID %s: %s"
