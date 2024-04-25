@@ -1,15 +1,15 @@
-from app.domain.model.race_info import Platform
+from app.domain.model.race_info_model import Platform
 from app.infrastructure.rest_api.model.base_api_model import BaseAPI_Model
 
 
-class RaceInfoBase(BaseAPI_Model):
+class API_RaceInfoBase(BaseAPI_Model):
     id: str = ''
     name: str = ''
     url: str = ''
     platform: Platform = Platform.SPORTMANIACS_LATEST
     processed: bool = False
 
-class RaceInfoSimplified(RaceInfoBase):
+class RaceInfoSimplifiedResponse(API_RaceInfoBase):
     race_data_id: str = ''
 
 class RaceInfoSimplifiedRequest(BaseAPI_Model):
@@ -17,3 +17,14 @@ class RaceInfoSimplifiedRequest(BaseAPI_Model):
     url: str = ''
     platform: Platform = Platform.SPORTMANIACS_LATEST
     processed: bool = False
+    race_data_id: str = ''
+
+class RaceInfoRAW_Response(API_RaceInfoBase):
+    data: list[any] = []
+
+class RaceInfoRAW_Request(BaseAPI_Model):
+    name: str = ''
+    url: str = ''
+    platform: Platform = Platform.SPORTMANIACS_LATEST
+    processed: bool = False
+    data: list[any] = []

@@ -1,6 +1,6 @@
 from typing import List
 from fastapi import APIRouter
-from app.domain.model.person import Person
+from app.domain.model.person_model import PersonModel
 from app.infrastructure.repository.repository_utils import load_repository_from_config
 from app.infrastructure.rest_api.model.person_request import PersonRequest
 from app.infrastructure.rest_api.controller.person_controller import PersonController
@@ -10,7 +10,7 @@ from app.aplication.person_service import PersonService
 person_router = APIRouter()
 
 db = load_repository_from_config()
-controller = PersonController(PersonService(db.get_repository('Persons', Person)))
+controller = PersonController(PersonService(db.get_repository('Persons', PersonModel)))
 
 @person_router.get('/')
 def get_all():
@@ -24,14 +24,14 @@ def get_by_id(person_id:str):
 def adds(persons: List[PersonRequest]):
     results = []
     for person in persons:
-        person_model = person.to_entity(Person)
+        person_model = person.to_entity(PersonModel)
         results.append(controller.add(person_model))
 
     return results
 
 @person_router.put('/{person_id}')
 def update_by_id(person_id: str, person: PersonRequest):
-    return controller.update_by_id(person_id, person.to_entity(Person))
+    return controller.update_by_id(person_id, person.to_entity(PersonModel))
 
 @person_router.delete('/{person_id}')
 def delete_by_id(person_id:str):

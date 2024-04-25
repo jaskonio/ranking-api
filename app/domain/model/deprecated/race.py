@@ -1,7 +1,7 @@
 from typing import List
-from app.domain.model.race_base import RaceBase
-from app.domain.model.runner_base import RunnerBase
-from app.domain.model.runner_race_ranking import RunnerRaceRanking
+from app.domain.model.deprecated.race_base import RaceBase
+from app.domain.model.deprecated.runner_base import RunnerBase
+from app.domain.model.deprecated.runner_race_ranking import RunnerRaceRanking
 from app.domain.repository.idownloader_race_data import TypePlatformInscriptions
 
 

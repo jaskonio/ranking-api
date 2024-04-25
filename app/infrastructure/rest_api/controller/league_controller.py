@@ -1,8 +1,8 @@
 import logging
 from typing import List
 from app.aplication.league_service import LeagueService
-from app.domain.model.league import League
-from app.domain.model.runner_base import RunnerBase
+from app.domain.model.league_model import LeagueModel
+from app.domain.model.deprecated.runner_base import RunnerBase
 
 
 class LeagueController():
@@ -29,7 +29,7 @@ class LeagueController():
             self.logger.error("Error retrieving item: %s", exception_error)
             raise TypeError('An error occurred while retrieving item.') from None
 
-    def add(self, league: League):
+    def add(self, league: LeagueModel):
         try:
             league = self.__league_service.add(league)
 
@@ -113,7 +113,7 @@ class LeagueController():
             self.logger.error("Error saving: %s", exception_error)
             raise TypeError('An error occurred while saving.') from None
 
-    def update_by_id(self, league_id:str, new_league: League):
+    def update_by_id(self, league_id:str, new_league: LeagueModel):
         try:
             league = self.__league_service.update_by_id(league_id, new_league)
 

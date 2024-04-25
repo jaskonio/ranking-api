@@ -1,7 +1,7 @@
 
 from datetime import datetime
 from typing import List
-from app.domain.model.runner_base import RunnerBase
+from app.domain.model.deprecated.runner_base import RunnerBase
 
 
 class RunnerRaceRanking(RunnerBase):

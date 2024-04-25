@@ -1,8 +1,9 @@
+from typing import List
 from fastapi import APIRouter
 from app.aplication.race_info_service import RaceInfoService
 from app.infrastructure.repository.repository_utils import load_repository_from_config
 from app.infrastructure.rest_api.controller.race_info_controller import RaceInfoController
-from app.infrastructure.rest_api.model.race_info import RaceInfoSimplifiedRequest
+from app.infrastructure.rest_api.model.race_info import RaceInfoRAW_Response, RaceInfoSimplifiedRequest
 
 
 race_info_router = APIRouter()
@@ -11,7 +12,7 @@ db = load_repository_from_config()
 controller = RaceInfoController(RaceInfoService())
 
 @race_info_router.get('/raw')
-def get_all_raw():
+def get_all_raw() -> List[RaceInfoRAW_Response]:
     return controller.get_all_raw()
 
 @race_info_router.get('/')

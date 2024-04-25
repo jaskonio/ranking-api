@@ -1,11 +1,11 @@
 from typing import List
 from app.core.mapper_utils import dicts_to_class
-from app.domain.model.base_entity import BaseEntity
-from app.domain.model.runner_race_ranking import RunnerRaceRanking
+from app.domain.model.base_model import BaseModel
+from app.domain.model.deprecated.runner_race_ranking import RunnerRaceRanking
 from app.domain.repository.idownloader_race_data import TypePlatformInscriptions
 
 
-class RaceBase(BaseEntity):
+class RaceBase(BaseModel):
     def __init__(self, id:str='', name:str='', url: str='', raw_ranking: List[RunnerRaceRanking] = None, platform_inscriptions:TypePlatformInscriptions = 0, processed: bool=False):
         self.id = str(id)
         self.name = name

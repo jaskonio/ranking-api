@@ -1,10 +1,9 @@
-from app.domain.model.race_info import Platform
-from app.domain.repository.idownloader_race_data import RaceDownloaderOptions, TypePlatformInscriptions, TypeService
-from app.infrastructure.rest_api.model.race_info import RaceInfoSimplified
+from app.domain.model.race_info_model import Platform, RaceInfoSimplifiedModel
+from app.domain.repository.idownloader_race_data import RaceDownloaderOptions, TypeService
 
 
 class RaceDownloaderOptionsFactory():
-    def factory_method(self, race_info_model: RaceInfoSimplified):
+    def factory_method(self, race_info_model: RaceInfoSimplifiedModel):
         print("Factory Mapper. Type:" + str(race_info_model.platform))
 
         options = RaceDownloaderOptions()

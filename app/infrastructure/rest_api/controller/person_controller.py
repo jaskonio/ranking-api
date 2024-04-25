@@ -1,6 +1,6 @@
 import logging
 from app.aplication.person_service import PersonService
-from app.domain.model.person import Person
+from app.domain.model.person_model import PersonModel
 
 
 class PersonController():
@@ -27,7 +27,7 @@ class PersonController():
             self.logger.error("Error retrieving item: %s", exception_error)
             raise TypeError('An error occurred while retrieving item.') from None
 
-    def add(self, person: Person):
+    def add(self, person: PersonModel):
         try:
             person = self.__person_service.add(person)
 

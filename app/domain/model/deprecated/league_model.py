@@ -3,16 +3,16 @@ from collections import Counter
 from datetime import timedelta
 from typing import List
 from app.core.mapper_utils import dicts_to_class
-from app.domain.model.base_entity import BaseEntity
-from app.domain.model.race import Race
-from app.domain.model.runner_base import RunnerBase
-from app.domain.model.runner_league_ranking import RunnerLeagueRanking
+from app.domain.model.base_model import BaseModel
+from app.domain.model.deprecated.race import Race
+from app.domain.model.deprecated.runner_base import RunnerBase
+from app.domain.model.deprecated.runner_league_ranking import RunnerLeagueRanking
 from app.domain.services.UtilsRunner import convert_string_to_timedelta, convert_timedelta_to_string
 
 
 logger = logging.getLogger(__name__)
 
-class League(BaseEntity):
+class LeagueModel(BaseModel):
     def __init__(self, id:str='0', name:str='', races: List[Race] = None, ranking:List[RunnerLeagueRanking] = None
                  , participants: List[RunnerBase] = None ):
         self.id = str(id)

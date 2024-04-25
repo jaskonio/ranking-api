@@ -1,6 +1,7 @@
 import logging
+from typing import List
 from app.aplication.race_info_service import RaceInfoService
-from app.infrastructure.rest_api.model.race_info import RaceInfoSimplified, RaceInfoSimplifiedRequest
+from app.infrastructure.rest_api.model.race_info import RaceInfoRAW_Response, RaceInfoSimplifiedRequest
 
 
 class RaceInfoController():
@@ -8,7 +9,7 @@ class RaceInfoController():
         self.__race_info_service = race_info_service
         self.logger = logging.getLogger(__name__)
 
-    def get_all_raw(self):
+    def get_all_raw(self) -> List[RaceInfoRAW_Response]:
         try:
             return self.__race_info_service.get_all_raw()
         except Exception as exception_error:
@@ -81,5 +82,3 @@ class RaceInfoController():
     #     except Exception as exception_error:
     #         self.logger.error("Error deleting: %s", exception_error)
     #         raise TypeError('An error occurred while deleting.') from None
-
-

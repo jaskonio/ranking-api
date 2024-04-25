@@ -1,7 +1,7 @@
 from typing import List
 from app.core.mapper_utils import dicts_to_class, dicts_to_objects
-from app.domain.model.race_info import RaceInfo
-from app.domain.model.runner_race_data import RunnerRaceData
+from app.domain.model.race_info_model import RaceInfoModel
+from app.domain.model.runner_race_data_model import RunnerRaceDataModel
 from app.domain.services.downloader_runners_service import DownloaderRunnersService
 from app.domain.services.http_downloader_service import HTTPDownloaderService
 from app.domain.services.mappe_runners_factory import MappeRunnersFactory
@@ -21,7 +21,7 @@ class RaceInfoService():
         db = load_repository_from_config()
         self.__race_data_repository = db.get_repository('race_data', RaceDataModel)
 
-    def get_all_raw(self) -> List[RaceInfo]:
+    def get_all_raw(self) -> List[RaceInfoModel]:
         all_races_info = self.__race_info_repository.get_all_raw()
 
         return all_races_info
@@ -47,7 +47,7 @@ class RaceInfoService():
         if race_info_model.race_data_id != '':
             self.__race_data_repository.delete_by_id(race_info_model.race_data_id)
 
-        runners_race_data:List[RunnerRaceData] = self.__downloader_runners_service.get_all_runners(race_info_model)
+        runners_race_data:List[RunnerRaceDataModel] = self.__downloader_runners_service.get_all_runners(race_info_model)
 
         runners_race_data_entity = dicts_to_objects(RunnerRaceDataEntityProperty, runners_race_data)
         # new_race_data_entity = RaceDataModel(data=runners_race_data_dict)

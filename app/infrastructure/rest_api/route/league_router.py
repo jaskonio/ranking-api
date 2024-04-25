@@ -1,10 +1,10 @@
 from typing import List
 from fastapi import APIRouter
 from app.aplication.league_service import LeagueService
-from app.domain.model.league import League
-from app.domain.model.person import Person
-from app.domain.model.race import Race
-from app.domain.model.runner_base import RunnerBase
+from app.domain.model.league_model import LeagueModel
+from app.domain.model.person_model import PersonModel
+from app.domain.model.deprecated.race import Race
+from app.domain.model.deprecated.runner_base import RunnerBase
 from app.infrastructure.repository.repository_utils import load_repository_from_config
 from app.infrastructure.rest_api.controller.league_controller import LeagueController
 from app.infrastructure.rest_api.model.league_request import LeagueRequest
@@ -14,9 +14,9 @@ from app.infrastructure.rest_api.model.runner_request import RunnerBaseRequest
 league_router = APIRouter()
 
 db = load_repository_from_config()
-controller = LeagueController(LeagueService(db.get_repository('Leagues', League)
+controller = LeagueController(LeagueService(db.get_repository('Leagues', LeagueModel)
                                         , db.get_repository('Races', Race)
-                                        , db.get_repository('Persons', Person)))
+                                        , db.get_repository('Persons', PersonModel)))
 
 @league_router.get('/')
 def get_all():
@@ -30,7 +30,7 @@ def get_by_id(league_id:str):
 def add(leagues: List[LeagueRequest]):
     results = []
     for league in leagues:
-        league_model = league.to_entity(League)
+        league_model = league.to_entity(LeagueModel)
         results.append(controller.add(league_model))
 
     return results
@@ -63,7 +63,7 @@ def disqualify_runner(league_id:str, race_name: str, bib_number:int):
 
 @league_router.put('/{league_id}')
 def update_by_id(league_id: str, league: LeagueRequest):
-    league_entity = league.to_entity(League)
+    league_entity = league.to_entity(LeagueModel)
     return controller.update_by_id(league_id, league_entity)
 
 @league_router.delete('/{league_id}')

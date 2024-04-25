@@ -1,5 +1,5 @@
 
-from app.domain.model.runner_base import RunnerBase
+from app.domain.model.deprecated.runner_base import RunnerBase
 
 
 class RunnerLeagueRanking(RunnerBase):

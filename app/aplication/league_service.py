@@ -1,10 +1,10 @@
 import logging
 from typing import List
-from app.domain.model.league import League
-from app.domain.model.person import Person
-from app.domain.model.race import Race
-from app.domain.model.race_base import RaceBase
-from app.domain.model.runner_base import RunnerBase
+from app.domain.model.league_model import LeagueModel
+from app.domain.model.person_model import PersonModel
+from app.domain.model.deprecated.race import Race
+from app.domain.model.deprecated.race_base import RaceBase
+from app.domain.model.deprecated.runner_base import RunnerBase
 from app.domain.repository.igeneric_repository import IGenericRepository
 
 
@@ -18,17 +18,17 @@ class LeagueService():
         self.person_repository = person_repository
         self.logger = logging.getLogger(__name__)
 
-    def get_all(self) -> List[League]:
+    def get_all(self) -> List[LeagueModel]:
         leagues = self.league_repository.get_all()
 
         return leagues
 
-    def get_by_id(self, league_id) -> League:
+    def get_by_id(self, league_id) -> LeagueModel:
         league = self.league_repository.get_by_id(league_id)
 
         return league
 
-    def add(self, league) -> League:
+    def add(self, league) -> LeagueModel:
         league_id = self.league_repository.add(league)
 
         league = self.league_repository.get_by_id(league_id)
@@ -36,7 +36,7 @@ class LeagueService():
         return league
 
     def add_runners(self, league_id:str, runners:List[RunnerBase]):
-        league:League = self.league_repository.get_by_id(league_id)
+        league:LeagueModel = self.league_repository.get_by_id(league_id)
 
         if league is None:
             self.logger.error("League not found.")
@@ -50,7 +50,7 @@ class LeagueService():
         return league
 
     def add_runner(self, league_id:str, runner:RunnerBase):
-        league:League = self.league_repository.get_by_id(league_id)
+        league:LeagueModel = self.league_repository.get_by_id(league_id)
 
         if league is None:
             self.logger.error("League not found.")
@@ -72,7 +72,7 @@ class LeagueService():
         return league
 
     def delete_runners(self, league_id:str, runners:List[RunnerBase]):
-        league:League = self.league_repository.get_by_id(league_id)
+        league:LeagueModel = self.league_repository.get_by_id(league_id)
 
         if league is None:
             self.logger.error("League not found.")
@@ -86,7 +86,7 @@ class LeagueService():
         return league
 
     def delete_runner(self, league_id:str, runner:RunnerBase):
-        league:League = self.league_repository.get_by_id(league_id)
+        league:LeagueModel = self.league_repository.get_by_id(league_id)
 
         if league is None:
             self.logger.error("League not found.")
@@ -100,7 +100,7 @@ class LeagueService():
         return league
 
     def add_race(self, league_id, race_id:str, order_race:int):
-        league:League = self.league_repository.get_by_id(league_id)
+        league:LeagueModel = self.league_repository.get_by_id(league_id)
 
         if league is None:
             self.logger.error("League not found.")
@@ -120,7 +120,7 @@ class LeagueService():
         return league
 
     def disqualify_runner(self, league_id:int, race_name:str, bib_number):
-        league:League = self.league_repository.get_by_id(league_id)
+        league:LeagueModel = self.league_repository.get_by_id(league_id)
 
         if league is None:
             self.logger.error("League not found.")
@@ -140,8 +140,8 @@ class LeagueService():
         else:
             return None
 
-    def update_by_id(self, league_id:str, new_league:League):
-        league = League()
+    def update_by_id(self, league_id:str, new_league:LeagueModel):
+        league = LeagueModel()
 
         league.id = league_id
         league.name = new_league.name

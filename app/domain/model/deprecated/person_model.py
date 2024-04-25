@@ -1,7 +1,7 @@
-from app.domain.model.base_entity import BaseEntity
+from app.domain.model.base_model import BaseModel
 
 
-class Person(BaseEntity):
+class PersonModel(BaseModel):
 
     def __init__(self, id:str='', first_name: str = '', last_name:str = '', nationality: str = '',
                  gender: str = '', photo:str = '', photo_url: str = '') -> None:

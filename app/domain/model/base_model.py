@@ -1,7 +1,7 @@
 from app.core.mapper_utils import class_to_dict
 
 
-class BaseEntity():
+class BaseModel():
     def __init__(self) -> None:
         pass
 
