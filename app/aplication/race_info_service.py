@@ -98,7 +98,7 @@ class RaceInfoService():
 
         status = self.__race_info_repository.update_by_id(race_info_entity.id, race_info_entity)
         race_info_entity = self.__race_info_repository.get_by_id(race_info_entity.id)
-        
+
         return race_info_entity.to_domain_model(RaceInfoSimplifiedModel)
 
     def update_by_id(self, race_id:str, race_model:RaceInfoSimplifiedModel):

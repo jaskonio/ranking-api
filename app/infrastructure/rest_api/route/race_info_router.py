@@ -40,6 +40,6 @@ def run_process(race_id:str) -> RaceInfoSimplifiedResponse:
 #     race_entity = race.to_entity(RaceBase)
 #     return controller.update_by_id(race_id, race_entity)
 
-# @race_info_router.delete('/{race_id}')
-# def delete_by_id(race_id:str):
-#     return controller.delete_by_id(race_id)
+@race_info_router.delete('/{race_id}')
+def delete_by_id(race_id:str):
+    return controller.delete_by_id(race_id)

@@ -87,14 +87,14 @@ class RaceInfoController():
     #         self.logger.error("Error updating: %s", exception_error)
     #         raise TypeError('An error occurred while updating.') from None
 
-    # def delete_by_id(self, race_id):
-    #     try:
-    #         status = self.__race_info_service.delete_by_id(race_id)
+    def delete_by_id(self, race_id):
+        try:
+            status = self.__race_info_service.delete_by_id(race_id)
 
-    #         if status:
-    #             return status
+            if status:
+                return status
 
-    #         return {}
-    #     except Exception as exception_error:
-    #         self.logger.error("Error deleting: %s", exception_error)
-    #         raise TypeError('An error occurred while deleting.') from None
+            return {}
+        except Exception as exception_error:
+            self.logger.error("Error deleting: %s", exception_error)
+            raise TypeError('An error occurred while deleting.') from None
