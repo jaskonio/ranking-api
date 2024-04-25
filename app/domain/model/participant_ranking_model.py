@@ -1,7 +1,7 @@
-from app.infrastructure.mongoDB.model.participant_league_entity import ParticipantLeagueEntity
+from app.domain.model.participant_league_model import ParticipantLeagueModel
 
 
-class ParticipantRankingEntityProperty(ParticipantLeagueEntity):
+class ParticipantRankingModel(ParticipantLeagueModel):
     is_disqualified: bool = False
     position: int = 0
     points: int = 0

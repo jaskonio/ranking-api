@@ -1,6 +1,7 @@
 from app.infrastructure.mongoDB.model.person_entity import PersonEntity
 
 
-class ParticipantLeagueModel(PersonEntity):
+class ParticipantLeagueEntity(PersonEntity):
     dorsal: int = 0
     category: str = ''
+    disqualified_order_race: int = 99999

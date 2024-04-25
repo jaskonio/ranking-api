@@ -12,3 +12,4 @@ class LeagueModel(BaseModel):
     race_ids: List[str] = []
     runner_participant_ids: List[str] = []
     ranking_id: List[str] = []
+    history_ranking_id: List[str] = []
