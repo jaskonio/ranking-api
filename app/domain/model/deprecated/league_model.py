@@ -3,7 +3,7 @@ from collections import Counter
 from datetime import timedelta
 from typing import List
 from app.core.mapper_utils import dicts_to_class
-from app.domain.model.base_model import BaseModel
+from app.domain.model.base_object_model import BaseModel
 from app.domain.model.deprecated.race import Race
 from app.domain.model.deprecated.runner_base import RunnerBase
 from app.domain.model.deprecated.runner_league_ranking import RunnerLeagueRanking

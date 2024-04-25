@@ -1,6 +1,6 @@
 from typing import List
 from app.core.mapper_utils import dicts_to_class
-from app.domain.model.base_model import BaseModel
+from app.domain.model.base_object_model import BaseModel
 from app.domain.model.deprecated.runner_race_ranking import RunnerRaceRanking
 from app.domain.repository.idownloader_race_data import TypePlatformInscriptions
 

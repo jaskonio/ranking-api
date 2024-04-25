@@ -1,4 +1,4 @@
-from app.domain.model.base_model import BaseModel
+from app.domain.model.base_object_model import BaseModel
 
 
 class PersonModel(BaseModel):

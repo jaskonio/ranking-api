@@ -1,6 +1,5 @@
 import logging
 from typing import List
-from app.domain.model.deprecated.race import Race
 from app.domain.model.race_info_model import RaceInfoSimplifiedModel
 from app.domain.model.runner_race_data_model import RunnerRaceDataModel
 from app.domain.services.http_downloader_service import HTTPDownloaderService

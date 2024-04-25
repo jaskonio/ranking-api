@@ -11,7 +11,15 @@ class RaceInfoController():
 
     def get_all_raw(self) -> List[RaceInfoRAW_Response]:
         try:
-            return self.__race_info_service.get_all_raw()
+            results = self.__race_info_service.get_all_raw()
+            data_response: List[RaceInfoRAW_Response] = []
+
+            for result in results:
+                data_dict = result.dict()
+                data = RaceInfoRAW_Response.parse_obj(data_dict)
+                data_response.append(data)
+
+            return data_response
         except Exception as exception_error:
             self.logger.error("Error retrieving all items: %s", exception_error)
             raise TypeError('An error occurred while retrieving all items.') from None
