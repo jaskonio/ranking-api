@@ -1,11 +1,5 @@
-from pydantic import BaseModel
+from app.infrastructure.mongoDB.model.participant_league_entity import ParticipantLeagueModel
 
 
-class ParticipantRaceEntityProperty(BaseModel):
-    first_name: str
-    last_name: str = ''
-    gender: str = ''
-    photo_url: str = ''
-    dorsal: int = 0
-    category: str = ''
+class ParticipantRaceEntityProperty(ParticipantLeagueModel):
     is_disqualified: bool = False

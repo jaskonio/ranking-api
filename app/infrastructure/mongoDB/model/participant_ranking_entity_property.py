@@ -1,13 +1,7 @@
-from app.infrastructure.mongoDB.model.base_entity_property import BaseEntityProperty
+from app.infrastructure.mongoDB.model.participant_league_entity import ParticipantLeagueModel
 
 
-class ParticipantRankingEntityProperty(BaseEntityProperty):
-    first_name: str = ''
-    last_name: str = ''
-    gender: str = ''
-    photo_url: str = ''
-    dorsal: int = 0
-    category: str = ''
+class ParticipantRankingEntityProperty(ParticipantLeagueModel):
     is_disqualified: bool = False
     position: int = 0
     points: int = 0

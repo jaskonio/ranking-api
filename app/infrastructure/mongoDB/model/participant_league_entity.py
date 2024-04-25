@@ -1,10 +1,6 @@
-from app.infrastructure.mongoDB.model.base_mongo_entity import BaseMongoEntity
+from app.infrastructure.mongoDB.model.person_entity import PersonEntity
 
 
-class ParticipantLeagueModel(BaseMongoEntity):
-    first_name: str
-    last_name: str = ''
-    gender: str = ''
-    photo_url: str = ''
+class ParticipantLeagueModel(PersonEntity):
     dorsal: int = 0
     category: str = ''
