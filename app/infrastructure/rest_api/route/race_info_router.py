@@ -20,7 +20,7 @@ def get_all_simplified() -> List[RaceInfoSimplifiedResponse]:
     return controller.get_all_simplified()
 
 @race_info_router.get('/{race_id}')
-def get_simplified_by_id(race_id:str):
+def get_simplified_by_id(race_id:str) -> RaceInfoSimplifiedResponse:
     return controller.get_simplified_by_id(race_id)
 
 @race_info_router.post('/')

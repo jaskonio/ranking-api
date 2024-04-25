@@ -9,6 +9,12 @@ class BaseAPI_Model(BaseModel):
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
 
+    def create_by_domain_model(self, domain_data: BaseModel):
+        data_dict = domain_data.dict()
+        data = self.parse_obj(data_dict)
+
+        return data
+
     def to_class_entity(self, class_entity):
         data = self.dict()
         new_id = ObjectId() if 'id' not in data or data['id'] == '' else ObjectId(data['id'])
