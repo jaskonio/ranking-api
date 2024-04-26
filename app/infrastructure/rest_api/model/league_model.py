@@ -1,4 +1,3 @@
-
 from typing import List
 from app.infrastructure.rest_api.model.base_api_model import BaseAPI_Model
 from app.infrastructure.rest_api.model.participant_league_model import ParticipantLeagueResponse

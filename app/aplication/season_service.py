@@ -1,6 +1,7 @@
 from typing import List
 from app.aplication.exceptions import MethodNotImplemented
-from app.domain.model.season_model import SeasonModel
+from app.aplication.league_service import LeagueService
+from app.domain.model.season_model import SeasonModel, SeasonRawModel
 from app.infrastructure.mongoDB.model.season_entity import SeasonEntity
 from app.infrastructure.repository.repository_utils import load_repository_from_config
 
@@ -10,6 +11,7 @@ class SeasonService():
     def __init__(self) -> None:
         db = load_repository_from_config()
         self.__season_repository = db.get_repository('season', SeasonEntity)
+        self.__leagues_service = LeagueService()
 
     def get_all(self) -> List[SeasonModel]:
         results: List[SeasonEntity] = self.__season_repository.get_all()
@@ -49,4 +51,30 @@ class SeasonService():
 
     # Raw
     def get_all_raw(self) -> List[SeasonModel]:
-        return MethodNotImplemented("get_all_raw not implemented")
+        season_entities: List[SeasonEntity] = self.__season_repository.get_all()
+        league_models = self.__leagues_service.get_all_raw()
+
+        season_models:List[SeasonModel] = []
+
+        for season_entity in season_entities:
+            season_model:SeasonRawModel = season_entity.to_domain_model(SeasonRawModel)
+
+            for league_model in league_models:
+                if league_model.id in season_entity.league_ids:
+                    season_model.leagues.append(league_model)
+
+            season_models.append(season_model)
+
+        return season_models
+
+    def get_raw_by_id(self, season_id:str) -> SeasonModel:
+        season_entity: SeasonEntity = self.__season_repository.get_by_id(season_id)
+        league_models = self.__leagues_service.get_all_raw()
+
+        season_model:SeasonRawModel = season_entity.to_domain_model(SeasonRawModel)
+
+        for league_model in league_models:
+            if league_model.id in season_entity.league_ids:
+                season_model.leagues.append(league_model)
+
+        return season_model

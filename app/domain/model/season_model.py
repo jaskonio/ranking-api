@@ -1,6 +1,6 @@
 from typing import List
 from app.domain.model.base_object_model import BaseObjectModel
-from app.domain.model.runner_race_data_model import RunnerRaceDataModel
+from app.domain.model.league_model import LeagueRAWModel
 
 
 class SeasonModel(BaseObjectModel):
@@ -11,4 +11,4 @@ class SeasonModel(BaseObjectModel):
 class SeasonRawModel(BaseObjectModel):
     id: str = ''
     name: str = ''
-    league_ids:List[RunnerRaceDataModel] = []
+    leagues:List[LeagueRAWModel] = []
