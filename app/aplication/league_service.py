@@ -1,9 +1,12 @@
 import logging
 from typing import List
 from app.aplication.particpant_league_service import ParticipantLeagueService
+from app.aplication.race_info_service import RaceInfoService
 from app.aplication.race_league_service import RaceLeagueService
 from app.aplication.ranking_league_service import RankingLeagueService
 from app.domain.model.league_model import LeagueModel, LeagueRAWModel
+from app.domain.model.participant_league_model import ParticipantLeagueModel
+from app.domain.model.race_league_model import RaceLeagueModel
 from app.infrastructure.mongoDB.model.league_entity import LeagueEntity
 from app.infrastructure.repository.repository_utils import load_repository_from_config
 
@@ -17,6 +20,7 @@ class LeagueService():
         self.__race_league_service = RaceLeagueService()
         self.__participant_league_service = ParticipantLeagueService()
         self.__ranking_league_service = RankingLeagueService()
+        self.__race_info_service = RaceInfoService()
 
     def get_all(self) -> List[LeagueModel]:
         league_entities: List[LeagueEntity] = self.__league_repository.get_all()
@@ -192,25 +196,48 @@ class LeagueService():
 
     #     return league
 
-    # def add_race(self, league_id, race_id:str, order_race:int):
-    #     league:LeagueModel = self.league_repository.get_by_id(league_id)
+    def add_race(self, league_id:str, new_race_league:RaceLeagueModel) -> LeagueModel:
+        league_entity:LeagueEntity = self.__league_repository.get_by_id(league_id)
+        league_model:LeagueModel = league_entity.to_domain_model(LeagueModel)
 
-    #     if league is None:
-    #         self.logger.error("League not found.")
-    #         return None
+        new_race_league:RaceLeagueModel = self.__race_league_service.add(new_race_league)
 
-    #     race:RaceBase = self.race_repository.get_by_id(race_id)
+        league_model.race_ids.append(new_race_league.id)
 
-    #     if race is None:
-    #         self.logger.error("Race not found.")
-    #         return None
+        league_model = self.__league_repository.update_by_id(league_id, league_model)
 
-    #     new_race = Race(id=0, name=race.name, url=race.url, ranking=race.ranking, order=order_race)
+        self.fill_race_league(league_id, new_race_league.id)
 
-    #     league.add_race(new_race)
-    #     self.league_repository.update_by_id(league_id, league)
+        return league_model
 
-    #     return league
+    def fill_race_league(self, league_id:str, race_league_id:str) -> RaceLeagueModel:
+        league_entity:LeagueEntity = self.__league_repository.get_by_id(league_id)
+        race_league_model = self.__race_league_service.get_by_id(race_league_id)
+
+        runner_participants_league:List[ParticipantLeagueModel] = self.get_participant_by_league(league_entity.id)
+
+        valid_participants: List[ParticipantLeagueModel] = []
+
+        for runner_participant_league in runner_participants_league:
+            if runner_participant_league.disqualified_order_race >= race_league_model.order:
+                continue
+
+            valid_participants.append(runner_participant_league)
+
+        race_info_raw_model = self.__race_info_service.get_raw_by_id(race_league_model.race_row_id)
+
+        for runner in race_info_raw_model.data.data:
+            for valid_participant in valid_participants:
+                if valid_participant.person_id == runner.person_id:
+                    race_league_model.ranking.append(runner)
+
+        self.__race_league_service.update_by_id(race_league_model.id, race_league_model)
+
+        return race_league_model
+
+    def get_participant_by_league(self, league_id:str) -> List[ParticipantLeagueModel]:
+        league_raw_model:LeagueRAWModel = self.get_raw_by_id(league_id)
+        return league_raw_model.runner_participants
 
     # def disqualify_runner(self, league_id:int, race_name:str, bib_number):
     #     league:LeagueModel = self.league_repository.get_by_id(league_id)

@@ -2,6 +2,7 @@ from app.domain.model.base_object_model import BaseObjectModel
 
 
 class RunnerRaceDataModel(BaseObjectModel):
+    person_id: str = ''
     first_name: str = ''
     last_name: str = ''
     nationality: str = ''
