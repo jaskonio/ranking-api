@@ -1,7 +1,15 @@
-from app.domain.model.participant_league_model import ParticipantLeagueModel
+from app.domain.model.base_object_model import BaseObjectModel
 
 
-class ParticipantRankingModel(ParticipantLeagueModel):
+class ParticipantRankingModel(BaseObjectModel):
+    person_id: str=''
+    first_name: str = ''
+    last_name:str = ''
+    nationality: str = ''
+    gender: str = ''
+    photo_url: str = ''
+    dorsal: int = 0
+    category: str = ''
     is_disqualified: bool = False
     position: int = 0
     points: int = 0

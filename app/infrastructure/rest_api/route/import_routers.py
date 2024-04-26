@@ -7,6 +7,7 @@ from app.infrastructure.rest_api.route.race_info_router import race_info_router
 from app.infrastructure.rest_api.route.season_router import season_router
 from app.infrastructure.rest_api.route.race_league_router import race_league_router
 from app.infrastructure.rest_api.route.particpant_league_router import participant_league_router
+from app.infrastructure.rest_api.route.ranking_league_router import ranking_league_router
 
 def get_routers():
     api_router = APIRouter()
@@ -21,5 +22,6 @@ def get_routers():
     api_router.include_router(league_router, prefix="/leagues", tags=["leagues"])
     api_router.include_router(race_league_router, prefix="/race_league")
     api_router.include_router(participant_league_router, prefix="/participant_league")
+    api_router.include_router(ranking_league_router, prefix="/ranking_league")
 
     return api_router
