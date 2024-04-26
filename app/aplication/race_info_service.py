@@ -1,4 +1,5 @@
 from typing import List
+from app.aplication.person_service import PersonService
 from app.domain.model.race_data_model import RaceDataModel
 from app.domain.model.race_info_model import RaceInfoRawModel, RaceInfoModel
 from app.domain.model.runner_race_data_model import RunnerRaceDataModel
@@ -6,9 +7,10 @@ from app.domain.services.downloader_runners_service import DownloaderRunnersServ
 from app.domain.services.http_downloader_service import HTTPDownloaderService
 from app.domain.services.mappe_runners_factory import MappeRunnersFactory
 from app.domain.services.race_downloader_options_factory import RaceDownloaderOptionsFactory
+from app.infrastructure.mongoDB.model.club_info_entity import ClubInfoEntity
 from app.infrastructure.mongoDB.model.race_data_entity import RaceDataEntity
 from app.infrastructure.mongoDB.model.race_info_entity import RaceInfoEntity
-from app.infrastructure.mongoDB.model.runner_race_data_entity_property import RunnerRaceDataEntityProperty
+from app.infrastructure.mongoDB.model.runner_race_data_entity import RunnerRaceDataEntity
 from app.infrastructure.repository.repository_utils import load_repository_from_config
 
 
@@ -19,6 +21,9 @@ class RaceInfoService():
         db = load_repository_from_config()
         self.__race_info_repository = db.get_repository('race_info', RaceInfoEntity)
         self.__race_data_repository = db.get_repository('race_data', RaceDataEntity)
+        self.__club_info_repository = db.get_repository('club_info', ClubInfoEntity)
+        self.__runner_race_data_repository = db.get_repository('runner_race_data', RunnerRaceDataEntity)
+        self.__person_service = PersonService()
 
     # RAW
     def get_all_raw(self) -> List[RaceInfoRawModel]:
@@ -88,8 +93,21 @@ class RaceInfoService():
 
         runners_race_data_model:List[RunnerRaceDataModel] = self.__downloader_runners_service.get_all_runners(race_info_model)
 
+        # Filter by club and person
+        club_info_entity:ClubInfoEntity =self.__club_info_repository.get_all()[0]
+        person_models = self.__person_service.get_all()
+
         new_race_data_entity = RaceDataEntity()
-        new_race_data_entity.data = [RunnerRaceDataEntityProperty().create_by_domain_model(runner_race_data_model) for runner_race_data_model in runners_race_data_model]
+
+        for runner_model in runners_race_data_model:
+            if runner_model.club.lower() in club_info_entity.names:
+                for person_model in person_models:
+                    if person_model == runner_model:
+                        runner_model.person_id = person_model.id
+                        runner_model.last_name = person_model.last_name
+                        runner_model.first_name = person_model.first_name
+                        runner_entity_id = self.__runner_race_data_repository.add(runner_model)
+                        new_race_data_entity.runner_ids.append(runner_entity_id)
 
         new_race_data_id = self.__race_data_repository.add(new_race_data_entity)
 

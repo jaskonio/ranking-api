@@ -14,7 +14,7 @@ class DownloaderRunnersService:
         self.__mapper_runners_factory = mapper_runners_factory
         self.__race_downloader_options_factory = race_downloader_options_factory
 
-        self.team_name = ['redolat', 'redolatteam', 'redolat team']
+        # self.team_name = ['redolat', 'redolatteam', 'redolat team']
         self.logger = logging.getLogger(__name__)
 
     def get_all_runners(self, race_info_simplified_model: RaceInfoModel) -> List[RunnerRaceDataModel]:
@@ -27,9 +27,9 @@ class DownloaderRunnersService:
 
             runners = mapper.execute(response)
 
-            runners_filtered_by_team = self.__filter_by_team_name(runners)
+            # runners_filtered_by_team = self.__filter_by_team_name(runners)
 
-            return runners_filtered_by_team
+            return runners
         except Exception as exception_error:
             self.logger.error("Error retrieving item: %s", exception_error)
             raise TypeError('An error occurred while get_all_runners') from None
@@ -45,11 +45,11 @@ class DownloaderRunnersService:
 
     #     return runners
 
-    def __filter_by_team_name(self, runners:List[RunnerRaceDataModel]):
-        rankings_by_club_list = []
+    # def __filter_by_team_name(self, runners:List[RunnerRaceDataModel]):
+    #     rankings_by_club_list = []
 
-        for runner in runners:
-            if runner.club.lower() in self.team_name:
-                rankings_by_club_list.append(runner)
+    #     for runner in runners:
+    #         if runner.club.lower() in self.team_name:
+    #             rankings_by_club_list.append(runner)
 
-        return rankings_by_club_list
+    #     return rankings_by_club_list

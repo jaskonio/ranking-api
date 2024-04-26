@@ -1,7 +1,8 @@
-from app.infrastructure.mongoDB.model.base_entity_property import BaseEntityProperty
+from app.infrastructure.mongoDB.model.base_mongo_entity import BaseMongoEntity
 
 
-class RunnerRaceDataEntityProperty(BaseEntityProperty):
+class RunnerRaceDataEntity(BaseMongoEntity):
+    person_id: str = ''
     first_name: str = ''
     last_name: str = ''
     nationality: str = ''
