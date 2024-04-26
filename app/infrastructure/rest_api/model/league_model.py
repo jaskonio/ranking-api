@@ -1,6 +1,9 @@
 
 from typing import List
 from app.infrastructure.rest_api.model.base_api_model import BaseAPI_Model
+from app.infrastructure.rest_api.model.participant_league_model import ParticipantLeagueResponse
+from app.infrastructure.rest_api.model.race_league_model import RaceLeagueRawResponse
+from app.infrastructure.rest_api.model.ranking_league_model import RankingLeagueResponse
 
 
 class LeagueResponse(BaseAPI_Model):
@@ -17,3 +20,12 @@ class LeagueRequest(BaseAPI_Model):
     race_ids: List[str] = []
     runner_participant_ids: List[str] = []
     ranking_id: List[str] = []
+
+class LeagueRawResponse(BaseAPI_Model):
+    id: str = ''
+    name: str = ''
+    order: int = 0
+    races: List[RaceLeagueRawResponse] = []
+    runner_participants: List[ParticipantLeagueResponse] = []
+    ranking_latest: RankingLeagueResponse = []
+    history_ranking: List[RankingLeagueResponse] = []

@@ -2,12 +2,20 @@ from typing import List
 from fastapi import APIRouter
 from app.aplication.league_service import LeagueService
 from app.infrastructure.rest_api.controller.league_controller import LeagueController
-from app.infrastructure.rest_api.model.league_model import LeagueRequest, LeagueResponse
+from app.infrastructure.rest_api.model.league_model import LeagueRawResponse, LeagueRequest, LeagueResponse
 
 
 league_router = APIRouter()
 
 controller = LeagueController(LeagueService())
+
+@league_router.get('/raw')
+def get_all_raw() -> List[LeagueRawResponse]:
+    return controller.get_all_raw()
+
+@league_router.get('/{league_id}')
+def get_raw_by_id(league_id:str) -> LeagueRawResponse:
+    return controller.get_raw_by_id(league_id)
 
 @league_router.get('/')
 def get_all() -> List[LeagueResponse]:

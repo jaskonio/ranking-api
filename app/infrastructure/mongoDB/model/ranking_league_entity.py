@@ -4,4 +4,5 @@ from app.infrastructure.mongoDB.model.participant_ranking_entity_property import
 
 
 class RankingLeagueEntity(BaseMongoEntity):
+    order: int = 0
     data: List[ParticipantRankingEntityProperty] = []
