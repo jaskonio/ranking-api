@@ -42,3 +42,13 @@ class RaceLeagueService():
             return status
 
         return None
+
+    def get_all_raw(self) -> List[RaceLeagueModel]:
+        race_entities:List[RaceLeagueEntity] = self.__race_info_repository.get_all()
+
+        return [race_entity.to_domain_model(RaceLeagueModel) for race_entity in race_entities]
+
+    def get_raw_by_id(self, race_id:str) -> RaceLeagueModel:
+        race_entity:RaceLeagueEntity = self.__race_info_repository.get_by_id(race_id)
+
+        return race_entity.to_domain_model(RaceLeagueModel)

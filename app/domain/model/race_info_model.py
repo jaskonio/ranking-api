@@ -23,5 +23,3 @@ class RaceInfoRawModel(BaseObjectModel):
     platform:Platform
     processed: bool
     data: RaceDataModel | None
-
-
