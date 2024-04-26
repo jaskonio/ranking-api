@@ -8,14 +8,6 @@ class Platform(str, Enum):
     TOPRUN_LATEST = "VALENCIACIUDADDELRUNNING_LATEST"
 
 class RaceInfoModel(BaseObjectModel):
-    id:str
-    name:str
-    url:str
-    platform:Platform
-    processed: bool
-    data: RaceDataModel | None
-
-class RaceInfoSimplifiedModel(BaseObjectModel):
 
     id:str
     name:str
@@ -23,3 +15,13 @@ class RaceInfoSimplifiedModel(BaseObjectModel):
     platform:Platform
     processed: bool
     race_data_id: str
+
+class RaceInfoRawModel(BaseObjectModel):
+    id:str
+    name:str
+    url:str
+    platform:Platform
+    processed: bool
+    data: RaceDataModel | None
+
+

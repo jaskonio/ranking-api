@@ -1,6 +1,6 @@
 import logging
 from typing import List
-from app.domain.model.race_info_model import RaceInfoSimplifiedModel
+from app.domain.model.race_info_model import RaceInfoModel
 from app.domain.model.runner_race_data_model import RunnerRaceDataModel
 from app.domain.services.http_downloader_service import HTTPDownloaderService
 from app.domain.services.mappe_runners_factory import MappeRunnersFactory
@@ -17,7 +17,7 @@ class DownloaderRunnersService:
         self.team_name = ['redolat', 'redolatteam', 'redolat team']
         self.logger = logging.getLogger(__name__)
 
-    def get_all_runners(self, race_info_simplified_model: RaceInfoSimplifiedModel) -> List[RunnerRaceDataModel]:
+    def get_all_runners(self, race_info_simplified_model: RaceInfoModel) -> List[RunnerRaceDataModel]:
         try:
             race_options = self.__race_downloader_options_factory.factory_method(race_info_simplified_model)
 

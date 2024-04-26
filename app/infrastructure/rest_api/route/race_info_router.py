@@ -3,7 +3,7 @@ from fastapi import APIRouter
 from app.aplication.race_info_service import RaceInfoService
 from app.infrastructure.repository.repository_utils import load_repository_from_config
 from app.infrastructure.rest_api.controller.race_info_controller import RaceInfoController
-from app.infrastructure.rest_api.model.race_info import RaceInfoRAW_Response, RaceInfoSimplifiedRequest, RaceInfoSimplifiedResponse
+from app.infrastructure.rest_api.model.race_info import RaceInfoRAW_Response, RaceInfoRequest, RaceInfoResponse
 
 
 race_info_router = APIRouter()
@@ -20,19 +20,19 @@ def get_raw_by_id(race_id:str) -> RaceInfoRAW_Response:
     return controller.get_raw_by_id(race_id)
 
 @race_info_router.get('/')
-def get_all_simplified() -> List[RaceInfoSimplifiedResponse]:
+def get_all_simplified() -> List[RaceInfoResponse]:
     return controller.get_all_simplified()
 
 @race_info_router.get('/{race_id}')
-def get_simplified_by_id(race_id:str) -> RaceInfoSimplifiedResponse:
+def get_simplified_by_id(race_id:str) -> RaceInfoResponse:
     return controller.get_simplified_by_id(race_id)
 
 @race_info_router.post('/')
-def add_simplified(race: RaceInfoSimplifiedRequest) -> RaceInfoSimplifiedResponse:
+def add_simplified(race: RaceInfoRequest) -> RaceInfoResponse:
     return controller.add_simplified(race)
 
 @race_info_router.get('/run_process/{race_id}')
-def run_process(race_id:str) -> RaceInfoSimplifiedResponse:
+def run_process(race_id:str) -> RaceInfoResponse:
     return controller.run_process(race_id)
 
 # @race_info_router.put('/{race_id}')

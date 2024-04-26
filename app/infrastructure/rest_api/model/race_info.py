@@ -11,10 +11,10 @@ class API_RaceInfoBase(BaseAPI_Model):
     platform: Platform = Platform.SPORTMANIACS_LATEST
     processed: bool = False
 
-class RaceInfoSimplifiedResponse(API_RaceInfoBase):
+class RaceInfoResponse(API_RaceInfoBase):
     race_data_id: str = ''
 
-class RaceInfoSimplifiedRequest(BaseAPI_Model):
+class RaceInfoRequest(BaseAPI_Model):
     name: str = ''
     url: str = ''
     platform: Platform = Platform.SPORTMANIACS_LATEST

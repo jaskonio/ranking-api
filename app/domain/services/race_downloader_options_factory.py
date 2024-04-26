@@ -1,12 +1,12 @@
 import logging
-from app.domain.model.race_info_model import Platform, RaceInfoSimplifiedModel
+from app.domain.model.race_info_model import Platform, RaceInfoModel
 from app.domain.repository.idownloader_race_data import RaceDownloaderOptions, TypeService
 
 
 logger = logging.getLogger(__name__)
 
 class RaceDownloaderOptionsFactory():
-    def factory_method(self, race_info_model: RaceInfoSimplifiedModel):
+    def factory_method(self, race_info_model: RaceInfoModel):
         logger.info("Factory Mapper. Type: %s", str(race_info_model.platform))
 
         options = RaceDownloaderOptions()

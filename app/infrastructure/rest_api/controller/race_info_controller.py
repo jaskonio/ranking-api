@@ -1,8 +1,8 @@
 import logging
 from typing import List
 from app.aplication.race_info_service import RaceInfoService
-from app.domain.model.race_info_model import RaceInfoModel, RaceInfoSimplifiedModel
-from app.infrastructure.rest_api.model.race_info import RaceInfoRAW_Response, RaceInfoSimplifiedRequest, RaceInfoSimplifiedResponse
+from app.domain.model.race_info_model import RaceInfoRawModel, RaceInfoModel
+from app.infrastructure.rest_api.model.race_info import RaceInfoRAW_Response, RaceInfoRequest, RaceInfoResponse
 
 
 class RaceInfoController():
@@ -22,7 +22,7 @@ class RaceInfoController():
 
     def get_raw_by_id(self, race_id: str) -> RaceInfoRAW_Response:
         try:
-            result:RaceInfoModel = self.__race_info_service.get_raw_by_id(race_id)
+            result:RaceInfoRawModel = self.__race_info_service.get_raw_by_id(race_id)
             data_response = RaceInfoRAW_Response().create_by_domain_model(result)
 
             return data_response
@@ -30,45 +30,45 @@ class RaceInfoController():
             self.logger.error("Error retrieving all items: %s", exception_error)
             raise TypeError('An error occurred while retrieving all items.') from None
 
-    def get_all_simplified(self) -> List[RaceInfoSimplifiedResponse]:
+    def get_all_simplified(self) -> List[RaceInfoResponse]:
         try:
             results = self.__race_info_service.get_all_simplified()
-            results = [RaceInfoSimplifiedResponse().create_by_domain_model(result) for result in results]
+            results = [RaceInfoResponse().create_by_domain_model(result) for result in results]
             return results
         except Exception as exception_error:
             self.logger.error("Error retrieving all items: %s", exception_error)
             raise TypeError('An error occurred while retrieving all items.') from None
 
-    def get_simplified_by_id(self, race_id) -> RaceInfoSimplifiedResponse:
+    def get_simplified_by_id(self, race_id) -> RaceInfoResponse:
         try:
             race = self.__race_info_service.get_simplified_by_id(race_id)
 
             if race:
-                return RaceInfoSimplifiedResponse().create_by_domain_model(race)
+                return RaceInfoResponse().create_by_domain_model(race)
 
             return {}
         except Exception as exception_error:
             self.logger.error("Error retrieving item: %s", exception_error)
             raise TypeError('An error occurred while retrieving item.') from None
 
-    def add_simplified(self, race:RaceInfoSimplifiedRequest) -> RaceInfoSimplifiedResponse:
+    def add_simplified(self, race:RaceInfoRequest) -> RaceInfoResponse:
         try:
-            race = self.__race_info_service.add_simplified(race.to_domain_model(RaceInfoSimplifiedModel))
+            race = self.__race_info_service.add_simplified(race.to_domain_model(RaceInfoModel))
 
             if race:
-                return RaceInfoSimplifiedResponse().create_by_domain_model(race)
+                return RaceInfoResponse().create_by_domain_model(race)
 
             return {}
         except Exception as exception_error:
             self.logger.error("Error saving: %s", exception_error)
             raise TypeError('An error occurred while saving.') from None
 
-    def run_process(self, race_id) -> RaceInfoSimplifiedResponse:
+    def run_process(self, race_id) -> RaceInfoResponse:
         try:
             model = self.__race_info_service.process(race_id)
 
             if model:
-                return RaceInfoSimplifiedResponse().create_by_domain_model(model)
+                return RaceInfoResponse().create_by_domain_model(model)
 
             return {}
         except Exception as exception_error:
