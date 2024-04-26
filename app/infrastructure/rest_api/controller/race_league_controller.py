@@ -43,7 +43,6 @@ class RaceLeagueController():
             self.logger.error("Error saving: %s", exception_error)
             raise TypeError('An error occurred while saving.') from None
 
-
     def update_by_id(self, race_id:str, new_race) -> RaceLeagueResponse:
         try:
             race = self.__race_league_service.update_by_id(race_id, new_race)

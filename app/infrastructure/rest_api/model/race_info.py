@@ -1,4 +1,3 @@
-from typing import List
 from app.domain.model.race_info_model import Platform
 from app.infrastructure.rest_api.model.base_api_model import BaseAPI_Model
 from app.infrastructure.rest_api.model.race_data import API_RaceDataResponse
