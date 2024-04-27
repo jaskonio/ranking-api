@@ -24,9 +24,8 @@ class PersonService():
 
     def add(self, new_person:PersonModel) -> PersonModel:
         new_person.photo_url = 'https://i.pravatar.cc/30'
-        person_id = self.__person_repository.add(PersonEntity().create_by_domain_model(new_person))
 
-        person_entity:PersonEntity = self.__person_repository.get_by_id(person_id)
+        person_entity:PersonEntity = self.__person_repository.add(PersonEntity().create_by_domain_model(new_person))
 
         return person_entity.to_domain_model(PersonModel)
 

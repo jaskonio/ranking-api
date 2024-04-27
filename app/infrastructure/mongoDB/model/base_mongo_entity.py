@@ -5,24 +5,8 @@ from app.infrastructure.mongoDB.model.OID import OID
 from bson import ObjectId
 
 
-def db_list_dict_to_entites(entity_class_name, datas:List[dict]):
-    entities = []
-
-    for data in datas:
-        entity = db_dict_to_build_entity(entity_class_name, data)
-        entities.append(entity)
-
-    return entities
-
-def db_dict_to_build_entity(entity_class_name, data:dict):
-    new_id = data.pop('_id', None)
-    data["id"] = new_id
-
-    entity = entity_class_name(**dict(data))
-    return entity
-
 class BaseMongoEntity(BaseModel):
-    id: OID = Field(default_factory=OID)
+    id: OID = Field(default_factory=OID,alias="_id")
 
     class Config(BaseConfigurator):
         allow_population_by_field_name = True

@@ -9,13 +9,13 @@ class OID(str):
         yield cls.validate
 
     @classmethod
-    def validate(cls, v):
+    def validate(cls, value_id):
         try:
-            if not isinstance(v, BsonObjectId):
+            if not isinstance(value_id, BsonObjectId):
                 raise TypeError('ObjectId required')
 
-            a = str(ObjectId(str(v)))
-            return a
+            value_id = str(ObjectId(str(value_id)))
+            return value_id
         except Exception as e:
             raise ValueError("Not a valid ObjectId")
 
