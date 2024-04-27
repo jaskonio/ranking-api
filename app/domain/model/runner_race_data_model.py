@@ -25,3 +25,9 @@ class RunnerRaceDataModel(BaseObjectModel):
     real_avg_time: str = ''
     real_cat_pos: int = 0
     real_gen_pos: int = 0
+
+    def __eq__(self, other_person):
+        if self.person_id == other_person.person_id:
+            return True
+
+        return False

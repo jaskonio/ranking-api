@@ -198,8 +198,6 @@ class LeagueService():
                     current_participant_ranking_model.best_position = current_participant_race_model.official_pos
                     current_participant_ranking_model.best_avegare_peace = current_participant_race_model.official_avg_time
                     current_participant_ranking_model.best_position_real = current_participant_race_model.real_pos
-
-                    continue
                 else:
                     if current_participant_race_model is None:
                         # no hay rankink previo ni ha participando en la carrera acutal, continua con el siguiente
@@ -248,7 +246,7 @@ class LeagueService():
         valid_participants: List[ParticipantLeagueModel] = []
 
         for runner_participant_league in runner_participants_league:
-            if runner_participant_league.disqualified_order_race >= race_league_model.order:
+            if runner_participant_league.disqualified_order_race != -1 and runner_participant_league.disqualified_order_race >= race_league_model.order:
                 continue
 
             valid_participants.append(runner_participant_league)

@@ -11,7 +11,7 @@ class ParticipantLeagueResponse(BaseAPI_Model):
     person_id: str = ''
     dorsal: int = 0
     category: str = ''
-    disqualified_order_race: int = 99999
+    disqualified_order_race: int = -1
 
 class ParticipantLeagueRequest(BaseAPI_Model):
     first_name: str = ''
@@ -21,4 +21,4 @@ class ParticipantLeagueRequest(BaseAPI_Model):
     photo_url: str = ''
     dorsal: int = 0
     category: str = ''
-    disqualified_order_race: int = 99999
+    disqualified_order_race: int = -1
