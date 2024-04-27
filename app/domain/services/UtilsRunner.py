@@ -17,21 +17,6 @@ def strtobool(val):
     else:
         raise ValueError("invalid truth value %s",str(val))
 
-def convert_to_int(value):
-    """_summary_
-
-    Args:
-        value (_type_): _description_
-
-    Returns:
-        _type_: _description_
-    """
-    try:
-        return int(value)
-    except (ValueError, TypeError):
-        return 0
-
-
 def convert_string_to_timedelta(input_str, format_type):
     """_summary_
 

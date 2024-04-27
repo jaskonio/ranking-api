@@ -2,15 +2,14 @@ import logging
 from bson import ObjectId
 from pymongo import collection
 from pymongo.database import Database
-from app.core.mapper_utils import dict_to_class, dict_to_entity, dicts_to_class, dicts_to_entity
 from app.domain.repository.igeneric_repository import IGenericRepository
-from app.infrastructure.mongoDB.model.base_mongo_entity import BaseMongoEntity
+from app.infrastructure.mongoDB.model.base_mongo_entity import BaseMongoEntity, db_dict_to_build_entity, db_list_dict_to_entites
 
 
 logger = logging.getLogger(__name__)
 
 class MongoDBRepository(IGenericRepository):
-    def __init__(self, db_client: Database, collection_name, entity_type):
+    def __init__(self, db_client: Database, collection_name:str, entity_type:BaseMongoEntity):
         name = collection_name
         self.database = db_client
         self.collection:collection.Collection = self.database.get_collection(name)
@@ -20,7 +19,7 @@ class MongoDBRepository(IGenericRepository):
         try:
             results = self.collection.find({})
 
-            return dicts_to_entity(self.entity_type, list(results ))
+            return db_list_dict_to_entites(self.entity_type, list(results))
         except Exception as exception:
             logger.error("Error al obtener todos los registros: %s", str(exception))
             return []
@@ -29,7 +28,7 @@ class MongoDBRepository(IGenericRepository):
         try:
             entity = self.collection.find_one({"_id": ObjectId(entity_id)})
             if entity is not None:
-                entity = dict_to_entity(self.entity_type, entity)
+                entity = db_dict_to_build_entity(self.entity_type, entity)
 
             return entity
         except Exception as exception:
