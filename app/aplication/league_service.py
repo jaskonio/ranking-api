@@ -6,7 +6,7 @@ from app.aplication.race_league_service import RaceLeagueService
 from app.aplication.ranking_league_service import RankingLeagueService
 from app.domain.model.league_model import LeagueModel, LeagueRAWModel
 from app.domain.model.participant_league_model import ParticipantLeagueModel
-from app.domain.model.race_league_model import RaceLeagueModel
+from app.domain.model.race_league_model import RaceLeagueModel, RaceLeagueRawModel
 from app.infrastructure.mongoDB.model.league_entity import LeagueEntity
 from app.infrastructure.repository.repository_utils import load_repository_from_config
 
@@ -113,103 +113,7 @@ class LeagueService():
 
         return league_raw_model
 
-    # def update_by_id(self, league_id:str, new_league:LeagueModel):
-    #     league = LeagueModel()
-
-    #     league.id = league_id
-    #     league.name = new_league.name
-
-    #     league.add_runners(new_league.participants)
-    #     league.add_races(new_league.races)
-
-    #     status = self.league_repository.update_by_id(league_id, league)
-
-    #     if status:
-    #         league = self.league_repository.get_by_id(league_id)
-    #         return league
-
-    #     return None
-
-    # def add_runners(self, league_id:str, runners:List[RunnerBase]):
-    #     league:LeagueModel = self.__league_repository.get_by_id(league_id)
-
-    #     if league is None:
-    #         self.logger.error("League not found.")
-    #         return None
-
-    #     league.add_runners(runners)
-
-    #     self.__league_repository.update_by_id(league_id, league)
-    #     self.logger.info("Runner added successfully.")
-
-    #     return league
-
-    # def add_runner(self, league_id:str, runner:RunnerBase):
-    #     league:LeagueModel = self.league_repository.get_by_id(league_id)
-
-    #     if league is None:
-    #         self.logger.error("League not found.")
-    #         return None
-
-    #     person:RunnerBase = self.person_repository.get_by_id(runner.id)
-
-    #     if person is None:
-    #         self.logger.warn("Person not found. Id: " + str(runner.id))
-    #         return None
-
-    #     person.dorsal = runner.dorsal
-
-    #     league.add_runner(person)
-
-    #     self.league_repository.update_by_id(league_id, league)
-    #     self.logger.info("Runner added successfully.")
-
-    #     return league
-
-    # def delete_runners(self, league_id:str, runners:List[RunnerBase]):
-    #     league:LeagueModel = self.league_repository.get_by_id(league_id)
-
-    #     if league is None:
-    #         self.logger.error("League not found.")
-    #         return None
-
-    #     league.delete_runners(runners)
-
-    #     self.league_repository.update_by_id(league_id, league)
-    #     self.logger.info("Runner added successfully.")
-
-    #     return league
-
-    # def delete_runner(self, league_id:str, runner:RunnerBase):
-    #     league:LeagueModel = self.league_repository.get_by_id(league_id)
-
-    #     if league is None:
-    #         self.logger.error("League not found.")
-    #         return None
-
-    #     league.delete_runner(runner)
-
-    #     self.league_repository.update_by_id(league_id, league)
-    #     self.logger.info("Runner added successfully.")
-
-    #     return league
-
-    def add_race(self, league_id:str, new_race_league:RaceLeagueModel) -> LeagueModel:
-        league_entity:LeagueEntity = self.__league_repository.get_by_id(league_id)
-        league_model:LeagueModel = league_entity.to_domain_model(LeagueModel)
-
-        # new_race_league.
-        new_race_league:RaceLeagueModel = self.__race_league_service.add(new_race_league)
-
-        league_model.race_ids.append(new_race_league.id)
-
-        league_model = self.__league_repository.update_by_id(league_id, league_model)
-
-        self.fill_race_league(league_id, new_race_league.id)
-
-        return league_model
-
-    def fill_race_league(self, league_id:str, race_league_id:str) -> RaceLeagueModel:
+    def fill_race_league_by_league_id(self, league_id:str, race_league_id:str) -> RaceLeagueModel:
         league_entity:LeagueEntity = self.__league_repository.get_by_id(league_id)
         race_league_model = self.__race_league_service.get_by_id(race_league_id)
 
@@ -226,10 +130,9 @@ class LeagueService():
         race_info_raw_model = self.__race_info_service.get_raw_by_id(race_league_model.race_row_id)
 
         race_league_model.ranking = []
-        for runner in race_info_raw_model.race_data.runner_ids:
-            for valid_participant in valid_participants:
-                if valid_participant.person_id == runner.person_id:
-                    race_league_model.ranking.append(runner)
+        for runner in race_info_raw_model.race_data.runners:
+            if runner in valid_participants:
+                race_league_model.ranking.append(runner)
 
         self.__race_league_service.update_by_id(race_league_model.id, race_league_model)
 
@@ -239,23 +142,118 @@ class LeagueService():
         league_raw_model:LeagueRAWModel = self.get_raw_by_id(league_id)
         return league_raw_model.runner_participants
 
-    # def disqualify_runner(self, league_id:int, race_name:str, bib_number):
-    #     league:LeagueModel = self.league_repository.get_by_id(league_id)
+    def fill_ranking_league(self, race_league_row_models:RaceLeagueRawModel) -> str:
+        # elimina los ranking ids y procesa de nuevo
 
-    #     if league is None:
-    #         self.logger.error("League not found.")
-    #         return None
+        return ''
 
-    #     if len(league.races) == 0:
-    #         self.logger.error("No se encontró la carrera especificada.")
-    #         return None
+    def process_league(self, league_id:str) -> bool:
+        # ordernar Race league por order, empezar de menor a mayor
+        # processar cada Race League cuando termina actualiza el ranking
+        # el ranking_id es el ultimo valor de la lista de History_ranking_ids
+        league_raw_model:LeagueRAWModel = self.get_raw_by_id(league_id)
+        race_league_raw_models:List[RaceLeagueRawModel] = list(sorted(league_raw_model.races, key=lambda x: x.order, reverse=True))
 
-    #     league.disqualify_runner_process(bib_number, race_name)
+        new_history_ranking_ids:List[str] = []
+        index = 0
+        for race_league_raw_model in race_league_raw_models:
+            self.fill_race_league_by_league_id(league_id, race_league_raw_model.id)
+            new_history_ranking_id = self.fill_ranking_league(race_league_raw_models[0:index+1])
+            new_history_ranking_ids.append(new_history_ranking_id)
 
-    #     status = self.league_repository.update_by_id(league_id, league)
+            index += 1
 
-    #     if status:
-    #         league = self.league_repository.get_by_id(league_id)
-    #         return league
-    #     else:
-    #         return None
+        league_model:LeagueModel = self.get_by_id(league_id)
+        league_model.ranking_id = new_history_ranking_ids[-1]
+        league_model.history_ranking_ids = new_history_ranking_ids
+
+        # update values
+        status = self.update_by_id(league_id, league_model)
+
+        if status is None:
+            return False
+        return True
+
+    def __set_points(self):
+        # Asignar puntos como en la F1
+        points = [25, 18, 15, 12, 10, 8, 6, 4, 2, 1, 0.75, 0.50, 0.25, 0.10, 0.05]
+        point_index = 0
+
+        for runner in self.ranking:
+            if point_index <= len(points)-1:
+                runner.points = points[point_index]
+
+            runner.position = point_index + 1
+            runner.posiciones_ant.append(runner.position)
+            runner.averages_ant.append(runner.real_avg_time)
+            runner.position_general_ant.append(runner.real_pos)
+
+            point_index = point_index + 1
+
+    def calculate_final_ranking(self):
+        ranking_league = {}
+
+        for race in self.get_races():
+            runners = race.get_ranking()
+
+            for runner in runners:
+                if runner.id not in ranking_league:
+                    ranking_league[runner.id] = runner
+                else:
+                    ranking_league[runner.id].points += runner.points
+
+        final_ranking:List[RunnerLeagueRanking] = sorted(ranking_league.values(),
+                                    key=lambda runner: (runner.points),
+                                    reverse=True)
+
+        runner_final_ranking:List[RunnerLeagueRanking] = []
+
+        for index, runner in enumerate(final_ranking):
+            new_runner = RunnerLeagueRanking(id=runner.id, first_name=runner.first_name, last_name=runner.last_name,
+                                             photo=runner.photo, photo_url=runner.photo_url)
+            new_runner.position = index + 1
+
+            if len(runner.posiciones_ant) != 0:
+                new_runner.pos_last_race = runner.posiciones_ant[-1]
+                new_runner.top_five = len([x for x in runner.posiciones_ant if x<=5])
+
+                new_runner.participations = len(runner.posiciones_ant)
+                new_runner.best_position = str(min(runner.posiciones_ant)) \
+                    + '(x' + str(Counter(runner.posiciones_ant)[min(runner.posiciones_ant)]) + ')'
+                new_runner.last_position_race = runner.position_general_ant[-1]
+                new_runner.best_avegare_peace = self.__get_best_avegare_peace(
+                    runner.averages_ant, "mm:ss / km")
+
+            runner_final_ranking.append(new_runner)
+
+        self.ranking = runner_final_ranking
+
+    def __get_previus_runner(self, current_runner: RunnerLeagueRanking):
+        previus_race = self.__get_previus_race()
+
+        if previus_race is None:
+            return None
+
+        for runner in previus_race.ranking:
+            if runner == current_runner:
+                return runner
+
+        return None
+
+    def __get_previus_race(self):
+        if len(self.races) == 0:
+            return None
+
+        return self.races[-1]
+
+    def __get_best_avegare_peace(self, averages:List[str], format_type):
+        average_times:List[timedelta] = []
+
+        for average_string in averages:
+            average_time = convert_string_to_timedelta(average_string, format_type)
+            average_times.append(average_time)
+
+        min_average_time = min(average_times)
+
+        return convert_timedelta_to_string(min_average_time, format_type)
+            
