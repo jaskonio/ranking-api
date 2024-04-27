@@ -17,6 +17,10 @@ def get_all_raw() -> List[LeagueRawResponse]:
 def get_raw_by_id(league_id:str) -> LeagueRawResponse:
     return controller.get_raw_by_id(league_id)
 
+@league_router.get('/run_process/{league_id}')
+def run_process_by_id(league_id:str) -> LeagueRawResponse:
+    return controller.run_process_by_id(league_id)
+
 @league_router.get('/')
 def get_all() -> List[LeagueResponse]:
     return controller.get_all()

@@ -6,7 +6,10 @@ from app.aplication.race_league_service import RaceLeagueService
 from app.aplication.ranking_league_service import RankingLeagueService
 from app.domain.model.league_model import LeagueModel, LeagueRAWModel
 from app.domain.model.participant_league_model import ParticipantLeagueModel
+from app.domain.model.participant_ranking_model import ParticipantRankingModel
 from app.domain.model.race_league_model import RaceLeagueModel, RaceLeagueRawModel
+from app.domain.model.ranking_league_model import RankingLeagueModel
+from app.domain.model.runner_race_data_model import RunnerRaceDataModel
 from app.infrastructure.mongoDB.model.league_entity import LeagueEntity
 from app.infrastructure.repository.repository_utils import load_repository_from_config
 
@@ -113,11 +116,134 @@ class LeagueService():
 
         return league_raw_model
 
-    def fill_race_league_by_league_id(self, league_id:str, race_league_id:str) -> RaceLeagueModel:
+    def run_process(self, league_id:str) -> LeagueRAWModel:
+        # elimina los ranking ids y procesa de nuevo
+        # ordernar Race league por order, empezar de menor a mayor
+        # processar cada Race League cuando termina actualiza el ranking
+        # el ranking_id es el ultimo valor de la lista de History_ranking_ids
+        league_raw_model:LeagueRAWModel = self.get_raw_by_id(league_id)
+        race_league_raw_models:List[RaceLeagueRawModel] = list(sorted(league_raw_model.races, key=lambda x: x.order, reverse=True))
+
+        # delete history ranking ids
+        for history_ranking in league_raw_model.history_ranking:
+            self.__ranking_league_service.delete_by_id(history_ranking.id)
+
+        # start process Race League and ranking
+        all_race_league_updated:List[RaceLeagueRawModel] = []
+        for race_league_raw_model in race_league_raw_models:
+            race_league_updated = self.__fill_race_league_by_league_id(league_id, race_league_raw_model.id)
+            all_race_league_updated.append(race_league_updated)
+
+        new_history_ranking_id = self.__fill_ranking_league(league_raw_model.runner_participants, all_race_league_updated)
+
+        league_model:LeagueModel = self.get_by_id(league_id)
+        league_model.ranking_id = new_history_ranking_id[-1]
+        league_model.history_ranking_ids = new_history_ranking_id
+
+        # update values
+        status = self.update_by_id(league_id, league_model)
+
+        if status is None:
+            return None
+
+        return self.get_raw_by_id(league_id)
+
+    def __fill_ranking_league(self, participants_league: List[ParticipantLeagueModel], race_league_row_models:List[RaceLeagueRawModel]) -> List[str]:
+        race_index:int = 0
+        all_ranking_league_models:List[RankingLeagueModel] = []
+        previus_race_league_row_model: RaceLeagueRawModel = None
+
+        for race_league_row_model in race_league_row_models:
+            ranking_league_model:RankingLeagueModel = RankingLeagueModel()
+            ranking_league_model.order = race_index
+            participant_ranking_models: List[ParticipantRankingModel] = []
+
+            for current_participant_league_model in participants_league:
+                previus_runner_race_data_model:RunnerRaceDataModel = None
+                previus_current_participant_ranking_model:ParticipantRankingModel = ParticipantRankingModel()
+                current_participant_ranking_model:ParticipantRankingModel = ParticipantRankingModel()
+                current_participant_race_model:RunnerRaceDataModel = None
+
+                # start. search participant in previus race
+                if previus_race_league_row_model is not None:
+                    previus_runner_race_data_model = self.__get_previus_runner_in_race_league(current_participant_league_model, race_league_row_models[0:race_index])
+
+                if len(all_ranking_league_models) != 0:
+                    previus_current_participant_ranking_model = self.__get_previus_runner_in_ranking_league(current_participant_league_model, all_ranking_league_models[0:race_index])
+
+                for runner in race_league_row_model.runners:
+                    if runner.person_id == current_participant_league_model.person_id:
+                        current_participant_race_model = runner
+                # end
+
+                # Fill ParticipantRankingModel
+                if previus_current_participant_ranking_model.person_id == '':
+                    if current_participant_race_model is None:
+                        # no hay rankink previo ni ha participando en la carrera acutal, continua con el siguiente
+                        continue
+
+                    current_participant_ranking_model = ParticipantRankingModel()
+
+                    current_participant_ranking_model.person_id = current_participant_race_model.person_id
+                    current_participant_ranking_model.first_name = current_participant_race_model.first_name
+                    current_participant_ranking_model.last_name = current_participant_race_model.last_name
+                    current_participant_ranking_model.gender = current_participant_race_model.gender
+                    current_participant_ranking_model.dorsal = current_participant_race_model.dorsal
+                    current_participant_ranking_model.category = current_participant_race_model.category
+                    current_participant_ranking_model.is_disqualified = False
+
+                    current_participant_ranking_model.position = current_participant_race_model.official_pos
+                    current_participant_ranking_model.top_five = current_participant_ranking_model.top_five + 1 if current_participant_race_model.official_pos <=5 else current_participant_ranking_model.top_five
+                    current_participant_ranking_model.participations += 1
+                    current_participant_ranking_model.best_position = current_participant_race_model.official_pos
+                    current_participant_ranking_model.best_avegare_peace = current_participant_race_model.official_avg_time
+                    current_participant_ranking_model.best_position_real = current_participant_race_model.real_pos
+
+                    continue
+                else:
+                    if current_participant_race_model is None:
+                        # no hay rankink previo ni ha participando en la carrera acutal, continua con el siguiente
+                        continue
+                    # Existe una ranking previo, por tanto se crea una copia del ranking anterior y se actualiza las propiedades
+
+                    current_participant_ranking_model = previus_current_participant_ranking_model
+
+                    current_participant_ranking_model.position = current_participant_race_model.official_pos
+                    current_participant_ranking_model.top_five = current_participant_ranking_model.top_five + 1 if current_participant_race_model.official_pos <=5 else current_participant_ranking_model.top_five
+                    current_participant_ranking_model.participations += 1
+                    current_participant_ranking_model.best_position = current_participant_race_model.official_pos
+                    current_participant_ranking_model.last_position_race = current_participant_ranking_model.last_position_race if previus_runner_race_data_model is None else previus_runner_race_data_model.official_pos
+                    current_participant_ranking_model.best_avegare_peace = current_participant_race_model.official_avg_time
+
+                    current_best_position_real = current_participant_ranking_model.best_position_real
+                    if previus_runner_race_data_model is not None and current_best_position_real < previus_runner_race_data_model.real_pos:
+                        current_participant_ranking_model.best_position_real = current_best_position_real
+
+                participant_ranking_models.append(current_participant_ranking_model)
+
+            # start set points and position
+            participant_ranking_models = self.__set_points(participant_ranking_models)
+            # end
+
+            previus_race_league_row_model = race_league_row_model
+
+            race_index += 1
+            ranking_league_model.data = participant_ranking_models
+            all_ranking_league_models.append(ranking_league_model)
+
+        ranking_league_models_ids:List[str] = []
+
+        for ranking_league_model in all_ranking_league_models:
+            model = self.__ranking_league_service.add(ranking_league_model)
+            ranking_league_models_ids.append(model.id)
+
+        return ranking_league_models_ids
+
+    def __fill_race_league_by_league_id(self, league_id:str, race_league_id:str) -> RaceLeagueRawModel:
         league_entity:LeagueEntity = self.__league_repository.get_by_id(league_id)
         race_league_model = self.__race_league_service.get_by_id(race_league_id)
 
-        runner_participants_league:List[ParticipantLeagueModel] = self.get_participant_by_league(league_entity.id)
+        runner_participants_league:List[ParticipantLeagueModel] = self.__get_participant_by_league(league_entity.id)
 
         valid_participants: List[ParticipantLeagueModel] = []
 
@@ -134,126 +260,39 @@ class LeagueService():
             if runner in valid_participants:
                 race_league_model.ranking.append(runner)
 
-        self.__race_league_service.update_by_id(race_league_model.id, race_league_model)
+        self.__race_league_service.update_by_id(race_league_id, race_league_model)
 
-        return race_league_model
+        return self.__race_league_service.get_raw_by_id(race_league_id)
 
-    def get_participant_by_league(self, league_id:str) -> List[ParticipantLeagueModel]:
-        league_raw_model:LeagueRAWModel = self.get_raw_by_id(league_id)
-        return league_raw_model.runner_participants
+    def __get_previus_runner_in_race_league(self, current_runner: ParticipantLeagueModel, race_league_row_models:List[RaceLeagueRawModel]) -> RunnerRaceDataModel:
+        for race_league_row_model in race_league_row_models:
+            for runner_of_race in race_league_row_model.runners:
+                if current_runner.person_id == runner_of_race.person_id:
+                    return runner_of_race
+        return None
 
-    def fill_ranking_league(self, race_league_row_models:RaceLeagueRawModel) -> str:
-        # elimina los ranking ids y procesa de nuevo
+    def __get_previus_runner_in_ranking_league(self, current_participant_league_model:ParticipantLeagueModel, ranking_league_models:List[RankingLeagueModel]) -> ParticipantRankingModel:
+        for ranking_league_model in ranking_league_models:
+            for runner in ranking_league_model.data:
+                if current_participant_league_model.person_id == runner.person_id:
+                    return runner
+        return None
 
-        return ''
-
-    def process_league(self, league_id:str) -> bool:
-        # ordernar Race league por order, empezar de menor a mayor
-        # processar cada Race League cuando termina actualiza el ranking
-        # el ranking_id es el ultimo valor de la lista de History_ranking_ids
-        league_raw_model:LeagueRAWModel = self.get_raw_by_id(league_id)
-        race_league_raw_models:List[RaceLeagueRawModel] = list(sorted(league_raw_model.races, key=lambda x: x.order, reverse=True))
-
-        new_history_ranking_ids:List[str] = []
-        index = 0
-        for race_league_raw_model in race_league_raw_models:
-            self.fill_race_league_by_league_id(league_id, race_league_raw_model.id)
-            new_history_ranking_id = self.fill_ranking_league(race_league_raw_models[0:index+1])
-            new_history_ranking_ids.append(new_history_ranking_id)
-
-            index += 1
-
-        league_model:LeagueModel = self.get_by_id(league_id)
-        league_model.ranking_id = new_history_ranking_ids[-1]
-        league_model.history_ranking_ids = new_history_ranking_ids
-
-        # update values
-        status = self.update_by_id(league_id, league_model)
-
-        if status is None:
-            return False
-        return True
-
-    def __set_points(self):
+    def __set_points(self, participant_ranking_models: List[ParticipantRankingModel]) -> List[ParticipantRankingModel]:
         # Asignar puntos como en la F1
+        participant_ranking_models = sorted(participant_ranking_models, key=lambda x: x.position, reverse=True)
         points = [25, 18, 15, 12, 10, 8, 6, 4, 2, 1, 0.75, 0.50, 0.25, 0.10, 0.05]
         point_index = 0
 
-        for runner in self.ranking:
-            if point_index <= len(points)-1:
-                runner.points = points[point_index]
+        for runner in participant_ranking_models:
+            if point_index > len(points)-1:
+                break
 
+            runner.points = points[point_index]
             runner.position = point_index + 1
-            runner.posiciones_ant.append(runner.position)
-            runner.averages_ant.append(runner.real_avg_time)
-            runner.position_general_ant.append(runner.real_pos)
 
-            point_index = point_index + 1
+        return participant_ranking_models
 
-    def calculate_final_ranking(self):
-        ranking_league = {}
-
-        for race in self.get_races():
-            runners = race.get_ranking()
-
-            for runner in runners:
-                if runner.id not in ranking_league:
-                    ranking_league[runner.id] = runner
-                else:
-                    ranking_league[runner.id].points += runner.points
-
-        final_ranking:List[RunnerLeagueRanking] = sorted(ranking_league.values(),
-                                    key=lambda runner: (runner.points),
-                                    reverse=True)
-
-        runner_final_ranking:List[RunnerLeagueRanking] = []
-
-        for index, runner in enumerate(final_ranking):
-            new_runner = RunnerLeagueRanking(id=runner.id, first_name=runner.first_name, last_name=runner.last_name,
-                                             photo=runner.photo, photo_url=runner.photo_url)
-            new_runner.position = index + 1
-
-            if len(runner.posiciones_ant) != 0:
-                new_runner.pos_last_race = runner.posiciones_ant[-1]
-                new_runner.top_five = len([x for x in runner.posiciones_ant if x<=5])
-
-                new_runner.participations = len(runner.posiciones_ant)
-                new_runner.best_position = str(min(runner.posiciones_ant)) \
-                    + '(x' + str(Counter(runner.posiciones_ant)[min(runner.posiciones_ant)]) + ')'
-                new_runner.last_position_race = runner.position_general_ant[-1]
-                new_runner.best_avegare_peace = self.__get_best_avegare_peace(
-                    runner.averages_ant, "mm:ss / km")
-
-            runner_final_ranking.append(new_runner)
-
-        self.ranking = runner_final_ranking
-
-    def __get_previus_runner(self, current_runner: RunnerLeagueRanking):
-        previus_race = self.__get_previus_race()
-
-        if previus_race is None:
-            return None
-
-        for runner in previus_race.ranking:
-            if runner == current_runner:
-                return runner
-
-        return None
-
-    def __get_previus_race(self):
-        if len(self.races) == 0:
-            return None
-
-        return self.races[-1]
-
-    def __get_best_avegare_peace(self, averages:List[str], format_type):
-        average_times:List[timedelta] = []
-
-        for average_string in averages:
-            average_time = convert_string_to_timedelta(average_string, format_type)
-            average_times.append(average_time)
-
-        min_average_time = min(average_times)
-
-        return convert_timedelta_to_string(min_average_time, format_type)
-            
+    def __get_participant_by_league(self, league_id:str) -> List[ParticipantLeagueModel]:
+        league_raw_model:LeagueRAWModel = self.get_raw_by_id(league_id)
+        return league_raw_model.runner_participants

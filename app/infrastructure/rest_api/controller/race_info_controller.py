@@ -32,7 +32,7 @@ class RaceInfoController():
 
     def get_all_simplified(self) -> List[RaceInfoResponse]:
         try:
-            results = self.__race_info_service.get_all_simplified()
+            results = self.__race_info_service.get_all()
             results = [RaceInfoResponse().create_by_domain_model(result) for result in results]
             return results
         except Exception as exception_error:
@@ -41,7 +41,7 @@ class RaceInfoController():
 
     def get_simplified_by_id(self, race_id) -> RaceInfoResponse:
         try:
-            race = self.__race_info_service.get_simplified_by_id(race_id)
+            race = self.__race_info_service.get_by_id(race_id)
 
             if race:
                 return RaceInfoResponse().create_by_domain_model(race)
@@ -53,7 +53,7 @@ class RaceInfoController():
 
     def add_simplified(self, race:RaceInfoRequest) -> RaceInfoResponse:
         try:
-            race = self.__race_info_service.add_simplified(race.to_domain_model(RaceInfoModel))
+            race = self.__race_info_service.add(race.to_domain_model(RaceInfoModel))
 
             if race:
                 return RaceInfoResponse().create_by_domain_model(race)

@@ -74,14 +74,11 @@ class RaceLeagueService():
 
     def get_raw_by_id(self, race_id:str) -> RaceLeagueRawModel:
         race_league_entity:RaceLeagueEntity = self.__race_league_repository.get_by_id(race_id)
-
-        race_info_entity:RaceInfoEntity = self.__race_info_repository.get_by_id(race_league_entity.race_row_id)
+        
+        race_info_raw_model:RaceInfoRawModel = self.__race_info_service.get_raw_by_id(race_league_entity.race_row_id)
 
         race_league_model:RaceLeagueRawModel = race_league_entity.to_domain_model(RaceLeagueRawModel)
-
-        race_league_model.name = race_info_entity.name
-        race_league_model.url = race_info_entity.url
-        race_league_model.platform = race_info_entity.platform
-        race_league_model.processed = race_info_entity.processed
+        
+        race_league_model.runners = race_info_raw_model.race_data.runners
 
         return race_league_model

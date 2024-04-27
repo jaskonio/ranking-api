@@ -79,17 +79,17 @@ class RaceInfoService():
         return race_info_model
 
     # Simplified
-    def get_all_simplified(self) -> List[RaceInfoModel]:
+    def get_all(self) -> List[RaceInfoModel]:
         all_race_info_entity: List[RaceInfoEntity] = self.__race_info_repository.get_all()
         all_race_info_model = [race_info_entity.to_domain_model(RaceInfoModel) for race_info_entity in all_race_info_entity]
 
         return all_race_info_model
 
-    def get_simplified_by_id(self, race_id) -> RaceInfoModel:
+    def get_by_id(self, race_id) -> RaceInfoModel:
         result:RaceInfoEntity = self.__race_info_repository.get_by_id(race_id)
         return result.to_domain_model(RaceInfoModel)
 
-    def add_simplified(self, race_model: RaceInfoModel) -> RaceInfoModel:
+    def add(self, race_model: RaceInfoModel) -> RaceInfoModel:
         new_race_entity = RaceInfoEntity().create_by_domain_model(race_model)
 
         race_id = self.__race_info_repository.add(new_race_entity)
