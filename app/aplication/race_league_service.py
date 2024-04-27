@@ -1,7 +1,11 @@
 from typing import List
+from app.aplication.race_info_service import RaceInfoService
+from app.domain.model.race_info_model import RaceInfoRawModel
 from app.domain.model.race_league_model import RaceLeagueModel, RaceLeagueRawModel
+from app.domain.model.runner_race_data_model import RunnerRaceDataModel
 from app.infrastructure.mongoDB.model.race_info_entity import RaceInfoEntity
 from app.infrastructure.mongoDB.model.race_league_entity import RaceLeagueEntity
+from app.infrastructure.mongoDB.model.runner_race_data_entity import RunnerRaceDataEntity
 from app.infrastructure.repository.repository_utils import load_repository_from_config
 
 class RaceLeagueService():
@@ -10,6 +14,8 @@ class RaceLeagueService():
         db = load_repository_from_config()
         self.__race_league_repository = db.get_repository('race_league', RaceLeagueEntity)
         self.__race_info_repository = db.get_repository('race_info', RaceInfoEntity)
+        self.__runner_race_data_repository = db.get_repository('runner_race_data', RunnerRaceDataEntity)
+        self.__race_info_service = RaceInfoService()
 
     def get_all(self) -> List[RaceLeagueModel]:
         race_entities:List[RaceLeagueEntity] = self.__race_league_repository.get_all()
@@ -47,19 +53,20 @@ class RaceLeagueService():
 
     def get_all_raw(self) -> List[RaceLeagueRawModel]:
         race_league_entities:List[RaceLeagueEntity] = self.__race_league_repository.get_all()
-        race_info_entities:List[RaceInfoEntity] = self.__race_info_repository.get_all()
+        runner_race_data_entities:List[RunnerRaceDataEntity] = self.__runner_race_data_repository.get_all()
 
         race_league_models: List[RaceLeagueRawModel] = []
 
         for race_league_entity in race_league_entities:
             race_league_model: RaceLeagueRawModel = race_league_entity.to_domain_model(RaceLeagueRawModel)
 
-            for race_info_entity in race_info_entities:
-                if race_league_entity.race_row_id == race_info_entity.id:
-                    race_league_model.name = race_info_entity.name
-                    race_league_model.url = race_info_entity.url
-                    race_league_model.platform = race_info_entity.platform
-                    race_league_model.processed = race_info_entity.processed
+            race_info_raw_model:RaceInfoRawModel = self.__race_info_service.get_raw_by_id(race_league_entity.race_row_id)
+            race_league_model.race_info = race_info_raw_model
+
+            for runners_id in race_league_entity.runners_ids:
+                for runner_race_data_entity in runner_race_data_entities:
+                    if runners_id == runner_race_data_entity.id:
+                        race_league_model.runners.append(runner_race_data_entity.to_domain_model(RunnerRaceDataModel))
 
             race_league_models.append(race_league_model)
 

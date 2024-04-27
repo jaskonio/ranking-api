@@ -1,5 +1,7 @@
-from app.domain.model.race_info_model import Platform
+from typing import List
 from app.infrastructure.rest_api.model.base_api_model import BaseAPI_Model
+from app.infrastructure.rest_api.model.race_data import RunnerRaceDataResponse
+from app.infrastructure.rest_api.model.race_info import RaceInfoRAW_Response
 
 class RaceLeagueResponse(BaseAPI_Model):
     id: str = ''
@@ -12,10 +14,6 @@ class RaceLeagueRequest(BaseAPI_Model):
 
 class RaceLeagueRawResponse(BaseAPI_Model):
     id: str = ''
-    race_row_id: str = ''
+    race_info: RaceInfoRAW_Response = None
     order: int = 0
-    ranking: list[dict] = []
-    name:str = ''
-    url:str = ''
-    platform: Platform = Platform.SPORTMANIACS_LATEST
-    processed: bool = False
+    runners: List[RunnerRaceDataResponse] = []

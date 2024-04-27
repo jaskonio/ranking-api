@@ -8,6 +8,7 @@ class ParticipantLeagueResponse(BaseAPI_Model):
     nationality: str = ''
     gender: str = ''
     photo_url: str = ''
+    person_id: str = ''
     dorsal: int = 0
     category: str = ''
     disqualified_order_race: int = 99999

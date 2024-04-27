@@ -11,14 +11,16 @@ class LeagueResponse(BaseAPI_Model):
     order: int = 0
     race_ids: List[str] = []
     runner_participant_ids: List[str] = []
-    ranking_id: List[str] = []
+    ranking_id: str = ''
+    history_ranking_ids: List[str] = []
 
 class LeagueRequest(BaseAPI_Model):
     name: str = ''
     order: int = 0
     race_ids: List[str] = []
     runner_participant_ids: List[str] = []
-    ranking_id: List[str] = []
+    ranking_id: str = ''
+    history_ranking_ids: List[str] = []
 
 class LeagueRawResponse(BaseAPI_Model):
     id: str = ''
