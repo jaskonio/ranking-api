@@ -13,7 +13,7 @@ controller = LeagueController(LeagueService())
 def get_all_raw() -> List[LeagueRawResponse]:
     return controller.get_all_raw()
 
-@league_router.get('/{league_id}')
+@league_router.get('/raw/{league_id}')
 def get_raw_by_id(league_id:str) -> LeagueRawResponse:
     return controller.get_raw_by_id(league_id)
 
