@@ -5,12 +5,10 @@ from app.domain.services.UtilsRunner import strtobool
 
 
 class SportmaniacsMapperService(IMapperService):
-    # base_url = 'https://sportmaniacs.com/es/races/rankings/'
-
     def __init__(self):
         pass
 
-    def execute(self, data:any):
+    def execute(self, data:any) -> List[RunnerRaceDataModel]:
         if 'data' not in data:
             return []
 
@@ -21,7 +19,7 @@ class SportmaniacsMapperService(IMapperService):
 
         return race_data
 
-    def __build_runners_model(self, runners):
+    def __build_runners_model(self, runners) -> List[RunnerRaceDataModel]:
         new_runners = []
 
         for row in runners:
@@ -31,7 +29,7 @@ class SportmaniacsMapperService(IMapperService):
 
         return new_runners
 
-    def __build_runner_model(self, row):
+    def __build_runner_model(self, row) -> RunnerRaceDataModel:
         runner = RunnerRaceDataModel()
         runner.first_name = " ".join(row["name"].split()) if "name" in row else None
         runner.gender = self.__convert_to_gender(row["gender"]) if "gender" in row else None
@@ -74,7 +72,7 @@ class SportmaniacsMapperService(IMapperService):
 
         return runner
 
-    def __convert_to_gender(self, gender_string):
+    def __convert_to_gender(self, gender_string) -> str:
         if gender_string == '' or gender_string is None:
             return None
 

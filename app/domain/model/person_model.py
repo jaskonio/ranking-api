@@ -10,4 +10,13 @@ class PersonModel(BaseObjectModel):
     photo_url: str = ''
 
     def __eq__(self, other_person):
-        return self.id == other_person.id and self.first_name == other_person.first_name and self.last_name == other_person.last_name
+        if self.id == other_person.person_id:
+            return True
+
+        self_full_name = self.first_name + ' ' + self.last_name
+        other_full_name = other_person.first_name + ' ' + other_person.last_name
+
+        if self_full_name.lower().strip() == other_full_name.lower().strip():
+            return True
+
+        return False

@@ -226,7 +226,8 @@ class LeagueService():
 
         race_info_raw_model = self.__race_info_service.get_raw_by_id(race_league_model.race_row_id)
 
-        for runner in race_info_raw_model.data.data:
+        race_league_model.ranking = []
+        for runner in race_info_raw_model.race_data.runner_ids:
             for valid_participant in valid_participants:
                 if valid_participant.person_id == runner.person_id:
                     race_league_model.ranking.append(runner)

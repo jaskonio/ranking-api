@@ -5,4 +5,8 @@ from app.domain.model.runner_race_data_model import RunnerRaceDataModel
 
 class RaceDataModel(BaseObjectModel):
     id: str = ''
-    data:List[RunnerRaceDataModel] = []
+    runner_ids:List[str] = []
+
+class RaceDataRawModel(BaseObjectModel):
+    id: str = ''
+    runners:List[RunnerRaceDataModel] = []
