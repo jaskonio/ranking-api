@@ -7,7 +7,7 @@ from app.aplication.ranking_league_service import RankingLeagueService
 from app.domain.model.league_model import LeagueModel, LeagueRAWModel
 from app.domain.model.participant_league_model import ParticipantLeagueModel
 from app.domain.model.participant_ranking_model import ParticipantRankingModel
-from app.domain.model.race_league_model import RaceLeagueModel, RaceLeagueRawModel
+from app.domain.model.race_league_model import RaceLeagueRawModel
 from app.domain.model.ranking_league_model import RankingLeagueModel
 from app.domain.model.runner_race_data_model import RunnerRaceDataModel
 from app.infrastructure.mongoDB.model.league_entity import LeagueEntity

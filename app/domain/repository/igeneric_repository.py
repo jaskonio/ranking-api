@@ -1,18 +1,19 @@
-from typing import TypeVar, Generic, List
+from abc import ABC
+from typing import Optional, List
+from app.infrastructure.mongoDB.model.base_mongo_entity import BaseMongoEntity
 
-T = TypeVar('T')
 
-class IGenericRepository(Generic[T]):
-    def get_all(self) -> List[T]:
+class IGenericRepository(ABC):
+    def get_all(self) -> List[BaseMongoEntity]:
         pass
 
-    def get_by_id(self, entity_id: str) -> T:
+    def get_by_id(self, entity_id: str) -> Optional[BaseMongoEntity]:
         pass
 
-    def add(self, new_entity: T) -> str:
+    def add(self, new_entity: BaseMongoEntity) -> Optional[BaseMongoEntity]:
         pass
 
-    def update_by_id(self, entity_id: str, new_entity: T) -> bool:
+    def update_by_id(self, entity_id: str, new_entity: BaseMongoEntity) -> Optional[BaseMongoEntity]:
         pass
 
     def delete_by_id(self, entity_id: str) -> bool:

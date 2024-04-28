@@ -17,4 +17,4 @@ def load_repository_from_config():
 
         return MongoDBRepositoryFactory(db.database)
     else:
-        raise ValueError("Tipo de base de datos no válido en la configuración.")
+        raise ValueError(f'{database_type} is not supported')

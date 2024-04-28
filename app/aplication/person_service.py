@@ -12,6 +12,10 @@ class PersonService():
 
     def get_all(self) -> List[PersonModel]:
         person_entities: List[PersonEntity] = self.__person_repository.get_all()
+
+        if person_entities == []:
+            return []
+
         return [person_entity.to_domain_model(PersonModel) for person_entity in person_entities]
 
     def get_by_id(self, person_id:str) -> PersonModel:
