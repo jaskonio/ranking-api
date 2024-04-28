@@ -2,6 +2,7 @@ import logging
 from typing import List, Optional
 from app.aplication.base_service import BaseService
 from app.domain.model.person_model import PersonModel
+from app.infrastructure.rest_api.model.custom_responses import CustomStaticJSONResponse
 from app.infrastructure.rest_api.model.person_model import PersonRequests, PersonResponse
 
 
@@ -22,13 +23,13 @@ class PersonController():
         try:
             model:PersonModel = self.__person_service.get_by_id(person_id)
 
-            if model:
-                return PersonResponse().create_by_domain_model(model)
+            if model is None:
+                return CustomStaticJSONResponse.error(status_code=404, message=f"El ID {person_id} no se ha encontrado")
 
-            return None
+            return CustomStaticJSONResponse.success(data=PersonResponse().create_by_domain_model(model))
         except Exception as exception_error:
             self.logger.error("Error retrieving item: %s", exception_error)
-            raise TypeError('An error occurred while retrieving item.') from None
+            return CustomStaticJSONResponse.invalid_request(status_code=500,errors="Error al processar la peticion")
 
     def add(self, new_person: PersonRequests) -> Optional[PersonResponse]:
         try:

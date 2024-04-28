@@ -1,12 +1,16 @@
+import logging
 from typing import List
-from fastapi import APIRouter, Response, status
-from fastapi.responses import JSONResponse
+from fastapi import APIRouter
 from app.aplication.base_service import BaseService
 from app.domain.model.person_model import PersonModel
 from app.infrastructure.mongoDB.model.person_entity import PersonEntity
 from app.infrastructure.repository.repository_utils import load_repository_from_config
+from app.infrastructure.rest_api.model.custom_responses import SuccessJsonPersonResponse
 from app.infrastructure.rest_api.model.person_model import PersonRequests, PersonResponse
 from app.infrastructure.rest_api.controller.person_controller import PersonController
+
+logger = logging.getLogger(__name__)
+
 
 person_router = APIRouter()
 
@@ -20,22 +24,15 @@ def get_all() -> List[PersonResponse]:
     return controller.get_all()
 
 @person_router.get('/{person_id}')
-def get_by_id(person_id:str) -> PersonResponse:
-    try:
-        result =  controller.get_by_id(person_id)
-        if result is None:
-            return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content={"message": "No se ha encontrado resultados"})
-
-        return JSONResponse(status_code=status.HTTP_200_OK, content=result)
-    except Exception as exception:
-        return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content={"message": f'Error al recuperar la persona con ID: {person_id}'})
+def get_by_id(person_id:str) -> SuccessJsonPersonResponse:
+    return controller.get_by_id(person_id)
 
 @person_router.post('/')
 def add(new_person: PersonRequests) -> PersonResponse:
     return controller.add(new_person)
 
 @person_router.post('/adds')
-def adds(new_persons: List[PersonRequests]) -> List[PersonResponse]:
+def adds(new_persons: List[PersonRequests]):
     results = []
     for new_person in new_persons:
         results.append(controller.add(new_person))
