@@ -1,16 +1,13 @@
 from typing import Any
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
-from app.infrastructure.rest_api.model.person_model import PersonResponse
+
 
 class BaseSuccessJsonResponse(BaseModel):
     status_code: int = 200
     status:str = "success"
     message:str = 'Success'
     data: Any
-
-class SuccessJsonPersonResponse(BaseSuccessJsonResponse):
-    data: PersonResponse
 
 class FailJsonResponse(BaseModel):
     status:str = "fail"

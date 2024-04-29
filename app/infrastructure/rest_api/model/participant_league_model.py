@@ -1,4 +1,5 @@
 from app.infrastructure.rest_api.model.base_api_model import BaseAPI_Model
+from app.infrastructure.rest_api.model.custom_responses import BaseSuccessJsonResponse
 
 
 class ParticipantLeagueResponse(BaseAPI_Model):
@@ -22,3 +23,6 @@ class ParticipantLeagueRequest(BaseAPI_Model):
     dorsal: int = 0
     category: str = ''
     disqualified_order_race: int = -1
+
+class SuccessJsonParticipantLeagueResponse(BaseSuccessJsonResponse):
+    data: ParticipantLeagueResponse

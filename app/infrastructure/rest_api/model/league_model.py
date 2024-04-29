@@ -1,5 +1,6 @@
 from typing import List
 from app.infrastructure.rest_api.model.base_api_model import BaseAPI_Model
+from app.infrastructure.rest_api.model.custom_responses import BaseSuccessJsonResponse
 from app.infrastructure.rest_api.model.participant_league_model import ParticipantLeagueResponse
 from app.infrastructure.rest_api.model.race_league_model import RaceLeagueRawResponse
 from app.infrastructure.rest_api.model.ranking_league_model import RankingLeagueResponse
@@ -30,3 +31,9 @@ class LeagueRawResponse(BaseAPI_Model):
     runner_participants: List[ParticipantLeagueResponse] = []
     ranking_latest: RankingLeagueResponse = []
     history_ranking: List[RankingLeagueResponse] = []
+
+class SuccessJsonLeagueResponse(BaseSuccessJsonResponse):
+    data: LeagueResponse
+
+class SuccessJsonLeagueRawResponse(BaseSuccessJsonResponse):
+    data: LeagueRawResponse

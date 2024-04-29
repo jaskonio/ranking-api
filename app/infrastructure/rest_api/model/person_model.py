@@ -1,4 +1,6 @@
+from typing import List
 from app.infrastructure.rest_api.model.base_api_model import BaseAPI_Model
+from app.infrastructure.rest_api.model.custom_responses import BaseSuccessJsonResponse
 
 
 class PersonResponse(BaseAPI_Model):
@@ -13,3 +15,9 @@ class PersonRequests(BaseAPI_Model):
     last_name: str = ''
     gender: str = ''
     photo_url: str = ''
+
+class SuccessJsonPersonResponse(BaseSuccessJsonResponse):
+    data: PersonResponse
+
+class SuccessJsonPersonsResponse(BaseSuccessJsonResponse):
+    data: List[PersonResponse]

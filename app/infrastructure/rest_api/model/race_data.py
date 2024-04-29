@@ -1,5 +1,6 @@
 from typing import List
 from app.infrastructure.rest_api.model.base_api_model import BaseAPI_Model
+from app.infrastructure.rest_api.model.custom_responses import BaseSuccessJsonResponse
 
 class RunnerRaceDataResponse(BaseAPI_Model):
     id: str = ''
@@ -34,3 +35,10 @@ class RaceDataResponse(BaseAPI_Model):
 class RaceDataRawResponse(BaseAPI_Model):
     id: str = ''
     runners:List[RunnerRaceDataResponse] = []
+
+class SuccessJsonRaceDataResponse(BaseSuccessJsonResponse):
+    data: RaceDataResponse
+
+class SuccessJsonRaceDataRawResponse(BaseSuccessJsonResponse):
+    data: RaceDataRawResponse
+   
