@@ -1,6 +1,5 @@
 from typing import List
 from fastapi import APIRouter
-
 from app.infrastructure.rest_api.controller.ranking_league_controller import RankingLeagueController
 from app.infrastructure.rest_api.model.ranking_league_model import RankingLeagueRequest, RankingLeagueResponse
 

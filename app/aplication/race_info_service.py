@@ -1,33 +1,32 @@
 from typing import List
+from app.aplication.base_service import BaseService
 from app.aplication.person_service import PersonService
-from app.domain.model.race_data_model import RaceDataModel, RaceDataRawModel
+from app.domain.model.race_data_model import RaceDataRawModel
 from app.domain.model.race_info_model import RaceInfoRawModel, RaceInfoModel
 from app.domain.model.runner_race_data_model import RunnerRaceDataModel
+from app.domain.repository.igeneric_repository import IGenericRepository
 from app.domain.services.downloader_runners_service import DownloaderRunnersService
-from app.domain.services.http_downloader_service import HTTPDownloaderService
-from app.domain.services.mappe_runners_factory import MappeRunnersFactory
-from app.domain.services.race_downloader_options_factory import RaceDownloaderOptionsFactory
 from app.infrastructure.mongoDB.model.club_info_entity import ClubInfoEntity
 from app.infrastructure.mongoDB.model.race_data_entity import RaceDataEntity
 from app.infrastructure.mongoDB.model.race_info_entity import RaceInfoEntity
 from app.infrastructure.mongoDB.model.runner_race_data_entity import RunnerRaceDataEntity
-from app.infrastructure.repository.repository_utils import load_repository_from_config
 
 
-class RaceInfoService():
+class RaceInfoService(BaseService):
 
-    def __init__(self):
-        self.__downloader_runners_service = DownloaderRunnersService(HTTPDownloaderService(), MappeRunnersFactory(), RaceDownloaderOptionsFactory())
-        db = load_repository_from_config()
-        self.__race_info_repository = db.get_repository('race_info', RaceInfoEntity)
-        self.__race_data_repository = db.get_repository('race_data', RaceDataEntity)
-        self.__club_info_repository = db.get_repository('club_info', ClubInfoEntity)
-        self.__runner_race_data_repository = db.get_repository('runner_race_data', RunnerRaceDataEntity)
-        self.__person_service = PersonService()
+    def __init__(self, repository:IGenericRepository, model_type:RaceInfoModel, entity_type:RaceInfoEntity
+                 , downloader_runners_service: DownloaderRunnersService, race_data_repository: IGenericRepository, club_info_repository: IGenericRepository
+                 , runner_race_data_repository: IGenericRepository, person_service: PersonService):
+        super().__init__(repository, model_type, entity_type)
 
-    # RAW
+        self.__downloader_runners_service = downloader_runners_service
+        self.__race_data_repository = race_data_repository
+        self.__club_info_repository = club_info_repository
+        self.__runner_race_data_repository = runner_race_data_repository
+        self.__person_service = person_service
+
     def get_all_raw(self) -> List[RaceInfoRawModel]:
-        all_race_info_entities:List[RaceInfoEntity] = self.__race_info_repository.get_all()
+        all_race_info_entities:List[RaceInfoEntity] = self.__repository.get_all()
         all_race_data_entities:List[RaceDataEntity] = self.__race_data_repository.get_all()
         all_runner_race_data_entities:List[RunnerRaceDataEntity] = self.__runner_race_data_repository.get_all()
 
@@ -52,7 +51,7 @@ class RaceInfoService():
         return all_race_info_model
 
     def get_raw_by_id(self, race_id: str) -> RaceInfoRawModel:
-        race_info_entity:RaceInfoEntity = self.__race_info_repository.get_by_id(race_id)
+        race_info_entity:RaceInfoEntity = self.__repository.get_by_id(race_id)
 
         if race_info_entity.race_data_id == '':
             return None
@@ -78,29 +77,9 @@ class RaceInfoService():
 
         return race_info_model
 
-    # Simplified
-    def get_all(self) -> List[RaceInfoModel]:
-        all_race_info_entity: List[RaceInfoEntity] = self.__race_info_repository.get_all()
-        all_race_info_model = [race_info_entity.to_domain_model(RaceInfoModel) for race_info_entity in all_race_info_entity]
-
-        return all_race_info_model
-
-    def get_by_id(self, race_id) -> RaceInfoModel:
-        result:RaceInfoEntity = self.__race_info_repository.get_by_id(race_id)
-        return result.to_domain_model(RaceInfoModel)
-
-    def add(self, race_model: RaceInfoModel) -> RaceInfoModel:
-        new_race_entity = RaceInfoEntity().create_by_domain_model(race_model)
-
-        race_id = self.__race_info_repository.add(new_race_entity)
-
-        race:RaceInfoEntity = self.__race_info_repository.get_by_id(race_id)
-
-        return race.to_domain_model(RaceInfoModel)
-
     # Common
     def process(self, race_id:str) -> RaceInfoModel:
-        race_info_entity:RaceInfoEntity = self.__race_info_repository.get_by_id(race_id)
+        race_info_entity:RaceInfoEntity = self.__repository.get_by_id(race_id)
 
         race_info_model: RaceInfoModel = race_info_entity.to_domain_model(RaceInfoModel)
 
@@ -133,26 +112,6 @@ class RaceInfoService():
         race_info_entity.race_data_id = new_race_data_id
         race_info_entity.processed = True
 
-        status = self.__race_info_repository.update_by_id(race_info_entity.id, race_info_entity)
-        race_info_entity = self.__race_info_repository.get_by_id(race_info_entity.id)
+        race_info_entity = self.__repository.update_by_id(race_info_entity.id, race_info_entity)
 
         return race_info_entity.to_domain_model(RaceInfoModel)
-
-    def update_by_id(self, race_id:str, race_model:RaceInfoModel):
-        new_race_entity = race_model.to_entity(RaceInfoEntity)
-
-        status = self.__race_info_repository.update_by_id(race_id, new_race_entity)
-
-        if status:
-            race = self.__race_info_repository.get_by_id(race_id)
-            return race
-        else:
-            return None
-
-    def delete_by_id(self, race_id):
-        status = self.__race_info_repository.delete_by_id(race_id)
-
-        if status:
-            return status
-
-        return None

@@ -1,87 +1,31 @@
-import logging
 from app.aplication.season_service import SeasonService
 from app.domain.model.season_model import SeasonModel
-from app.infrastructure.rest_api.model.season_info import SeasonRawResponse, SeasonRequest, SeasonResponse
+from app.infrastructure.rest_api.controller.base_controller import BaseController
+from app.infrastructure.rest_api.model.custom_responses import CustomStaticJSONResponse
+from app.infrastructure.rest_api.model.season_info import SeasonRawResponse, SeasonResponse
 
 
-class SeasonController():
-    def __init__(self, season_service:SeasonService):
-        self.__season_service = season_service
-        self.logger = logging.getLogger(__name__)
+class SeasonController(BaseController):
+    def __init__(self, base_service:SeasonService, model_api_response:SeasonResponse, model_domain:SeasonModel):
+        super().__init__(base_service, model_api_response, model_domain)
 
-    def get_all(self) -> list[SeasonResponse]:
+    def get_all_raw(self):
         try:
-            models = self.__season_service.get_all()
-            return [SeasonResponse().create_by_domain_model(model) for model in models]
+            results = self.__base_service.get_all_raw()
+            results = [SeasonRawResponse().create_by_domain_model(result) for result in results]
+            return CustomStaticJSONResponse.success(data=results)
         except Exception as exception_error:
             self.logger.error("Error retrieving all items: %s", exception_error)
-            raise TypeError('An error occurred while retrieving all items.') from None
+            return CustomStaticJSONResponse.invalid_request(status_code=500,errors="Error al processar la peticion")
 
-    def get_by_id(self, season_id:str) -> SeasonResponse:
+    def get_raw_by_id(self, season_id:str):
         try:
-            model = self.__season_service.get_by_id(season_id)
+            result_model_domain = self.__base_service.get_raw_by_id(season_id)
 
-            if model:
-                return SeasonResponse().create_by_domain_model(model)
+            if result_model_domain is None:
+                return CustomStaticJSONResponse.error(status_code=404, message=f"El ID {season_id} no se ha encontrado")
 
-            return {}
+            return CustomStaticJSONResponse.success(data=SeasonRawResponse().create_by_domain_model(result_model_domain))
         except Exception as exception_error:
             self.logger.error("Error retrieving item: %s", exception_error)
-            raise TypeError('An error occurred while retrieving item.') from None
-
-    def add(self, season_api_model:SeasonRequest) -> SeasonResponse:
-        try:
-            model = season_api_model.to_domain_model(SeasonModel)
-            season_model = self.__season_service.add(model)
-
-            if season_model:
-                return SeasonResponse().create_by_domain_model(season_model)
-
-            return {}
-        except Exception as exception_error:
-            self.logger.error("Error saving: %s", exception_error)
-            raise TypeError('An error occurred while saving.') from None
-
-    def update_by_id(self, season_id:str, new_season_model:SeasonRequest) -> SeasonResponse:
-        try:
-            model = self.__season_service.update_by_id(season_id, new_season_model.to_domain_model(SeasonModel))
-
-            if model:
-                return SeasonResponse().create_by_domain_model(model)
-
-            return {}
-        except Exception as exception_error:
-            self.logger.error("Error updating: %s", exception_error)
-            raise TypeError('An error occurred while updating.') from None
-
-    def delete_by_id(self, season_id:str):
-        try:
-            status = self.__season_service.delete_by_id(season_id)
-
-            if status:
-                return status
-
-            return {}
-        except Exception as exception_error:
-            self.logger.error("Error deleting: %s", exception_error)
-            raise TypeError('An error occurred while deleting.') from None
-
-    def get_all_raw(self) -> list[SeasonRawResponse]:
-        try:
-            models = self.__season_service.get_all_raw()
-            return [SeasonRawResponse().create_by_domain_model(model) for model in models]
-        except Exception as exception_error:
-            self.logger.error("Error retrieving all items: %s", exception_error)
-            raise TypeError('An error occurred while retrieving all items.') from None
-
-    def get_raw_by_id(self, season_id:str) -> SeasonRawResponse:
-        try:
-            model = self.__season_service.get_raw_by_id(season_id)
-
-            if model:
-                return SeasonRawResponse().create_by_domain_model(model)
-
-            return {}
-        except Exception as exception_error:
-            self.logger.error("Error retrieving item: %s", exception_error)
-            raise TypeError('An error occurred while retrieving item.') from None
+            return CustomStaticJSONResponse.invalid_request(status_code=500,errors="Error al processar la peticion")

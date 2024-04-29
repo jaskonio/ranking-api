@@ -30,7 +30,7 @@ class RaceInfoController():
             self.logger.error("Error retrieving all items: %s", exception_error)
             raise TypeError('An error occurred while retrieving all items.') from None
 
-    def get_all_simplified(self) -> List[RaceInfoResponse]:
+    def get_all(self) -> List[RaceInfoResponse]:
         try:
             results = self.__race_info_service.get_all()
             results = [RaceInfoResponse().create_by_domain_model(result) for result in results]
@@ -39,7 +39,7 @@ class RaceInfoController():
             self.logger.error("Error retrieving all items: %s", exception_error)
             raise TypeError('An error occurred while retrieving all items.') from None
 
-    def get_simplified_by_id(self, race_id) -> RaceInfoResponse:
+    def get_by_id(self, race_id) -> RaceInfoResponse:
         try:
             race = self.__race_info_service.get_by_id(race_id)
 
@@ -51,7 +51,7 @@ class RaceInfoController():
             self.logger.error("Error retrieving item: %s", exception_error)
             raise TypeError('An error occurred while retrieving item.') from None
 
-    def add_simplified(self, race:RaceInfoRequest) -> RaceInfoResponse:
+    def add(self, race:RaceInfoRequest) -> RaceInfoResponse:
         try:
             race = self.__race_info_service.add(race.to_domain_model(RaceInfoModel))
 
@@ -75,17 +75,17 @@ class RaceInfoController():
             self.logger.error("Error deleting: %s", exception_error)
             raise TypeError('An error occurred while deleting.') from None
 
-    # def update_by_id(self, race_id:str, new_race):
-    #     try:
-    #         race = self.__race_info_service.update_by_id(race_id, new_race)
+    def update_by_id(self, race_id:str, new_race):
+        try:
+            race = self.__race_info_service.update_by_id(race_id, new_race)
 
-    #         if race:
-    #             return race
+            if race:
+                return race
 
-    #         return {}
-    #     except Exception as exception_error:
-    #         self.logger.error("Error updating: %s", exception_error)
-    #         raise TypeError('An error occurred while updating.') from None
+            return {}
+        except Exception as exception_error:
+            self.logger.error("Error updating: %s", exception_error)
+            raise TypeError('An error occurred while updating.') from None
 
     def delete_by_id(self, race_id):
         try:

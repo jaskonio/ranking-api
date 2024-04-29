@@ -37,3 +37,9 @@ class SuccessJsonLeagueResponse(BaseSuccessJsonResponse):
 
 class SuccessJsonLeagueRawResponse(BaseSuccessJsonResponse):
     data: LeagueRawResponse
+
+class SuccessJsonLeaguesResponse(BaseSuccessJsonResponse):
+    data: List[LeagueResponse]
+
+class SuccessJsonLeaguesRawResponse(BaseSuccessJsonResponse):
+    data: List[LeagueRawResponse]

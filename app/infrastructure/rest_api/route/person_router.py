@@ -19,7 +19,7 @@ person_repository = db.get_repository('person', PersonEntity)
 controller = PersonController(BaseService(person_repository, PersonModel, PersonEntity))
 
 @person_router.get('/')
-def get_all() -> List[SuccessJsonPersonResponse]:
+def get_all() -> SuccessJsonPersonResponse:
     return controller.get_all()
 
 @person_router.get('/{person_id}')
@@ -31,7 +31,7 @@ def add(new_person: PersonRequests) -> SuccessJsonPersonResponse:
     return controller.add(new_person)
 
 @person_router.post('/adds')
-def adds(new_persons: List[PersonRequests]) -> List[SuccessJsonPersonsResponse]:
+def adds(new_persons: List[PersonRequests]) -> SuccessJsonPersonsResponse:
     return controller.adds(new_persons)
 
 @person_router.put('/{person_id}')
