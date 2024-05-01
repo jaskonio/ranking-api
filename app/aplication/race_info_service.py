@@ -1,6 +1,5 @@
 from typing import List
 from app.aplication.base_service import BaseService
-from app.aplication.person_service import PersonService
 from app.domain.model.race_data_model import RaceDataRawModel
 from app.domain.model.race_info_model import RaceInfoRawModel, RaceInfoModel
 from app.domain.model.runner_race_data_model import RunnerRaceDataModel
@@ -16,17 +15,17 @@ class RaceInfoService(BaseService):
 
     def __init__(self, repository:IGenericRepository, model_type:RaceInfoModel, entity_type:RaceInfoEntity
                  , downloader_runners_service: DownloaderRunnersService, race_data_repository: IGenericRepository, club_info_repository: IGenericRepository
-                 , runner_race_data_repository: IGenericRepository, person_service: PersonService):
+                 , runner_race_data_repository: IGenericRepository):
         super().__init__(repository, model_type, entity_type)
 
         self.__downloader_runners_service = downloader_runners_service
         self.__race_data_repository = race_data_repository
         self.__club_info_repository = club_info_repository
         self.__runner_race_data_repository = runner_race_data_repository
-        self.__person_service = person_service
+        # self.__person_service = person_service
 
     def get_all_raw(self) -> List[RaceInfoRawModel]:
-        all_race_info_entities:List[RaceInfoEntity] = self.__repository.get_all()
+        all_race_info_entities:List[RaceInfoEntity] = self.repository.get_all()
         all_race_data_entities:List[RaceDataEntity] = self.__race_data_repository.get_all()
         all_runner_race_data_entities:List[RunnerRaceDataEntity] = self.__runner_race_data_repository.get_all()
 
@@ -51,7 +50,7 @@ class RaceInfoService(BaseService):
         return all_race_info_model
 
     def get_raw_by_id(self, race_id: str) -> RaceInfoRawModel:
-        race_info_entity:RaceInfoEntity = self.__repository.get_by_id(race_id)
+        race_info_entity:RaceInfoEntity = self.repository.get_by_id(race_id)
 
         if race_info_entity.race_data_id == '':
             return None
@@ -79,7 +78,7 @@ class RaceInfoService(BaseService):
 
     # Common
     def process(self, race_id:str) -> RaceInfoModel:
-        race_info_entity:RaceInfoEntity = self.__repository.get_by_id(race_id)
+        race_info_entity:RaceInfoEntity = self.repository.get_by_id(race_id)
 
         race_info_model: RaceInfoModel = race_info_entity.to_domain_model(RaceInfoModel)
 
@@ -112,6 +111,6 @@ class RaceInfoService(BaseService):
         race_info_entity.race_data_id = new_race_data_id
         race_info_entity.processed = True
 
-        race_info_entity = self.__repository.update_by_id(race_info_entity.id, race_info_entity)
+        race_info_entity = self.repository.update_by_id(race_info_entity.id, race_info_entity)
 
         return race_info_entity.to_domain_model(RaceInfoModel)

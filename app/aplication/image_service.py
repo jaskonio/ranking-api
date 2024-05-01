@@ -1,45 +1,20 @@
-import base64
-import io
-from PIL import Image
-from fastapi.responses import StreamingResponse
-from app.domain.repository.igeneric_repository import IGenericRepository
+import logging
+from fastapi import UploadFile
 
 
 class ImageService():
 
-    def __init__(self, person_repository:IGenericRepository) -> None:
-        self.person_repository = person_repository
+    def __init__(self) -> None:
+        self.logger = logging.getLogger(__name__)
 
-    def get_image_by_person_id(self, person_id):
-        person = self.person_repository.get_by_id(person_id)
+    def upload(self, identifier:str, file: UploadFile) -> str:
+        try:
+            if file is None:
+                return 'https://i.pravatar.cc/30'
 
-        if person is None:
-            return None
+            self.logger.info(f'Image Name: {file.filename}')
 
-        if person.photo == "":
-            return None
-
-        binary = person.photo.split(',')[1]
-
-        image_stream = self.__resize_base64_image(binary, 90 ,90)
-
-        return StreamingResponse(content=image_stream, media_type="image/png")
-
-
-    def __resize_base64_image(self, binary, width, height):
-        image_content = base64.b64decode(binary, validate=True)
-
-        # Decodificar la imagen Base64
-        image_bytes = io.BytesIO(image_content)
-        image = Image.open(image_bytes)
-
-        # Cambiar el tamaño de la imagen si se especifican los parámetros
-        if width and height:
-            image = image.resize((width, height))
-
-        # Convertir la imagen a formato JPG
-        image_jpg = io.BytesIO()
-        image.save(image_jpg, format="JPEG")
-        image_jpg_content = image_jpg.getvalue()
-        image_stream = io.BytesIO(image_jpg_content)
-        return image_stream
+            return 'https://i.pravatar.cc/30'
+        except Exception as exception_error:
+            self.logger.error(f"Error upload image: {file.filename}. Exception: {exception_error}")
+            return 'https://i.pravatar.cc/40'

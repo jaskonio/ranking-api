@@ -13,7 +13,7 @@ class SeasonService(BaseService):
         self.__league_service = league_service
 
     def get_all_raw(self) -> List[SeasonModel]:
-        season_entities: List[SeasonEntity] = self.__repository.get_all()
+        season_entities: List[SeasonEntity] = self.repository.get_all()
         league_models = self.__league_service.get_all_raw()
 
         season_models:List[SeasonModel] = []
@@ -30,7 +30,7 @@ class SeasonService(BaseService):
         return season_models
 
     def get_raw_by_id(self, season_id:str) -> SeasonModel:
-        season_entity: SeasonEntity = self.__repository.get_by_id(season_id)
+        season_entity: SeasonEntity = self.repository.get_by_id(season_id)
         league_models = self.__league_service.get_all_raw()
 
         season_model:SeasonRawModel = season_entity.to_domain_model(SeasonRawModel)

@@ -1,80 +1,49 @@
-import logging
-from typing import List, Optional
+from typing import List
+from fastapi import File, UploadFile
 from app.aplication.base_service import BaseService
+from app.aplication.image_service import ImageService
 from app.domain.model.person_model import PersonModel
+from app.infrastructure.rest_api.controller.base_controller import BaseController
 from app.infrastructure.rest_api.model.custom_responses import CustomStaticJSONResponse
 from app.infrastructure.rest_api.model.person_model import PersonRequests, PersonResponse
 
 
-class PersonController():
-    def __init__(self, person_service:BaseService):
-        self.__person_service = person_service
-        self.logger = logging.getLogger(__name__)
+class PersonController(BaseController):
+    def __init__(self, base_service:BaseService, model_api_response:PersonResponse, model_domain:PersonModel, image_service:ImageService):
+        super().__init__(base_service, model_api_response, model_domain)
+        self.image_service = image_service
 
-    def get_all(self) -> List[PersonResponse]:
+    def add(self, new_model: PersonRequests, file: UploadFile = File(None)):
         try:
-            models: List[PersonModel] = self.__person_service.get_all()
-            models = [PersonResponse().create_by_domain_model(model) for model in models]
-            return CustomStaticJSONResponse.success(data=models)
+            person_model:PersonModel = new_model.to_domain_model(PersonModel)
+            result:PersonModel = self.base_service.add(person_model)
+
+            result.photo_url = self.image_service.upload(result.id, file)
+
+            result:PersonModel = self.base_service.update_by_id(result.id, result)
+
+            if result is None:
+                return CustomStaticJSONResponse.error(status_code=404, message='Hubo un error al crear el nuevo item')
+
+            return CustomStaticJSONResponse.success(data=result)
         except Exception as exception_error:
-            self.logger.error("Error retrieving all items: %s", exception_error)
+            self.logger.error(f"Error saving: {exception_error}")
             return CustomStaticJSONResponse.invalid_request(status_code=500,errors="Error al processar la peticion")
 
-    def get_by_id(self, person_id:str) -> Optional[PersonResponse]:
+    def adds(self, new_models: List[PersonRequests]):
         try:
-            model:PersonModel = self.__person_service.get_by_id(person_id)
+            result_new_models: List[PersonResponse] = []
 
-            if model is None:
-                return CustomStaticJSONResponse.error(status_code=404, message=f"El ID {person_id} no se ha encontrado")
+            for new_model in new_models:
+                person_model:PersonModel = new_model.to_domain_model(PersonModel)
+                person_model.photo_url = self.image_service.upload(new_model.photo)
 
-            return CustomStaticJSONResponse.success(data=PersonResponse().create_by_domain_model(model))
+                result:PersonModel = self.base_service.add(person_model)
+
+                if result:
+                    result_new_models.append(PersonResponse().create_by_domain_model(result))
+
+            return CustomStaticJSONResponse.success(data=result_new_models)
         except Exception as exception_error:
-            self.logger.error("Error retrieving item: %s", exception_error)
-            return CustomStaticJSONResponse.invalid_request(status_code=500,errors="Error al processar la peticion")
-
-    def add(self, new_person: PersonRequests) -> Optional[PersonResponse]:
-        try:
-            new_person.photo_url = 'https://i.pravatar.cc/30'
-            model:PersonModel = self.__person_service.add(new_person.to_domain_model(PersonModel))
-
-            if model:
-                return PersonResponse().create_by_domain_model(model)
-
-            return None
-        except Exception as exception_error:
-            self.logger.error("Error saving: %s", exception_error)
-            raise TypeError('An error occurred while saving.') from None
-
-    def adds(self, new_persons: PersonRequests) -> List[PersonResponse]:
-        try:
-            result_new_persons: List[PersonResponse] = []
-            for new_person in new_persons:
-                new_person.photo_url = 'https://i.pravatar.cc/30'
-                model:PersonModel = self.__person_service.add(new_person.to_domain_model(PersonModel))
-                if model:
-                    result_new_persons.append(PersonResponse().create_by_domain_model(model))
-            return CustomStaticJSONResponse.success(data=result_new_persons)
-        except Exception as exception_error:
-            self.logger.error("Error saving: %s", exception_error)
-            return CustomStaticJSONResponse.invalid_request(status_code=500,errors="Error al processar la peticion")
-
-    def update_by_id(self, person_id:str, new_person: PersonRequests) -> Optional[PersonResponse]:
-        try:
-            model:PersonModel = self.__person_service.update_by_id(person_id, new_person.to_domain_model(PersonModel))
-
-            if model is None:
-                return CustomStaticJSONResponse.error(status_code=404, message=f"El ID {person_id} no se ha encontrado")
-
-            return CustomStaticJSONResponse.success(data=PersonResponse().create_by_domain_model(model))
-        except Exception as exception_error:
-            self.logger.error("Error updating: %s", exception_error)
-            return CustomStaticJSONResponse.invalid_request(status_code=500,errors="Error al processar la peticion")
-
-    def delete_by_id(self, person_id:str) -> bool:
-        try:
-            status = self.__person_service.delete_by_id(person_id)
-
-            return status
-        except Exception as exception_error:
-            self.logger.error("Error deleting: %s", exception_error)
+            self.logger.error(f"Error saving: {exception_error}")
             return CustomStaticJSONResponse.invalid_request(status_code=500,errors="Error al processar la peticion")
