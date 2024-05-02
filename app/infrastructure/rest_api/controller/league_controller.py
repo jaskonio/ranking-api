@@ -29,7 +29,9 @@ class LeagueController(BaseController):
             if league_model is None:
                 return CustomStaticJSONResponse.error(status_code=404, message=f"El ID {league_id} no se ha encontrado")
 
-            return CustomStaticJSONResponse.success(data=self.model_api_response().create_by_domain_model(league_model))
+            results = LeagueRawResponse().create_by_domain_model(league_model)
+
+            return CustomStaticJSONResponse.success(data=results)
         except Exception as exception_error:
             self.logger.error("Error retrieving item: %s", exception_error)
             return CustomStaticJSONResponse.invalid_request(status_code=500,errors="Error al processar la peticion")
@@ -41,7 +43,9 @@ class LeagueController(BaseController):
             if league_model:
                 return CustomStaticJSONResponse.error(status_code=404, message=f"El ID {league_id} no se ha encontrado")
 
-            return CustomStaticJSONResponse.success(data=self.model_api_response().create_by_domain_model(league_model))
+            result = LeagueRawResponse().create_by_domain_model(league_model)
+
+            return CustomStaticJSONResponse.success(data=result)
         except Exception as exception_error:
             self.logger.error("Error retrieving item: %s", exception_error)
             return CustomStaticJSONResponse.invalid_request(status_code=500,errors="Error al processar la peticion")
