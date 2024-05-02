@@ -1,12 +1,13 @@
 from fastapi import APIRouter
-from app.aplication.league_service import LeagueService
+from app.domain.model.league_model import LeagueModel
 from app.infrastructure.rest_api.controller.league_controller import LeagueController
-from app.infrastructure.rest_api.model.league_model import LeagueRequest, SuccessJsonLeagueRawResponse, SuccessJsonLeagueResponse, SuccessJsonLeaguesRawResponse
+from app.infrastructure.rest_api.model.league_model import LeagueRequest, LeagueResponse, SuccessJsonLeagueRawResponse, SuccessJsonLeagueResponse, SuccessJsonLeaguesRawResponse
+from app.core.services import league_service
 
 
 league_router = APIRouter()
 
-controller = LeagueController(LeagueService())
+controller = LeagueController(league_service, LeagueResponse, LeagueModel)
 
 @league_router.get('/raw')
 def get_all_raw() -> SuccessJsonLeaguesRawResponse:

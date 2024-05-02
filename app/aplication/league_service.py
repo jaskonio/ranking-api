@@ -1,9 +1,6 @@
 import logging
 from typing import List
-from app.aplication.particpant_league_service import ParticipantLeagueService
-from app.aplication.race_info_service import RaceInfoService
-from app.aplication.race_league_service import RaceLeagueService
-from app.aplication.ranking_league_service import RankingLeagueService
+from app.aplication.base_service import BaseService
 from app.domain.model.league_model import LeagueModel, LeagueRAWModel
 from app.domain.model.participant_league_model import ParticipantLeagueModel
 from app.domain.model.participant_ranking_model import ParticipantRankingModel
@@ -11,53 +8,17 @@ from app.domain.model.race_league_model import RaceLeagueRawModel
 from app.domain.model.ranking_league_model import RankingLeagueModel
 from app.domain.model.runner_race_data_model import RunnerRaceDataModel
 from app.infrastructure.mongoDB.model.league_entity import LeagueEntity
-from app.infrastructure.repository.repository_utils import load_repository_from_config
 
 
-class LeagueService():
-
-    def __init__(self) -> None:
+class LeagueService(BaseService):
+    def __init__(self, league_repository, race_league_service, participant_league_service, ranking_league_service, race_info_service) -> None:
+        super().__init__(league_repository, LeagueModel, LeagueEntity)
         self.logger = logging.getLogger(__name__)
-        db = load_repository_from_config()
-        self.__league_repository = db.get_repository('league', LeagueEntity)
-        self.__race_league_service = RaceLeagueService()
-        self.__participant_league_service = ParticipantLeagueService()
-        self.__ranking_league_service = RankingLeagueService()
-        self.__race_info_service = RaceInfoService()
-
-    def get_all(self) -> List[LeagueModel]:
-        league_entities: List[LeagueEntity] = self.__league_repository.get_all()
-
-        return [league_entity.to_domain_model(LeagueModel) for league_entity in league_entities]
-
-    def get_by_id(self, league_id:str) -> LeagueModel:
-        league_entity:LeagueEntity = self.__league_repository.get_by_id(league_id)
-
-        return league_entity.to_domain_model(LeagueModel)
-
-    def add(self, league:LeagueModel) -> LeagueModel:
-        league_id = self.__league_repository.add(LeagueEntity().create_by_domain_model(league))
-
-        league_entity:LeagueEntity = self.__league_repository.get_by_id(league_id)
-
-        return league_entity.to_domain_model(LeagueModel)
-
-    def update_by_id(self, league_id:str, new_league:LeagueModel):
-        status = self.__league_repository.update_by_id(league_id, LeagueEntity().create_by_domain_model(new_league))
-
-        if status:
-            league = self.__league_repository.get_by_id(league_id)
-            return league
-
-        return None
-
-    def delete_by_id(self, league_id:str) -> bool:
-        status = self.__league_repository.delete_by_id(league_id)
-
-        if status:
-            return status
-
-        return None
+        self.__league_repository = league_repository
+        self.__race_league_service = race_league_service
+        self.__participant_league_service = participant_league_service
+        self.__ranking_league_service = ranking_league_service
+        self.__race_info_service = race_info_service
 
     def get_all_raw(self) -> List[LeagueRAWModel]:
         league_entities: List[LeagueEntity] = self.__league_repository.get_all()

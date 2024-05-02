@@ -1,12 +1,14 @@
 import logging
 from typing import List
 from app.aplication.race_info_service import RaceInfoService
-from app.domain.model.race_info_model import RaceInfoRawModel, RaceInfoModel
-from app.infrastructure.rest_api.model.race_info import RaceInfoRAW_Response, RaceInfoRequest, RaceInfoResponse
+from app.domain.model.race_info_model import RaceInfoRawModel
+from app.infrastructure.rest_api.controller.base_controller import BaseController
+from app.infrastructure.rest_api.model.race_info import RaceInfoRAW_Response, RaceInfoResponse
 
 
-class RaceInfoController():
-    def __init__(self, race_info_service:RaceInfoService):
+class RaceInfoController(BaseController):
+    def __init__(self, race_info_repository, domain_model, entity_model, race_info_service:RaceInfoService):
+        super().__init__(race_info_repository, domain_model, entity_model)
         self.__race_info_service = race_info_service
         self.logger = logging.getLogger(__name__)
 
@@ -30,69 +32,12 @@ class RaceInfoController():
             self.logger.error("Error retrieving all items: %s", exception_error)
             raise TypeError('An error occurred while retrieving all items.') from None
 
-    def get_all(self) -> List[RaceInfoResponse]:
-        try:
-            results = self.__race_info_service.get_all()
-            results = [RaceInfoResponse().create_by_domain_model(result) for result in results]
-            return results
-        except Exception as exception_error:
-            self.logger.error("Error retrieving all items: %s", exception_error)
-            raise TypeError('An error occurred while retrieving all items.') from None
-
-    def get_by_id(self, race_id) -> RaceInfoResponse:
-        try:
-            race = self.__race_info_service.get_by_id(race_id)
-
-            if race:
-                return RaceInfoResponse().create_by_domain_model(race)
-
-            return {}
-        except Exception as exception_error:
-            self.logger.error("Error retrieving item: %s", exception_error)
-            raise TypeError('An error occurred while retrieving item.') from None
-
-    def add(self, race:RaceInfoRequest) -> RaceInfoResponse:
-        try:
-            race = self.__race_info_service.add(race.to_domain_model(RaceInfoModel))
-
-            if race:
-                return RaceInfoResponse().create_by_domain_model(race)
-
-            return {}
-        except Exception as exception_error:
-            self.logger.error("Error saving: %s", exception_error)
-            raise TypeError('An error occurred while saving.') from None
-
     def run_process(self, race_id) -> RaceInfoResponse:
         try:
             model = self.__race_info_service.process(race_id)
 
             if model:
                 return RaceInfoResponse().create_by_domain_model(model)
-
-            return {}
-        except Exception as exception_error:
-            self.logger.error("Error deleting: %s", exception_error)
-            raise TypeError('An error occurred while deleting.') from None
-
-    def update_by_id(self, race_id:str, new_race):
-        try:
-            race = self.__race_info_service.update_by_id(race_id, new_race)
-
-            if race:
-                return race
-
-            return {}
-        except Exception as exception_error:
-            self.logger.error("Error updating: %s", exception_error)
-            raise TypeError('An error occurred while updating.') from None
-
-    def delete_by_id(self, race_id):
-        try:
-            status = self.__race_info_service.delete_by_id(race_id)
-
-            if status:
-                return status
 
             return {}
         except Exception as exception_error:

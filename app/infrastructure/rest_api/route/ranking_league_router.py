@@ -1,12 +1,15 @@
 from typing import List
 from fastapi import APIRouter
-from app.infrastructure.rest_api.controller.ranking_league_controller import RankingLeagueController
+from app.domain.model.ranking_league_model import RankingLeagueModel
+from app.infrastructure.mongoDB.model.ranking_league_entity import RankingLeagueEntity
+from app.infrastructure.rest_api.controller.base_controller import BaseController
 from app.infrastructure.rest_api.model.ranking_league_model import RankingLeagueRequest, RankingLeagueResponse
+from app.core.services import ranking_league_service
 
 
 ranking_league_router = APIRouter()
 
-controller = RankingLeagueController()
+controller = BaseController(ranking_league_service, RankingLeagueModel, RankingLeagueEntity)
 
 @ranking_league_router.get('/')
 def get_all() -> List[RankingLeagueResponse]:

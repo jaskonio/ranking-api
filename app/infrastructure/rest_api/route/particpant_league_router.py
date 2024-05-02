@@ -1,12 +1,14 @@
 from typing import List
 from fastapi import APIRouter
-from app.infrastructure.rest_api.controller.participant_league_controller import ParticipantLeagueController
+from app.domain.model.participant_league_model import ParticipantLeagueModel
+from app.infrastructure.mongoDB.model.participant_league_entity import ParticipantLeagueEntity
+from app.infrastructure.rest_api.controller.base_controller import BaseController
 from app.infrastructure.rest_api.model.participant_league_model import ParticipantLeagueRequest, ParticipantLeagueResponse
-
+from app.core.services import participant_league_service
 
 participant_league_router = APIRouter()
 
-controller = ParticipantLeagueController()
+controller = BaseController(participant_league_service, ParticipantLeagueModel, ParticipantLeagueEntity)
 
 @participant_league_router.get('/')
 def get_all() -> List[ParticipantLeagueResponse]:

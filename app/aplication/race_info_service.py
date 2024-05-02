@@ -15,14 +15,14 @@ class RaceInfoService(BaseService):
 
     def __init__(self, repository:IGenericRepository, model_type:RaceInfoModel, entity_type:RaceInfoEntity
                  , downloader_runners_service: DownloaderRunnersService, race_data_repository: IGenericRepository, club_info_repository: IGenericRepository
-                 , runner_race_data_repository: IGenericRepository):
+                 , runner_race_data_repository: IGenericRepository, person_service:BaseService):
         super().__init__(repository, model_type, entity_type)
 
         self.__downloader_runners_service = downloader_runners_service
         self.__race_data_repository = race_data_repository
         self.__club_info_repository = club_info_repository
         self.__runner_race_data_repository = runner_race_data_repository
-        # self.__person_service = person_service
+        self.__person_service = person_service
 
     def get_all_raw(self) -> List[RaceInfoRawModel]:
         all_race_info_entities:List[RaceInfoEntity] = self.repository.get_all()
