@@ -1,25 +1,13 @@
 from fastapi import APIRouter
-from app.aplication.league_service import LeagueService
-from app.aplication.season_service import SeasonService
 from app.domain.model.season_model import SeasonModel
-from app.infrastructure.mongoDB.model.season_entity import SeasonEntity
-from app.infrastructure.repository.repository_utils import load_repository_from_config
 from app.infrastructure.rest_api.controller.season_controller import SeasonController
 from app.infrastructure.rest_api.model.season_info import SeasonRequest, SeasonResponse, SuccessJsonSeasonRawResponse, SuccessJsonSeasonResponse
+from app.core.services import seasson_service
 
 
 season_router = APIRouter()
 
-db = load_repository_from_config()
-season_repository = db.get_repository('season', SeasonEntity)
-season_model_domain = SeasonModel
-season_entity_type = SeasonEntity
-league_service = LeagueService()
-season_service = SeasonService(season_repository, season_model_domain, season_entity_type, league_service)
-
-season_model_api_reponse = SeasonResponse
-
-controller = SeasonController(season_service, season_model_api_reponse, season_model_domain)
+controller = SeasonController(seasson_service, SeasonResponse, SeasonModel)
 
 @season_router.get('/raw')
 def get_all_raw() -> SuccessJsonSeasonRawResponse:
