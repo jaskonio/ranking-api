@@ -11,14 +11,14 @@ from app.infrastructure.rest_api.route.ranking_league_router import ranking_leag
 def get_routers():
     api_router = APIRouter()
 
-    api_router.include_router(image_router, prefix="/image")
-    api_router.include_router(person_router, prefix="/persons")
-    api_router.include_router(race_info_router, prefix="/raceinfo")
+    api_router.include_router(race_info_router, prefix="/raceinfo", tags=['Race info'])
+    api_router.include_router(person_router, prefix="/persons", tags=['Persons'])
+    api_router.include_router(image_router, prefix="/image", tags=['Image'])
 
-    api_router.include_router(season_router, prefix="/season")
-    api_router.include_router(league_router, prefix="/leagues")
-    api_router.include_router(race_league_router, prefix="/race_league")
-    api_router.include_router(participant_league_router, prefix="/participant_league")
-    api_router.include_router(ranking_league_router, prefix="/ranking_league")
+    api_router.include_router(season_router, prefix="/season", tags=['Seasson'])
+    api_router.include_router(league_router, prefix="/leagues", tags=['Leagues'])
+    api_router.include_router(race_league_router, prefix="/race_league", tags=['Race league'])
+    api_router.include_router(participant_league_router, prefix="/participant_league", tags=['Participant league'])
+    api_router.include_router(ranking_league_router, prefix="/ranking_league", tags=['Ranking league'])
 
     return api_router

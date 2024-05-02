@@ -35,7 +35,7 @@ class RaceInfoService(BaseService):
             race_info_model:RaceInfoRawModel = race_info_entity.to_domain_model(RaceInfoRawModel)
 
             for race_data_entity in all_race_data_entities:
-                if race_info_entity.race_data_id == race_data_entity.id:
+                if race_info_entity.race_data_id == str(race_data_entity.id):
                     race_data_model:RaceDataRawModel  = race_data_entity.to_domain_model(RaceDataRawModel)
 
                     for runner_id in race_data_entity.runner_ids:
@@ -108,7 +108,7 @@ class RaceInfoService(BaseService):
 
         new_race_data_id = self.__race_data_repository.add(new_race_data_entity)
 
-        race_info_entity.race_data_id = new_race_data_id
+        race_info_entity.race_data_id = str(new_race_data_id)
         race_info_entity.processed = True
 
         race_info_entity = self.repository.update_by_id(race_info_entity.id, race_info_entity)

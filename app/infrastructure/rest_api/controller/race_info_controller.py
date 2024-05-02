@@ -8,14 +8,13 @@ from app.infrastructure.rest_api.model.race_info import RaceInfoRAW_Response, Ra
 
 
 class RaceInfoController(BaseController):
-    def __init__(self, race_info_repository, domain_model, entity_model, race_info_service:RaceInfoService):
-        super().__init__(race_info_repository, domain_model, entity_model)
-        self.__race_info_service = race_info_service
+    def __init__(self, race_info_service:RaceInfoService, domain_model, entity_model):
+        super().__init__(race_info_service, domain_model, entity_model)
         self.logger = logging.getLogger(__name__)
 
     def get_all_raw(self) -> List[RaceInfoRAW_Response]:
         try:
-            results = self.__race_info_service.get_all_raw()
+            results = self.base_service.get_all_raw()
             data_response: List[RaceInfoRAW_Response] = [RaceInfoRAW_Response().create_by_domain_model(result) for result in results]
 
             return CustomStaticJSONResponse.success(data=data_response)
@@ -25,7 +24,7 @@ class RaceInfoController(BaseController):
 
     def get_raw_by_id(self, race_id: str) -> RaceInfoRAW_Response:
         try:
-            result:RaceInfoRawModel = self.__race_info_service.get_raw_by_id(race_id)
+            result:RaceInfoRawModel = self.base_service.get_raw_by_id(race_id)
             data_response = RaceInfoRAW_Response().create_by_domain_model(result)
 
             if data_response is None:
@@ -38,7 +37,7 @@ class RaceInfoController(BaseController):
 
     def run_process(self, race_id) -> RaceInfoResponse:
         try:
-            model = self.__race_info_service.process(race_id)
+            model = self.base_service.process(race_id)
 
             if model is None:
                 return CustomStaticJSONResponse.error(status_code=404, message=f"El ID {race_id} no se ha encontrado")
