@@ -1,26 +1,11 @@
-import logging
-from typing import List
 from fastapi import APIRouter
-from app.aplication.base_service import BaseService
-from app.aplication.image_service import ImageService
 from app.domain.model.person_model import PersonModel
-from app.infrastructure.mongoDB.model.person_entity import PersonEntity
-from app.infrastructure.repository.repository_utils import load_repository_from_config
-from app.infrastructure.rest_api.model.person_model import PersonRequests, PersonResponse, SuccessJsonPersonResponse, SuccessJsonPersonsResponse
-from app.infrastructure.rest_api.controller.person_controller import PersonController
-
-logger = logging.getLogger(__name__)
+from app.infrastructure.rest_api.controller.base_controller import BaseController
+from app.infrastructure.rest_api.model.person_model import PersonRequests, PersonResponse, SuccessJsonPersonResponse
+from app.core.services import person_service
 
 person_router = APIRouter()
-
-db = load_repository_from_config()
-
-person_repository = db.get_repository('person', PersonEntity)
-
-person_service = BaseService(person_repository, PersonModel, PersonEntity)
-image_service = ImageService()
-
-controller = PersonController(person_service, PersonResponse, PersonModel, image_service)
+controller = BaseController(person_service, PersonResponse, PersonModel)
 
 @person_router.get('/')
 def get_all() -> SuccessJsonPersonResponse:
@@ -32,11 +17,7 @@ def get_by_id(person_id:str) -> SuccessJsonPersonResponse:
 
 @person_router.post('/')
 def add(new_person: PersonRequests):
-    return controller.add(new_person, None)
-
-@person_router.post('/adds')
-def adds(new_persons: List[PersonRequests]) -> SuccessJsonPersonsResponse:
-    return controller.adds(new_persons)
+    return controller.add(new_person)
 
 @person_router.put('/{person_id}')
 def update_by_id(person_id: str, person: PersonRequests) -> SuccessJsonPersonResponse:

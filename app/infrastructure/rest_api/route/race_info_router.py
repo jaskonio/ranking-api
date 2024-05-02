@@ -1,5 +1,4 @@
 from fastapi import APIRouter
-from app.aplication.person_service import PersonService
 from app.aplication.race_info_service import RaceInfoService
 from app.domain.model.race_info_model import RaceInfoModel
 from app.domain.services.downloader_runners_service import DownloaderRunnersService
@@ -24,7 +23,7 @@ downloader_runners_service = DownloaderRunnersService(HTTPDownloaderService(), M
 race_data_repository = db.get_repository('race_data', RaceDataEntity)
 club_info_repository = db.get_repository('club_info', ClubInfoEntity)
 runner_race_data_repository = db.get_repository('runner_race_data', RunnerRaceDataEntity)
-person_service = PersonService()
+# person_service = PersonService()
 
 controller = RaceInfoController(RaceInfoService(race_info_repository, RaceInfoModel, RaceInfoEntity, downloader_runners_service
                                                 , race_data_repository, club_info_repository, runner_race_data_repository, person_service))
