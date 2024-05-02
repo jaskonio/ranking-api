@@ -1,14 +1,13 @@
 from fastapi import APIRouter
 from app.domain.model.race_info_model import RaceInfoModel
-from app.infrastructure.mongoDB.model.race_info_entity import RaceInfoEntity
 from app.infrastructure.rest_api.controller.race_info_controller import RaceInfoController
-from app.infrastructure.rest_api.model.race_info import SuccessJsonRaceInfoRAW_Response, RaceInfoRequest, SuccessJsonRaceInfoResponse
+from app.infrastructure.rest_api.model.race_info import RaceInfoResponse, SuccessJsonRaceInfoRAW_Response, RaceInfoRequest, SuccessJsonRaceInfoResponse
 from app.core.services import race_info_repository, race_info_service
 
 race_info_router = APIRouter()
 
 
-controller = RaceInfoController(race_info_repository, RaceInfoModel, RaceInfoEntity, race_info_service)
+controller = RaceInfoController(race_info_repository, RaceInfoResponse, RaceInfoModel, race_info_service)
 
 @race_info_router.get('/raw')
 def get_all_raw() -> SuccessJsonRaceInfoRAW_Response:

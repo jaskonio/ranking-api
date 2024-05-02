@@ -41,7 +41,7 @@ class LeagueService(BaseService):
                     league_raw_model.runner_participants.append(participant_league_model)
 
             for ranking_league_raw_model in ranking_league_raw_models:
-                if ranking_league_raw_model.id == league_entity.ranking_id:
+                if ranking_league_raw_model.id in league_entity.ranking_id:
                     league_raw_model.ranking_latest = ranking_league_raw_model
 
                 if ranking_league_raw_model.id in league_entity.history_ranking_ids:

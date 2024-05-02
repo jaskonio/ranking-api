@@ -1,14 +1,13 @@
 from typing import List
 from fastapi import APIRouter
 from app.domain.model.race_league_model import RaceLeagueModel
-from app.infrastructure.mongoDB.model.race_league_entity import RaceLeagueEntity
 from app.infrastructure.rest_api.controller.race_league_controller import RaceLeagueController
 from app.infrastructure.rest_api.model.race_league_model import RaceLeagueRawResponse, RaceLeagueRequest, RaceLeagueResponse
 from app.core.services import race_league_repository, race_league_service
 
 race_league_router = APIRouter()
 
-controller = RaceLeagueController(race_league_repository, RaceLeagueModel, RaceLeagueEntity, race_league_service)
+controller = RaceLeagueController(race_league_repository, RaceLeagueResponse, RaceLeagueModel, race_league_service)
 
 @race_league_router.get('/raw')
 def get_all_raw() -> List[RaceLeagueRawResponse]:
