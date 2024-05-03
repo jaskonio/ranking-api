@@ -1,16 +1,20 @@
 from typing import List
-from app.domain.model.league_model import LeagueRAWModel
+from app.domain.model.league_model import LeagueModel, LeagueRAWModel
 from app.infrastructure.mongoDB.model.league_entity import LeagueEntity
 from app.infrastructure.mongoDB.repository.mongo_db_repository import MongoDBRepository
 from app.infrastructure.mongoDB.repository.race_league_repository import RaceLeagueRepository
+from app.infrastructure.mongoDB.model.participant_league_entity import ParticipantLeagueEntity
+from app.infrastructure.mongoDB.model.ranking_league_entity import RankingLeagueEntity
+from app.domain.model.participant_league_model import ParticipantLeagueModel
+from app.domain.model.ranking_league_model import RankingLeagueModel
 
 
 class LeagueRepository(MongoDBRepository):
     def __init__(self):
-        super().__init__('league')
+        super().__init__('league', LeagueEntity, LeagueModel)
         self.__race_league_service = RaceLeagueRepository()
-        self.__participant_league_service = MongoDBRepository('participant_league')
-        self.__ranking_league_service = MongoDBRepository('ranking_league')
+        self.__participant_league_service = MongoDBRepository('participant_league', ParticipantLeagueEntity, ParticipantLeagueModel)
+        self.__ranking_league_service = MongoDBRepository('ranking_league', RankingLeagueEntity, RankingLeagueModel)
 
     def get_all_raw(self) -> List[LeagueRAWModel]:
         league_entities: List[LeagueEntity] = self.get_all()

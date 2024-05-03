@@ -4,21 +4,20 @@ from app.aplication.base_service import BaseService
 from app.domain.model.league_model import LeagueModel, LeagueRAWModel
 from app.domain.model.participant_league_model import ParticipantLeagueModel
 from app.domain.model.participant_ranking_model import ParticipantRankingModel
-from app.domain.model.race_league_model import RaceLeagueRawModel
+from app.domain.model.race_info_model import RaceInfoRawModel
+from app.domain.model.race_league_model import RaceLeagueModel, RaceLeagueRawModel
 from app.domain.model.ranking_league_model import RankingLeagueModel
 from app.domain.model.runner_race_data_model import RunnerRaceDataModel
-from app.infrastructure.mongoDB.model.league_entity import LeagueEntity
+from app.domain.repository.igeneric_repository import IGenericRepository
 
 
 class LeagueService(BaseService):
-    def __init__(self, league_repository, race_league_service, ranking_league_service, race_info_service) -> None:
-        super().__init__(league_repository, LeagueModel, LeagueEntity)
+    def __init__(self, league_repository, race_league_repository:IGenericRepository, ranking_league_repository:IGenericRepository, race_info_repository:IGenericRepository) -> None:
+        super().__init__(league_repository)
         self.logger = logging.getLogger(__name__)
-        self.__league_repository = league_repository
-        self.__race_league_service = race_league_service
-        self.__ranking_league_service = ranking_league_service
-        self.__race_info_service = race_info_service
-
+        self.__race_league_repository = race_league_repository
+        self.__ranking_league_repository = ranking_league_repository
+        self.__race_info_repository = race_info_repository
 
     def run_process(self, league_id:str) -> LeagueRAWModel:
         # elimina los ranking ids y procesa de nuevo
@@ -30,7 +29,7 @@ class LeagueService(BaseService):
 
         # delete history ranking ids
         for history_ranking in league_raw_model.history_ranking:
-            self.__ranking_league_service.delete_by_id(history_ranking.id)
+            self.__ranking_league_repository.delete_by_id(history_ranking.id)
 
         # start process Race League and ranking
         all_race_league_updated:List[RaceLeagueRawModel] = []
@@ -136,35 +135,35 @@ class LeagueService(BaseService):
         ranking_league_models_ids:List[str] = []
 
         for ranking_league_model in all_ranking_league_models:
-            model = self.__ranking_league_service.add(ranking_league_model)
+            model:RankingLeagueModel = self.__ranking_league_repository.add(ranking_league_model)
             ranking_league_models_ids.append(model.id)
 
         return ranking_league_models_ids
 
     def __fill_race_league_by_league_id(self, league_id:str, race_league_id:str) -> RaceLeagueRawModel:
-        league_entity:LeagueEntity = self.__league_repository.get_by_id(league_id)
-        race_league_model = self.__race_league_service.get_by_id(race_league_id)
+        league_model:LeagueModel = self.get_by_id(league_id)
+        race_league_model:RaceLeagueModel = self.__race_league_repository.get_by_id(race_league_id)
 
-        runner_participants_league:List[ParticipantLeagueModel] = self.__get_participant_by_league(league_entity.id)
+        participant_league_models:List[ParticipantLeagueModel] = self.__get_participant_by_league(league_model.id)
 
         valid_participants: List[ParticipantLeagueModel] = []
 
-        for runner_participant_league in runner_participants_league:
-            if runner_participant_league.disqualified_order_race != -1 and runner_participant_league.disqualified_order_race >= race_league_model.order:
+        for participant_league_model in participant_league_models:
+            if participant_league_model.disqualified_order_race != -1 and participant_league_model.disqualified_order_race >= race_league_model.order:
                 continue
 
-            valid_participants.append(runner_participant_league)
+            valid_participants.append(participant_league_model)
 
-        race_info_raw_model = self.__race_info_service.get_raw_by_id(race_league_model.race_row_id)
+        race_info_raw_model:RaceInfoRawModel = self.__race_info_repository.get_raw_by_id(race_league_model.race_row_id)
 
         race_league_model.ranking = []
         for runner in race_info_raw_model.race_data.runners:
             if runner in valid_participants:
                 race_league_model.ranking.append(runner)
 
-        self.__race_league_service.update_by_id(race_league_id, race_league_model)
+        self.__race_league_repository.update_by_id(race_league_id, race_league_model)
 
-        return self.__race_league_service.get_raw_by_id(race_league_id)
+        return self.__race_league_repository.get_raw_by_id(race_league_id)
 
     def __get_previus_runner_in_race_league(self, current_runner: ParticipantLeagueModel, race_league_row_models:List[RaceLeagueRawModel]) -> RunnerRaceDataModel:
         for race_league_row_model in race_league_row_models:

@@ -1,20 +1,20 @@
 import logging
 from typing import List, Optional
 from bson import ObjectId
-from app.domain.model.base_object_model import BaseObjectModel
-from mongo_db_session import db
+from app.infrastructure.mongoDB.repository.mongo_db_session import MongoDBSession
 from pymongo import collection
 from pymongo.errors import ServerSelectionTimeoutError
+from app.domain.model.base_object_model import BaseObjectModel
 from app.domain.repository.igeneric_repository import IGenericRepository
 from app.infrastructure.mongoDB.model.base_mongo_entity import BaseMongoEntity
 
 
 class MongoDBRepository(IGenericRepository):
-    def __init__(self, collection_name:str):
-        self.database = db.database
+    def __init__(self, collection_name:str, entity_type:BaseMongoEntity, model_type:BaseObjectModel):
+        self.database = MongoDBSession()
         self.collection:collection.Collection = self.database.get_collection(collection_name)
-        self.entity_type:BaseMongoEntity = BaseMongoEntity
-        self.model_type:BaseObjectModel = BaseObjectModel
+        self.entity_type:BaseMongoEntity = entity_type
+        self.model_type:BaseObjectModel = model_type
         self.logger = logging.getLogger(__name__)
 
     def get_all(self) -> List[BaseObjectModel]:

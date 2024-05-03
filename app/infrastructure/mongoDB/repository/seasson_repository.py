@@ -1,5 +1,5 @@
 from typing import List, Optional
-from app.domain.model.season_model import SeasonRawModel
+from app.domain.model.season_model import SeasonRawModel, SeasonModel
 from app.infrastructure.mongoDB.model.season_entity import SeasonEntity
 from app.infrastructure.mongoDB.repository.league_repository import LeagueRepository
 from app.infrastructure.mongoDB.repository.mongo_db_repository import MongoDBRepository
@@ -7,34 +7,38 @@ from app.infrastructure.mongoDB.repository.mongo_db_repository import MongoDBRep
 
 class SeassonRepository(MongoDBRepository):
     def __init__(self):
-        super().__init__('seasson')
+        super().__init__('seasson', SeasonEntity, SeasonModel)
         self.__league_repository = LeagueRepository()
 
     def get_all_raw(self) -> List[SeasonRawModel]:
-        season_entities: List[SeasonEntity] = self.get_all()
-        league_models = self.__league_repository.get_all_raw()
+        all_season_models: List[SeasonModel] = self.get_all()
+        all_raw_league_models = self.__league_repository.get_all_raw()
 
-        season_models:List[SeasonRawModel] = []
+        all_raw_season_models:List[SeasonRawModel] = []
 
-        for season_entity in season_entities:
-            season_model:SeasonRawModel = season_entity.to_domain_model(SeasonRawModel)
+        for season_model in all_season_models:
+            raw_season_model:SeasonRawModel = SeasonRawModel()
+            raw_season_model.id = season_model.id
+            raw_season_model.name = season_model.name
 
-            for league_model in league_models:
-                if league_model.id in season_entity.league_ids:
-                    season_model.leagues.append(league_model)
+            for raw_league_model in all_raw_league_models:
+                if raw_league_model.id in season_model.league_ids:
+                    raw_season_model.leagues.append(raw_league_model)
 
-            season_models.append(season_model)
+            all_raw_season_models.append(season_model)
 
-        return season_models
+        return all_raw_season_models
 
-    def get_raw_by_id(self, entity_id:str) -> Optional[SeasonRawModel]:
-        season_entity: SeasonEntity = self.get_by_id(entity_id)
-        league_models = self.__league_repository.get_all_raw()
+    def get_raw_by_id(self, model_id:str) -> Optional[SeasonRawModel]:
+        season_model: SeasonModel = self.get_by_id(model_id)
+        all_raw_league_models = self.__league_repository.get_all_raw()
 
-        season_model:SeasonRawModel = season_entity.to_domain_model(SeasonRawModel)
+        raw_season_model:SeasonRawModel = SeasonRawModel()
+        raw_season_model.id = season_model.id
+        raw_season_model.name = season_model.name
 
-        for league_model in league_models:
-            if league_model.id in season_entity.league_ids:
-                season_model.leagues.append(league_model)
+        for raw_league_model in all_raw_league_models:
+            if raw_league_model.id in season_model.league_ids:
+                raw_season_model.leagues.append(raw_league_model)
 
-        return season_model
+        return raw_season_model

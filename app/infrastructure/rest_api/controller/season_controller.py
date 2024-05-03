@@ -1,4 +1,4 @@
-from app.aplication.season_service import SeasonService
+from app.aplication.base_service import BaseService
 from app.domain.model.season_model import SeasonModel
 from app.infrastructure.rest_api.controller.base_controller import BaseController
 from app.infrastructure.rest_api.model.custom_responses import CustomStaticJSONResponse
@@ -6,7 +6,7 @@ from app.infrastructure.rest_api.model.season_info import SeasonRawResponse, Sea
 
 
 class SeasonController(BaseController):
-    def __init__(self, base_service:SeasonService, model_api_response:SeasonResponse, model_domain:SeasonModel):
+    def __init__(self, base_service:BaseService, model_api_response:SeasonResponse, model_domain:SeasonModel):
         super().__init__(base_service, model_api_response, model_domain)
 
     def get_all_raw(self):
