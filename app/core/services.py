@@ -19,20 +19,25 @@ from app.infrastructure.mongoDB.model.person_entity import PersonEntity
 from app.infrastructure.mongoDB.model.race_info_entity import RaceInfoEntity
 from app.infrastructure.mongoDB.model.ranking_league_entity import RankingLeagueEntity
 from app.infrastructure.mongoDB.model.season_entity import SeasonEntity
-from app.infrastructure.mongoDB.mongo_db_session import get_repository
+from app.infrastructure.mongoDB.repository.league_repository import LeagueRepository
+from app.infrastructure.mongoDB.repository.mongo_db_repository import MongoDBRepository
+from app.infrastructure.mongoDB.repository.race_data_repository import RaceDataRepository
+from app.infrastructure.mongoDB.repository.race_info_repository import RaceInfoRepository
+from app.infrastructure.mongoDB.repository.race_league_repository import RaceLeagueRepository
+from app.infrastructure.mongoDB.repository.seasson_repository import SeassonRepository
 
 
-club_info_repository = get_repository('club_info')
-race_info_repository = get_repository('race_info')
-person_repository = get_repository('person')
-season_repository = get_repository('season')
-race_league_repository = get_repository('race_league')
-race_data_repository = get_repository('race_data')
-runner_race_data_repository = get_repository('runner_race_data')
-league_repository = get_repository('league')
-ranking_league_repository = get_repository('ranking_league')
-participant_league_repository = get_repository('participant_league')
+club_info_repository = MongoDBRepository('club_info')
+race_data_repository = RaceDataRepository()
+race_info_repository = RaceInfoRepository()
+person_repository = MongoDBRepository('person')
+season_repository = SeassonRepository()
+runner_race_data_repository = MongoDBRepository('runner_race_data')
+participant_league_repository = MongoDBRepository('participant_league')
 aws_repository = AWS_Repository()
+ranking_league_repository = MongoDBRepository('ranking_league')
+race_league_repository = RaceLeagueRepository()
+league_repository = LeagueRepository()
 
 # club_service = BaseService(club_info_repository, PersonModel, ClubInfoEntity)
 person_service = BaseService(person_repository, PersonModel, PersonEntity)
@@ -44,5 +49,5 @@ race_info_service = RaceInfoService(race_info_repository, RaceInfoModel, RaceInf
 
 race_league_service = RaceLeagueService(race_league_repository, runner_race_data_repository, race_info_service)
 
-league_service = LeagueService(league_repository, race_league_service, participant_league_service, ranking_league_service, race_info_service)
+league_service = LeagueService(league_repository, race_league_service, ranking_league_service, race_info_service)
 seasson_service = SeasonService(season_repository, SeasonModel, SeasonEntity, league_service)

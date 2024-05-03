@@ -1,8 +1,8 @@
 from logging.config import BaseConfigurator
-from typing import List
-from pydantic import BaseModel, Field
-from app.infrastructure.mongoDB.model.OID import OID
 from bson import ObjectId
+from pydantic import BaseModel, Field
+from app.domain.model.base_object_model import BaseObjectModel
+from app.infrastructure.mongoDB.model.OID import OID
 
 
 class BaseMongoEntity(BaseModel):
@@ -13,7 +13,7 @@ class BaseMongoEntity(BaseModel):
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
 
-    def create_by_domain_model(self, domain_data: BaseModel):
+    def create_by_domain_model(self, domain_data: BaseObjectModel):
         data_dict = domain_data.dict()
 
         new_id = ObjectId() if 'id' not in data_dict or data_dict['id'] == '' else ObjectId(data_dict['id'])
@@ -30,7 +30,7 @@ class BaseMongoEntity(BaseModel):
 
         return parsed
 
-    def to_domain_model(self, class_model:BaseModel):
+    def to_domain_model(self, class_model:BaseObjectModel):
         data = self.dict()
         new_class = class_model.parse_obj(data)
         return new_class
