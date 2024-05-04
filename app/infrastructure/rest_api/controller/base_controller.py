@@ -36,7 +36,8 @@ class BaseController(IBaseController):
 
     def add(self, new_model:BaseAPI_Model):
         try:
-            result_model_domain = self.base_service.add(new_model.to_domain_model(self.domain_model))
+            domain_model = new_model.to_domain_model(self.domain_model)
+            result_model_domain = self.base_service.add(domain_model)
 
             if result_model_domain is None:
                 return CustomStaticJSONResponse.error(status_code=404, message='Hubo un error al crear el nuevo item')
@@ -48,7 +49,8 @@ class BaseController(IBaseController):
 
     def update_by_id(self, model_id:str, new_model: BaseAPI_Model):
         try:
-            result_model_domain = self.base_service.update_by_id(model_id, new_model.to_domain_model(self.domain_model))
+            domain_model = new_model.to_domain_model(self.domain_model)
+            result_model_domain = self.base_service.update_by_id(model_id, domain_model)
 
             if result_model_domain is None:
                 return CustomStaticJSONResponse.error(status_code=404, message=f"El ID {model_id} no se ha encontrado")

@@ -3,11 +3,11 @@ from app.domain.model.base_object_model import BaseObjectModel
 
 class PersonModel(BaseObjectModel):
     id: str=''
-    first_name: str = ''
-    last_name:str = ''
-    nationality: str = ''
-    gender: str = ''
-    photo_url: str = ''
+    first_name: str | None = None
+    first_name: str | None = None
+    last_name: str| None = None
+    gender: str| None = None
+    photo_url: str| None = None
 
     def __eq__(self, other_person):
         if self.id == other_person.person_id:

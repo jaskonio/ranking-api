@@ -49,7 +49,7 @@ class MongoDBRepository(IGenericRepository):
 
     def add(self, new_model: BaseObjectModel) -> Optional[BaseObjectModel]:
         try:
-            entity:BaseMongoEntity = self.entity_type.create_by_domain_model(new_model)
+            entity:BaseMongoEntity = self.entity_type().create_by_domain_model(new_model)
             entity_id = self.collection.insert_one(entity.to_dict_db()).inserted_id
 
             return self.get_by_id(entity_id)
@@ -59,7 +59,7 @@ class MongoDBRepository(IGenericRepository):
 
     def update_by_id(self, model_id:str, new_model:BaseObjectModel) -> Optional[BaseObjectModel]:
         try:
-            entity:BaseMongoEntity = self.entity_type.create_by_domain_model(new_model)
+            entity:BaseMongoEntity = self.entity_type().create_by_domain_model(new_model)
             result = self.collection.update_one({"_id": ObjectId(model_id)},
                                                 {"$set": entity.to_dict_db()})
 

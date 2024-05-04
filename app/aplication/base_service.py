@@ -1,7 +1,7 @@
 import logging
 from typing import Optional
-from pydantic import BaseModel
 from app.aplication.iservice import IGenericService
+from app.domain.model.base_object_model import BaseObjectModel
 from app.domain.repository.igeneric_repository import IGenericRepository
 
 
@@ -18,7 +18,7 @@ class BaseService(IGenericService):
 
         return models
 
-    def get_by_id(self, model_id:str) -> Optional[BaseModel]:
+    def get_by_id(self, model_id:str) -> Optional[BaseObjectModel]:
         model = self.repository.get_by_id(model_id)
 
         if model is None:
@@ -26,7 +26,7 @@ class BaseService(IGenericService):
 
         return model
 
-    def add(self, new_model:BaseModel) -> Optional[BaseModel]:
+    def add(self, new_model:BaseObjectModel) -> Optional[BaseObjectModel]:
         new_model = self.repository.add(new_model)
 
         if new_model is None:
@@ -34,7 +34,7 @@ class BaseService(IGenericService):
 
         return new_model
 
-    def update_by_id(self, model_id:str, new_model:BaseModel) -> Optional[BaseModel]:
+    def update_by_id(self, model_id:str, new_model:BaseObjectModel) -> Optional[BaseObjectModel]:
         model = self.repository.update_by_id(model_id, new_model)
 
         if model is None:
@@ -55,7 +55,7 @@ class BaseService(IGenericService):
 
         return models
 
-    def get_raw_by_id(self, model_id:str) -> Optional[BaseModel]:
+    def get_raw_by_id(self, model_id:str) -> Optional[BaseObjectModel]:
         model = self.repository.get_raw_by_id(model_id)
 
         if model is None:

@@ -25,9 +25,9 @@ class CustomStaticJSONResponse:
     def success(data=None, message="Success", status_code=200):
         data_dict = None
         if isinstance(data, BaseModel):
-            data_dict = data.dict()
+            data_dict = data.dict(exclude_none=True)
         elif isinstance(data, list):
-            data_dict = [v.dict() for v in data]
+            data_dict = [v.dict(exclude_none=True) for v in data]
 
         response_body = {
             "status": "success",

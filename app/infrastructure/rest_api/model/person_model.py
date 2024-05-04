@@ -11,10 +11,10 @@ class PersonResponse(BaseAPI_Model):
     photo_url: str = ''
 
 class PersonRequests(BaseAPI_Model):
-    first_name: str = ''
-    first_name: str = ''
-    last_name: str = ''
-    gender: str = ''
+    first_name: str | None = None
+    last_name: str| None = None
+    gender: str| None = None
+    photo_url: str| None = None
 
 class SuccessJsonPersonResponse(BaseSuccessJsonResponse):
     data: PersonResponse

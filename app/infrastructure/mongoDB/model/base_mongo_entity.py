@@ -14,7 +14,7 @@ class BaseMongoEntity(BaseModel):
         json_encoders = {ObjectId: str}
 
     def create_by_domain_model(self, domain_data: BaseObjectModel):
-        data_dict = domain_data.dict()
+        data_dict = domain_data.dict(exclude_none=True)
 
         new_id = ObjectId() if 'id' not in data_dict or data_dict['id'] == '' else ObjectId(data_dict['id'])
         data_dict['id'] = new_id
@@ -24,16 +24,16 @@ class BaseMongoEntity(BaseModel):
         return data
 
     def to_dict_db(self):
-        parsed = self.dict()
+        parsed = self.dict(exclude_none=True)
 
         parsed.pop('id')
 
         return parsed
 
     def to_domain_model(self, class_model:BaseObjectModel):
-        data = self.dict()
+        data = self.dict(exclude_none=True)
         new_class = class_model.parse_obj(data)
         return new_class
 
     def to_dict(self):
-        return self.dict()
+        return self.dict(exclude_none=True)
