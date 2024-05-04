@@ -1,13 +1,14 @@
+from typing import Optional
 from app.domain.model.base_object_model import BaseObjectModel
 
 
 class PersonModel(BaseObjectModel):
     id: str=''
-    first_name: str | None = None
-    first_name: str | None = None
-    last_name: str| None = None
-    gender: str| None = None
-    photo_url: str| None = None
+    first_name: Optional[str]
+    first_name: Optional[str]
+    last_name: Optional[str]
+    gender: Optional[str]
+    photo_url: Optional[str]
 
     def __eq__(self, other_person):
         if self.id == other_person.person_id:
