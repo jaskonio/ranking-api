@@ -60,8 +60,9 @@ class MongoDBRepository(IGenericRepository):
     def update_by_id(self, model_id:str, new_model:BaseObjectModel) -> Optional[BaseObjectModel]:
         try:
             entity:BaseMongoEntity = self.entity_type().create_by_domain_model(new_model)
+            dict_update = entity.to_dict_db()
             result = self.collection.update_one({"_id": ObjectId(model_id)},
-                                                {"$set": entity.to_dict_db()})
+                                                {"$set": dict_update})
 
             if result.modified_count == 0:
                 return None
