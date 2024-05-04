@@ -32,6 +32,7 @@ class CustomStaticJSONResponse:
         response_body = {
             "status": "success",
             "message": message,
+            "status_code": status_code,
             "data": data_dict
         }
         return JSONResponse(content=response_body, status_code=status_code)
