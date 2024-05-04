@@ -13,7 +13,7 @@ class RaceDataRepository(MongoDBRepository):
 
     def get_all_raw(self) -> List[RaceDataRawModel]:
         all_race_data_model:List[RaceDataModel] = self.get_all()
-        all_runner_race_data_entities:List[RunnerRaceDataEntity] = self.__runner_race_data_repository.get_all()
+        all_runner_race_data_models:List[RunnerRaceDataModel] = self.__runner_race_data_repository.get_all()
 
         all_raw_race_data_model: List[RaceDataRawModel] = []
 
@@ -21,9 +21,9 @@ class RaceDataRepository(MongoDBRepository):
             raw_race_data_model:RaceDataRawModel = RaceDataRawModel(id=race_data_model.id)
 
             for runner_id in race_data_model.runner_ids:
-                for runner_race_data_entity in all_runner_race_data_entities:
-                    if runner_id in runner_race_data_entity.id:
-                        raw_race_data_model.runners.append(runner_race_data_entity.to_domain_model(RunnerRaceDataModel))
+                for runner_race_data_model in all_runner_race_data_models:
+                    if runner_id in runner_race_data_model.id:
+                        raw_race_data_model.runners.append(runner_race_data_model)
 
             all_raw_race_data_model.append(raw_race_data_model)
 
@@ -31,13 +31,13 @@ class RaceDataRepository(MongoDBRepository):
 
     def get_raw_by_id(self, model_id: str) -> Optional[RaceDataRawModel]:
         race_data_model:RaceDataModel = self.get_by_id(model_id)
-        all_runner_race_data_entities:List[RunnerRaceDataEntity] = self.__runner_race_data_repository.get_all()
+        all_runner_race_data_models:List[RunnerRaceDataModel] = self.__runner_race_data_repository.get_all()
 
         raw_race_data_model:RaceDataRawModel = RaceDataRawModel(id=race_data_model.id)
 
         for runner_id in race_data_model.runner_ids:
-            for runner_race_data_entity in all_runner_race_data_entities:
-                if runner_id in runner_race_data_entity.id:
-                    raw_race_data_model.runners.append(runner_race_data_entity.to_domain_model(RunnerRaceDataModel))
+            for runner_race_data_model in all_runner_race_data_models:
+                if runner_id in runner_race_data_model.id:
+                    raw_race_data_model.runners.append(runner_race_data_model)
 
         return raw_race_data_model

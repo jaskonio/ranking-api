@@ -1,15 +1,16 @@
-from app.domain.model.base_object_model import BaseObjectModel
+from typing import Optional
+from app.domain.model.person_model import PersonModel
 
 
-class RunnerRaceDataModel(BaseObjectModel):
+class RunnerRaceDataModel(PersonModel):
     id: str = ''
-    person_id: str = ''
-    first_name: str = ''
-    last_name: str = ''
+    first_name: Optional[str]
+    last_name: Optional[str]
     nationality: str = ''
     gender: str = ''
-
     photo_url: str = ''
+
+    person_id: str = ''
     dorsal: int = 0
     club: str = ''
     category: str = ''
@@ -26,9 +27,3 @@ class RunnerRaceDataModel(BaseObjectModel):
     real_avg_time: str = ''
     real_cat_pos: int = 0
     real_gen_pos: int = 0
-
-    def __eq__(self, other_person):
-        if self.person_id == other_person.person_id:
-            return True
-
-        return False

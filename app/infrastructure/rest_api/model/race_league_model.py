@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 from app.infrastructure.rest_api.model.base_api_model import BaseAPI_Model
 from app.infrastructure.rest_api.model.custom_responses import BaseSuccessJsonResponse
 from app.infrastructure.rest_api.model.race_data import RunnerRaceDataResponse
@@ -10,8 +10,8 @@ class RaceLeagueResponse(BaseAPI_Model):
     order: int = 0
 
 class RaceLeagueRequest(BaseAPI_Model):
-    race_row_id: str
-    order: int = 0
+    race_row_id: Optional[str]
+    order: Optional[int]
 
 class RaceLeagueRawResponse(BaseAPI_Model):
     id: str = ''

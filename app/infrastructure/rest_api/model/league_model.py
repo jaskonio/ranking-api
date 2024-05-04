@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 from app.infrastructure.rest_api.model.base_api_model import BaseAPI_Model
 from app.infrastructure.rest_api.model.custom_responses import BaseSuccessJsonResponse
 from app.infrastructure.rest_api.model.participant_league_model import ParticipantLeagueResponse
@@ -16,12 +16,12 @@ class LeagueResponse(BaseAPI_Model):
     history_ranking_ids: List[str] = []
 
 class LeagueRequest(BaseAPI_Model):
-    name: str = ''
-    order: int = 0
-    race_ids: List[str] = []
-    runner_participant_ids: List[str] = []
-    ranking_id: str = ''
-    history_ranking_ids: List[str] = []
+    name: Optional[str]
+    order: Optional[int]
+    race_ids: Optional[List[str]]
+    runner_participant_ids: Optional[List[str]]
+    ranking_id: Optional[str]
+    history_ranking_ids: Optional[List[str]]
 
 class LeagueRawResponse(BaseAPI_Model):
     id: str = ''
