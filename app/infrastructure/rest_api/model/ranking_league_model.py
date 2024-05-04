@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 from app.infrastructure.rest_api.model.base_api_model import BaseAPI_Model
 from app.infrastructure.rest_api.model.custom_responses import BaseSuccessJsonResponse
 
@@ -9,8 +9,8 @@ class RankingLeagueResponse(BaseAPI_Model):
     data: List[dict] = []
 
 class RankingLeagueRequest(BaseAPI_Model):
-    order: int = 0
-    data: List[dict] = []
+    order: Optional[int]
+    data: Optional[List[dict]]
 
 class SuccessJsonRankingLeagueResponse(BaseSuccessJsonResponse):
     data: RankingLeagueResponse

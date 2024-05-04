@@ -1,9 +1,8 @@
-from typing import List
+from typing import List, Optional
 from app.domain.model.base_object_model import BaseObjectModel
 from app.domain.model.participant_ranking_model import ParticipantRankingModel
 
-
 class RankingLeagueModel(BaseObjectModel):
     id: str = ''
-    order: int = 0
-    data: List[ParticipantRankingModel] = []
+    order: Optional[int]
+    data: Optional[List[ParticipantRankingModel]]

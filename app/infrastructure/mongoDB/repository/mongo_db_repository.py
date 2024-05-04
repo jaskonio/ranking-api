@@ -64,9 +64,6 @@ class MongoDBRepository(IGenericRepository):
             result = self.collection.update_one({"_id": ObjectId(model_id)},
                                                 {"$set": dict_update})
 
-            if result.modified_count == 0:
-                return None
-
             return self.get_by_id(model_id)
         except Exception as exception:
             self.logger.error("Error al actualizar el registro con ID %s: %s", str(model_id), str(exception))
