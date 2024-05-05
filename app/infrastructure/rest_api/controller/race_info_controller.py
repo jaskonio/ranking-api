@@ -44,5 +44,5 @@ class RaceInfoController(BaseController):
 
             return CustomStaticJSONResponse.success(data=model)
         except Exception as exception_error:
-            self.logger.error("Error deleting: %s", exception_error)
+            self.logger.error("Error processing: %s", exception_error)
             return CustomStaticJSONResponse.invalid_request(status_code=500,errors="Error al processar la peticion")
