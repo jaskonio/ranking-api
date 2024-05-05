@@ -14,7 +14,6 @@ class DownloaderRunnersService:
         self.__mapper_runners_factory = mapper_runners_factory
         self.__race_downloader_options_factory = race_downloader_options_factory
 
-        # self.team_name = ['redolat', 'redolatteam', 'redolat team']
         self.logger = logging.getLogger(__name__)
 
     def get_all_runners(self, race_info_simplified_model: RaceInfoModel) -> List[RunnerRaceDataModel]:

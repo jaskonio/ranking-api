@@ -39,7 +39,7 @@ pip install -r requirements.txt
 ### Run
 
 ```cmd
-    docker run -d --rm --name ranking-api -p 9000:8080 ranking-api
+    docker run -d --rm --name ranking-api -p 8000:8000 --env-file=.env ranking-api
 ```
 
 ### Stop
@@ -137,10 +137,29 @@ docker stop ranking-db-mongo
 docker rm ranking-db-mongo
 ```
 
-## Config file
+## .env Config file
 
 ```bash
-DATABASE_TYPE=MONGODB
-DATABASE_NAME=rankings
-MONGODB_CONNECTION_STING=mongodb://admin:admin@localhost/
+APP_PORT=8000
+
+MONGODB_HOST=xxxx
+MONGODB_NAME=xxx
+MONGODB_USER=admin
+MONGODB_PASSWORD=admin
+MONGODB_PORT=
+
+AWS_KEY=xxxxxx
+AWS_SECRET_KEY=xxxxxxxx
+AWS_BUCKET_NAME=xxxxxxxx
+AWS_IMAGE_FOLDER=xxxxxxxxx
+```
+
+## Use docker compose
+
+```bash
+docker-compose build && docker-compose up -d
+docker-compose stop && docker-compose rm -f # stop and delete
+
+docker-compose stop
+docker-compose start
 ```

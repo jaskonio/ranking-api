@@ -1,31 +1,23 @@
+import logging
 from pymongo import MongoClient
 from app.core.config import Settings
 
-# class MongoDBSession:
-#     def __init__(self):
-#         db_name = Settings.DATABASE_NAME
-#         connection_string = Settings.CONNECTION_STRING + db_name
+logger = logging.getLogger(__name__)
 
-#         self.client = MongoClient(connection_string)
-#         self.database = self.client.get_database()
+def build_connection_string():
+    port_string = '' if Settings.MONGODB_PORT == '' else f':${Settings.MONGODB_PORT}'
+    connection_string = f"mongodb://{Settings.MONGODB_USER}:{Settings.MONGODB_PASSWORD}@{Settings.MONGODB_HOST}{port_string}/{Settings.MONGODB_NAME}?authSource={Settings.MONGODB_USER}"
+    logger.info(f"Conection string: {connection_string}")
 
-# db = MongoDBSession()
-
-# def get_db():
-#     if db is None:
-#         return MongoDBSession()
-#     return db
+    return connection_string
 
 class MongoDBSession():
     _instance_database = None
 
     def __new__(cls):
         if cls._instance_database is None:
-            db_name = Settings.DATABASE_NAME
-            connection_string = Settings.CONNECTION_STRING + db_name
+            connection_string = build_connection_string()
             client = MongoClient(connection_string)
             cls._instance_database = client.get_database()
 
         return cls._instance_database
-
-# mongo_database = MongoDatabase()

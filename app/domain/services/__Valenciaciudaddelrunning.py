@@ -4,7 +4,7 @@ from app.domain.services.downloader import Downloader
 
 class Valenciaciudaddelrunning(Downloader):
     url_base = 'https://resultados.valenciaciudaddelrunning.com/medio-maraton-clubs.php?y=$$year$$'
-    team_filter = 'REDOLAT TEAM CLUB'
+    team_filter = 'TEAM CLUB'
 
     def __init__(self, url) -> None:
         super().__init__(url)

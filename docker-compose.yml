@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  api:
+    build: .
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    depends_on:
+      - mongo_db
+  mongo_db:
+    image: mongo:7.0.8
+    env_file:
+      - .env
+    ports:
+      - "27017:27017"
+    environment:
+      - "MONGO_INITDB_DATABASE=${MONGODB_NAME}"
+      - "MONGO_INITDB_ROOT_USERNAME=${MONGODB_USER}"
+      - "MONGO_INITDB_ROOT_PASSWORD=${MONGODB_PASSWORD}"
+    volumes:
+      - taskdb:/data/ranking-api/db
+
+volumes:
+    taskdb:
