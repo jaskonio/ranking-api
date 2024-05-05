@@ -29,13 +29,19 @@ class RaceInfoService(BaseService):
         runners_race_data_model:List[RunnerRaceDataModel] = self.__downloader_runners_service.get_all_runners(race_info_model)
 
         # Filter by club and person
-        club_info_mocel:ClubInfoModel =self.__club_info_repository.get_all()[0]
+        club_info_model:ClubInfoModel =self.__club_info_repository.get_all()
+
+        if len(club_info_model) == 0:
+            raise TypeError("Falta informacion del club")
+        else:
+            club_info_model = club_info_model[0]
+
         person_models:List[PersonModel] = self.__person_repository.get_all()
 
         new_race_data_model = RaceDataModel()
 
         for runner_model in runners_race_data_model:
-            if runner_model.club.lower() in club_info_mocel.names:
+            if runner_model.club.lower() in club_info_model.names:
                 for person_model in person_models:
                     if person_model == runner_model:
                         runner_model.person_id = person_model.id
