@@ -4,7 +4,7 @@ services:
   api:
     build: .
     env_file:
-      - .env
+      - .env_docker
     ports:
       - "8000:8000"
     depends_on:
@@ -12,7 +12,7 @@ services:
   mongo_db:
     image: mongo:7.0.8
     env_file:
-      - .env
+      - .env_docker
     ports:
       - "27017:27017"
     environment:
@@ -20,7 +20,8 @@ services:
       - "MONGO_INITDB_ROOT_USERNAME=${MONGODB_USER}"
       - "MONGO_INITDB_ROOT_PASSWORD=${MONGODB_PASSWORD}"
     volumes:
-      - taskdb:/data/ranking-api/db
+      - ranking-mongo-db:/data/db
 
 volumes:
-    taskdb:
+  ranking-mongo-db:
+    external: true
