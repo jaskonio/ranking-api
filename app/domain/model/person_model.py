@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Literal, Optional
 from app.domain.model.base_object_model import BaseObjectModel
 
 
@@ -6,7 +6,7 @@ class PersonModel(BaseObjectModel):
     id: str=''
     first_name: Optional[str]
     last_name: Optional[str]
-    gender: Optional[str]
+    gender: Optional[Literal['H', 'M']]
     photo_url: Optional[str]
 
     @property
