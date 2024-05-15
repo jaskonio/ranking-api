@@ -24,7 +24,14 @@ class Settings:
     AUTH_SECRET_KEY: str = os.getenv("AUTH_SECRET_KEY")
     AUTH_ALGORITHM: str = os.getenv("AUTH_ALGORITHM")
     AUTH_ACCESS_TOKEN_EXPIRE_MINUTES: str = int(os.getenv("AUTH_ACCESS_TOKEN_EXPIRE_MINUTES"))
-    AUTH_USER: str = os.getenv("AUTH_USER")
-    AUTH_PASSWORD: str = os.getenv("AUTH_PASSWORD")
+
+    # Users
+    AUTH_ADMIN_USER: str = os.getenv("AUTH_ADMIN_USER")
+    AUTH_ADMIN_PASSWORD: str = os.getenv("AUTH_ADMIN_PASSWORD")
+    AUTH_ADMIN_ROLES: str = os.getenv("AUTH_ADMIN_ROLES").split(",")
+
+    AUTH_GUEST_USER: str = os.getenv("AUTH_GUEST_USER")
+    AUTH_GUEST_PASSWORD: str = os.getenv("AUTH_GUEST_PASSWORD")
+    AUTH_GUEST_ROLES: str = os.getenv("AUTH_GUEST_ROLES").split(",")
 
 settings = Settings()

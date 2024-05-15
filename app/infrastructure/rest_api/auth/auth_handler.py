@@ -1,12 +1,8 @@
 import datetime
 import logging
-from typing import Dict
-import os
-from fastapi import Depends, HTTPException, status
+from typing import Dict, List
 import jwt
-from pydantic import BaseModel
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-
+from pydantic import BaseModel# [import-error]
 from app.core.config import Settings
 
 logger = logging.getLogger(__name__)
@@ -14,9 +10,35 @@ logger = logging.getLogger(__name__)
 class UserAuthModel(BaseModel):
     user_name: str
     password: str
+    roles: List[str]
 
-def user_is_valid(user:UserAuthModel):
-    return user.user_name == Settings.AUTH_USER and user.password == Settings.AUTH_PASSWORD
+class UserAuthRequests(BaseModel):
+    user_name: str
+    password: str
+
+class UserDBService():
+    db_users:List[UserAuthModel] = []
+
+    def __init__(self) -> None:
+        self.db_users.append(UserAuthModel(user_name=Settings.AUTH_ADMIN_USER, password=Settings.AUTH_ADMIN_PASSWORD, roles=Settings.AUTH_ADMIN_ROLES))
+        self.db_users.append(UserAuthModel(user_name=Settings.AUTH_GUEST_USER, password=Settings.AUTH_GUEST_PASSWORD, roles=Settings.AUTH_GUEST_ROLES))
+
+    def getUserByName(self, user:UserAuthRequests):
+        for db_user in self.db_users:
+            if db_user.user_name == user.user_name and db_user.password == user.password:
+                return db_user
+
+        return None
+
+user_db_service = UserDBService()
+
+def user_is_valid(user:UserAuthRequests):
+    user_exist_in_db = user_db_service.getUserByName(user)
+
+    if user_exist_in_db is None or not user_exist_in_db:
+        return False
+
+    return True
 
 def token_response(token: str):
     return {
@@ -24,12 +46,14 @@ def token_response(token: str):
         "token_type": "bearer"
     }
 
-def generate_jwt(user: UserAuthModel) -> Dict[str, str]:
+def generate_jwt(user: UserAuthRequests) -> Dict[str, str]:
+    db_user = user_db_service.getUserByName(user)
     time = datetime.datetime.now(datetime.timezone.utc)
     payload = {
         "iat": time,
         "exp": time + datetime.timedelta(minutes=Settings.AUTH_ACCESS_TOKEN_EXPIRE_MINUTES),
-        "user_name": user.user_name
+        "user_name": db_user.user_name,
+        "roles": db_user.roles
     }
 
     token = jwt.encode(payload, Settings.AUTH_SECRET_KEY, algorithm=Settings.AUTH_ALGORITHM)

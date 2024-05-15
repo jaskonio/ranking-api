@@ -1,11 +1,11 @@
 from fastapi import APIRouter
 
-from app.infrastructure.rest_api.auth.auth_handler import UserAuthModel, generate_jwt, user_is_valid
+from app.infrastructure.rest_api.auth.auth_handler import UserAuthModel, UserAuthRequests, generate_jwt, user_is_valid
 
 auth_router = APIRouter()
 
 @auth_router.post('/')
-def generate_token(user: UserAuthModel):
+def generate_token(user: UserAuthRequests):
 
     is_user_authenticated = user_is_valid(user)
 
