@@ -10,8 +10,15 @@
             "request": "launch",
             "module": "uvicorn",
             "console": "integratedTerminal",
-            //"args": ["main:app","--reload"]
             "args": ["app.main:app","--reload", "--log-config", "log_conf.yaml"]
+        },
+        {
+            "name": "SSL Python: Module",
+            "type": "python",
+            "request": "launch",
+            "module": "uvicorn",
+            "console": "integratedTerminal",
+            "args": ["app.main:app","--reload", "--log-config", "log_conf.yaml", "--ssl-keyfile", "config/tls/key.pem", "--ssl-certfile", "config/tls/cert.pem"]
         },
         {
             "name": "Python: Current File",
