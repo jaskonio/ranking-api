@@ -5,7 +5,7 @@ from app.core.config import Settings
 logger = logging.getLogger(__name__)
 
 def build_connection_string():
-    port_string = '' if Settings.MONGODB_PORT == '' else f':${Settings.MONGODB_PORT}'
+    port_string = '' if Settings.MONGODB_PORT == '' else f':{Settings.MONGODB_PORT}'
     connection_string = f"mongodb://{Settings.MONGODB_USER}:{Settings.MONGODB_PASSWORD}@{Settings.MONGODB_HOST}{port_string}/{Settings.MONGODB_NAME}?authSource={Settings.MONGODB_USER}"
     logger.info(f"Conection string: {connection_string}")
 

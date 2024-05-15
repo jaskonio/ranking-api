@@ -21,4 +21,10 @@ class Settings:
     AWS_BUCKET_NAME: str = os.getenv("AWS_BUCKET_NAME")
     AWS_IMAGE_FOLDER: str = os.getenv("AWS_IMAGE_FOLDER")
 
+    AUTH_SECRET_KEY: str = os.getenv("AUTH_SECRET_KEY")
+    AUTH_ALGORITHM: str = os.getenv("AUTH_ALGORITHM")
+    AUTH_ACCESS_TOKEN_EXPIRE_MINUTES: str = int(os.getenv("AUTH_ACCESS_TOKEN_EXPIRE_MINUTES"))
+    AUTH_USER: str = os.getenv("AUTH_USER")
+    AUTH_PASSWORD: str = os.getenv("AUTH_PASSWORD")
+
 settings = Settings()

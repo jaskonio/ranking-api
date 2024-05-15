@@ -1,4 +1,5 @@
 from fastapi import APIRouter
+from app.infrastructure.rest_api.route.auth_router import auth_router
 from app.infrastructure.rest_api.route.image_router import image_router
 from app.infrastructure.rest_api.route.person_router import person_router
 from app.infrastructure.rest_api.route.race_info_router import race_info_router
@@ -10,7 +11,7 @@ from app.infrastructure.rest_api.route.ranking_league_router import ranking_leag
 
 def get_routers():
     api_router = APIRouter()
-
+    api_router.include_router(auth_router, prefix="/token", tags=['Token'])
     api_router.include_router(race_info_router, prefix="/raceinfo", tags=['Race info'])
     api_router.include_router(person_router, prefix="/persons", tags=['Persons'])
     api_router.include_router(image_router, prefix="/image", tags=['Image'])

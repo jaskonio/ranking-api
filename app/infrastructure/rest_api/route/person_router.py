@@ -1,5 +1,6 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from app.domain.model.person_model import PersonModel
+from app.infrastructure.rest_api.auth.auth_bearer import JWTBearer
 from app.infrastructure.rest_api.controller.base_controller import BaseController
 from app.infrastructure.rest_api.model.person_model import PersonRequests, PersonResponse, SuccessJsonPersonResponse
 from app.core.services import person_service
@@ -7,7 +8,7 @@ from app.core.services import person_service
 person_router = APIRouter()
 controller = BaseController(person_service, PersonResponse, PersonModel)
 
-@person_router.get('/')
+@person_router.get('/',dependencies=[Depends(JWTBearer())])
 def get_all() -> SuccessJsonPersonResponse:
     return controller.get_all()
 
