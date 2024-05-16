@@ -166,3 +166,12 @@ docker-compose logs -f
 docker-compose stop
 docker-compose start
 ```
+
+
+## Deploy nging config 
+
+```bash
+sudo cp ranking-app.com /etc/nginx/sites-available/ranking-app.com
+sudo ln -s /etc/nginx/sites-available/ranking-app.com /etc/nginx/sites-enabled/
+sudo systemctl restart nginx
+```
