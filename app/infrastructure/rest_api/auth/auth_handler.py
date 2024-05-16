@@ -1,4 +1,5 @@
 import datetime
+from enum import Enum
 import logging
 from typing import Dict, List
 import jwt
@@ -15,6 +16,10 @@ class UserAuthModel(BaseModel):
 class UserAuthRequests(BaseModel):
     user_name: str
     password: str
+
+class Roles(str, Enum):
+    VIEW = "view"
+    ADMIN = "admin"
 
 class UserDBService():
     db_users:List[UserAuthModel] = []

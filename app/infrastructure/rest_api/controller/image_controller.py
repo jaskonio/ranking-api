@@ -20,3 +20,10 @@ class ImageController():
         except Exception as exception_error:
             self.logger.error("Error retrieving item: %s", exception_error)
             raise TypeError('An error occurred while retrieving item.') from None
+
+    def delete(self, file_name: str):
+        try:
+            return self.image_repository.remove_file(file_name)
+        except Exception as exception_error:
+            self.logger.error("Error retrieving item: %s", exception_error)
+            return False
