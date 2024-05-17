@@ -96,39 +96,6 @@ Check pylint
 
 [Guide to install docker](https://docs.docker.com/engine/install/ubuntu/)
 
-Create MongoDB Container
-
-```bash
-docker run -d --name ranking-db-mongo \
--v ./data:/data/db \
--p 27017:27017 \
--e MONGO_INITDB_ROOT_USERNAME=admin \
--e MONGO_INITDB_ROOT_PASSWORD=admin \
--e MONGO_INITDB_DATABASE=rankings \
-mongo:5.0.24
-```
-
-Active admin user:
-
-```bash
-docker exec -it ranking-db-mongo bash
-mongo -u admin
-use rankings
-db.createUser(
-    {
-        user: "admin",
-        pwd: "admin",
-        roles: [
-            {
-                role: "readWrite",
-                db: "rankings"
-            }
-        ]
-    }
-);
-db.createCollection("test");
-```
-
 Start/Stop mongoDB
 
 ```bash
@@ -167,8 +134,40 @@ docker-compose stop
 docker-compose start
 ```
 
+Create MongoDB Container
 
-## Deploy nging config 
+```bash
+docker run -d --name ranking-db-mongo \
+-v ./data:/data/db \
+-p 27017:27017 \
+-e MONGO_INITDB_ROOT_USERNAME=admin \
+-e MONGO_INITDB_ROOT_PASSWORD=admin \
+-e MONGO_INITDB_DATABASE=rankings \
+mongo:5.0.24
+```
+
+Active admin user:
+
+```bash
+docker exec -it api-mongo_db-1 bash
+mongo -u admin
+use rankings
+db.createUser(
+    {
+        user: "admin",
+        pwd: "admin",
+        roles: [
+            {
+                role: "readWrite",
+                db: "rankings"
+            }
+        ]
+    }
+);
+db.createCollection("test");
+```
+
+## Deploy nging config
 
 ```bash
 sudo cp ranking-app.com /etc/nginx/sites-available/ranking-app.com
