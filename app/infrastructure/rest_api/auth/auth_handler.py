@@ -47,25 +47,27 @@ def user_is_valid(user:UserAuthRequests):
 
     return True
 
-def token_response(token: str):
-    return {
-        "access_token": token,
-        "token_type": "bearer"
-    }
-
 def generate_jwt(user: UserAuthRequests) -> Dict[str, str]:
     db_user = user_db_service.getUserByName(user)
     time = datetime.datetime.now(datetime.timezone.utc)
+    time_expired = time + datetime.timedelta(minutes=Settings.AUTH_ACCESS_TOKEN_EXPIRE_MINUTES)
+
     payload = {
         "iat": time,
-        "exp": time + datetime.timedelta(minutes=Settings.AUTH_ACCESS_TOKEN_EXPIRE_MINUTES),
+        "exp": time_expired,
         "user_name": db_user.user_name,
         "roles": db_user.roles
     }
 
     token = jwt.encode(payload, Settings.AUTH_SECRET_KEY, algorithm=Settings.AUTH_ALGORITHM)
 
-    return token_response(token)
+    token_response = {
+        "access_token": token,
+        "expires_in": time_expired,
+        "token_type": "bearer",
+    }
+
+    return token_response
 
 def decode_jwt(token: str):
     try:
