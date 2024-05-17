@@ -52,9 +52,12 @@ def generate_jwt(user: UserAuthRequests) -> Dict[str, str]:
     time = datetime.datetime.now(datetime.timezone.utc)
     time_expired = time + datetime.timedelta(minutes=Settings.AUTH_ACCESS_TOKEN_EXPIRE_MINUTES)
 
+    time_epoch = int(time.timestamp())
+    time_expired_epoch = int(time_expired.timestamp())
+       
     payload = {
-        "iat": time,
-        "exp": time_expired,
+        "iat": time_epoch,
+        "exp": time_expired_epoch,
         "user_name": db_user.user_name,
         "roles": db_user.roles
     }
@@ -63,7 +66,7 @@ def generate_jwt(user: UserAuthRequests) -> Dict[str, str]:
 
     token_response = {
         "access_token": token,
-        "expires_in": time_expired,
+        "expires_in": time_expired_epoch,
         "token_type": "bearer",
     }
 
