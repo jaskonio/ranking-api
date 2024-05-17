@@ -24,9 +24,11 @@ class Roles(str, Enum):
 class UserDBService():
     db_users:List[UserAuthModel] = []
 
+    guest_user = UserAuthModel(user_name=Settings.AUTH_GUEST_USER, password=Settings.AUTH_GUEST_PASSWORD, roles=Settings.AUTH_GUEST_ROLES)
+
     def __init__(self) -> None:
         self.db_users.append(UserAuthModel(user_name=Settings.AUTH_ADMIN_USER, password=Settings.AUTH_ADMIN_PASSWORD, roles=Settings.AUTH_ADMIN_ROLES))
-        self.db_users.append(UserAuthModel(user_name=Settings.AUTH_GUEST_USER, password=Settings.AUTH_GUEST_PASSWORD, roles=Settings.AUTH_GUEST_ROLES))
+        self.db_users.append(self.guest_user)
 
     def getUserByName(self, user:UserAuthRequests):
         for db_user in self.db_users:
@@ -90,3 +92,6 @@ def is_valid_jwt(jwtoken: str):
         is_token_valid = True
 
     return is_token_valid
+
+def generate_guest_jwt():
+    return generate_jwt(UserDBService.guest_user)
