@@ -158,7 +158,7 @@ AWS_IMAGE_FOLDER=xxxxxxxxx
 
 ```bash
 docker volume create ranking-mongo-db
-docker-compose build && docker-compose up -d
+docker compose build && docker compose up -d
 docker compose stop && docker compose rm -f # stop and delete
 
 docker-compose logs -f 
