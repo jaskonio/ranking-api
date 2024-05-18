@@ -8,7 +8,7 @@ COPY requirements.txt ./app
 COPY log_conf.yaml ./app
 
 RUN pip install --no-cache-dir -r app/requirements.txt
-RUN rm requirements.txt
+RUN rm app/requirements.txt
 
 COPY app/ ./app/
 
