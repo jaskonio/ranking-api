@@ -151,7 +151,7 @@ Active admin user:
 
 ```bash
 docker exec -it api-mongo_db-1 bash
-mongo -u admin
+mongosh -u admin
 use rankings
 db.createUser(
     {
