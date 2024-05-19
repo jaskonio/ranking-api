@@ -45,5 +45,4 @@ jobs:
             docker login ghcr.io -i ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
             docker pull ghcr.io/jaskonio/ranking-api:v1
             docker stop app-ranking && docker rm app-ranking
-            docker run -d -p 8000:8000 --env-file .env --restart always ghcr.io/jaskonio/ranking-api:v1
-
+            docker run -d -p 8000:8000 --env-file .env --restart always --name app-ranking ghcr.io/jaskonio/ranking-api:v1
