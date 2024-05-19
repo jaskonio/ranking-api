@@ -37,7 +37,7 @@ jobs:
         with:
           host: ${{ secrets.IP_HOST }}
           username: ubuntu
-          passphrase: ${{ secrets.SSH_PRIVATE_KEY }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             mkdir -p ranking-app
             cd ranking-app
