@@ -40,8 +40,8 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             mkdir -p ranking-app
-            echo "${{secrets.APP_ENV}}" > .env
             cd ranking-app
+            echo "${{secrets.APP_ENV}}" > .env
             docker login ghcr.io -i ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
             docker pull ghcr.io/jaskonio/ranking-api:v1
             docker stop app-ranking && docker rm app-ranking
