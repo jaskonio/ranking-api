@@ -9,7 +9,7 @@ on:
 jobs:
 
   build-docker-image:
-
+    permissions: write-all
     runs-on: ubuntu-latest
 
     steps:
