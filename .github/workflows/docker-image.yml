@@ -39,8 +39,8 @@ jobs:
           username: ubuntu
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            echo "${{secrets.APP_ENV}}" > .env
             mkdir -p ranking-app
+            echo "${{secrets.APP_ENV}}" > .env
             cd ranking-app
             docker login ghcr.io -i ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
             docker pull ghcr.io/jaskonio/ranking-api:v1
