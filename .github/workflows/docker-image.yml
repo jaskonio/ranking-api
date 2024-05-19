@@ -32,16 +32,17 @@ jobs:
     needs: build-docker-image
     runs-on: ubuntu-latest
     steps:
-      - name: Install sshpass
-        run: sudo apt install -y sshpass
+      - name: Deploy sshpass
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.IP_HOST }}
+          username: ubuntu
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            mkdir -p ranking-app
+            cd ranking-app
+            docker login ghcr.io -i ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
+            docker pull ghcr.io/jaskonio/ranking-api:v1
+            docker stop app-ranking && docker rm app-ranking
+            docker run -d -p 8000:8000 --env-file .env --restart always ghcr.io/jaskonio/ranking-api:v1
 
-      - name: Download and run Image
-        run: |
-          sshpass -p ${{ secrets.HOST_CREDENTIALS}} ssh -o ${{ secrets.HOST }} << EOF
-          mkdir -p ranking-app
-          cd ranking-app
-          docker login ghcr.io -i ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
-          docker pull ghcr.io/jaskonio/ranking-api:v1
-          docker stop app-ranking && docker rm app-ranking
-          docker run -d -p 8000:8000 --env-file .env --restart always ghcr.io/jaskonio/ranking-api:v1
-          EOF
