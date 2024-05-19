@@ -20,7 +20,7 @@ jobs:
       with:
         registry: ghcr.io
         username: ${{ github.actor }}
-        password: ${{ secrets.DEPLOY_TOKEN }}
+        password: $DEPLOY_TOKEN
     - name: Build the Docker image
       run: | 
         docker build -t ghcr.io/$GITHUB_REPOSITORY:v1 .
