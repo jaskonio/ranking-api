@@ -168,6 +168,15 @@ db.createUser(
 db.createCollection("test");
 ```
 
+## Docker run only app
+
+```bash
+docker build -t app-ranking .
+docker run --name app-ranking --env-file .env -d -p 8000:8000 app-ranking
+docker logs -f app-ranking
+docker stop app-ranking && docker rm app-ranking
+```
+
 ## Deploy nging config
 
 ```bash

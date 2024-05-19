@@ -14,7 +14,7 @@ class Settings:
     MONGODB_USER=os.getenv("MONGODB_USER")
     MONGODB_PASSWORD=os.getenv("MONGODB_PASSWORD")
     MONGODB_PORT=os.getenv("MONGODB_PORT")
-    CONNECTION_STRING = os.getenv("MONGODB_CONNECTION_STING")
+    MONGODB_DRIVER = os.getenv("MONGODB_DRIVER")
 
     AWS_KEY: str = os.getenv("AWS_KEY")
     AWS_SECRET_KEY: str = os.getenv("AWS_SECRET_KEY")
