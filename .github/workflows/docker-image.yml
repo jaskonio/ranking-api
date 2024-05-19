@@ -15,14 +15,33 @@ jobs:
     steps:
     - name: Chekout the code
       uses: actions/checkout@v4
+
     - name: Login Github Container Registry
       uses: docker/login-action@v3.1.0
       with:
         registry: ghcr.io
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
+
     - name: Build the Docker image
       run: | 
         docker build -t ghcr.io/$GITHUB_REPOSITORY:v1 .
         docker push ghcr.io/$GITHUB_REPOSITORY:v1
 
+  deploy-aws:
+    needs: build-docker-image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install sshpass
+        run: sudo apt install -y sshpass
+
+      - name: Download and run Image
+        run: |
+          sshpass -p ${{ secrets.HOST_CREDENTIALS}} ssh -o ${{ secrets.HOST }} << EOF
+          mkdir -p ranking-app
+          cd ranking-app
+          docker login ghcr.io -i ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
+          docker pull ghcr.io/jaskonio/ranking-api:v1
+          docker stop app-ranking && docker rm app-ranking
+          docker run -d -p 8000:8000 --env-file .env --restart always ghcr.io/jaskonio/ranking-api:v1
+          EOF
