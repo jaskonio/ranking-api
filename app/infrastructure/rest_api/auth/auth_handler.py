@@ -59,7 +59,8 @@ def generate_jwt(user: UserAuthRequests) -> Dict[str, str]:
         "iat": time_epoch,
         "exp": time_expired_epoch,
         "user_name": db_user.user_name,
-        "roles": db_user.roles
+        "roles": db_user.roles,
+        "success": True
     }
 
     token = jwt.encode(payload, Settings.AUTH_SECRET_KEY, algorithm=Settings.AUTH_ALGORITHM)

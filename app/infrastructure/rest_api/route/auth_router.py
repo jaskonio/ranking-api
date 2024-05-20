@@ -16,7 +16,7 @@ def generate_token(user: UserAuthRequests):
 
     return token_valid_user
 
-@auth_router.get('/guest')
+@auth_router.post('/guest')
 def generate_token():
 
     token_valid_user = generate_guest_jwt()
