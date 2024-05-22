@@ -1,33 +1,30 @@
-from fastapi import APIRouter
-from app.domain.model.person import Person
-from app.infrastructure.repository.repository_utils import load_repository_from_config
-from app.infrastructure.rest_api.model.person_request import PersonRequest
+from fastapi import APIRouter, Depends
+from app.domain.model.person_model import PersonModel
+from app.infrastructure.rest_api.auth.auth_bearer import JWTBearer
+from app.infrastructure.rest_api.auth.auth_handler import Roles
 from app.infrastructure.rest_api.controller.person_controller import PersonController
-from app.aplication.person_service import PersonService
-
+from app.infrastructure.rest_api.model.person_model import PersonRequests, PersonResponse, SuccessJsonPersonResponse
+from app.core.services import person_service, aws_repository
 
 person_router = APIRouter()
+controller = PersonController(person_service, PersonResponse, PersonModel, aws_repository)
 
-db = load_repository_from_config()
-controller = PersonController(PersonService(db.get_repository('Persons', Person)))
-
-@person_router.get('/')
-def get_all():
+@person_router.get('/', dependencies=[Depends(JWTBearer([Roles.VIEW]))])
+def get_all() -> SuccessJsonPersonResponse:
     return controller.get_all()
 
-@person_router.get('/{person_id}')
-def get_by_id(person_id:str):
+@person_router.get('/{person_id}', dependencies=[Depends(JWTBearer([Roles.VIEW]))])
+def get_by_id(person_id:str) -> SuccessJsonPersonResponse:
     return controller.get_by_id(person_id)
 
-@person_router.post('/')
-def add(person: PersonRequest):
-    person_model = person.to_entity(Person)
-    return controller.add(person_model)
+@person_router.post('/', dependencies=[Depends(JWTBearer([Roles.ADMIN]))])
+def add(new_person: PersonRequests):
+    return controller.add(new_person)
 
-@person_router.put('/{person_id}')
-def update_by_id(person_id: str, person: PersonRequest):
-    return controller.update_by_id(person_id, person.to_entity(Person))
+@person_router.put('/{person_id}', dependencies=[Depends(JWTBearer([Roles.ADMIN]))])
+def update_by_id(person_id: str, person: PersonRequests) -> SuccessJsonPersonResponse:
+    return controller.update_by_id(person_id, person)
 
-@person_router.delete('/{person_id}')
-def delete_by_id(person_id:str):
+@person_router.delete('/{person_id}', dependencies=[Depends(JWTBearer([Roles.ADMIN]))])
+def delete_by_id(person_id:str) -> bool:
     return controller.delete_by_id(person_id)

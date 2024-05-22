@@ -3,3 +3,5 @@ disable=
     C0111, # missing-module-docstring
     C0301, # line-too-long
     C0103
+extension-pkg-allow-list=pydantic
+init-hook="from pylint.config import find_pylintrc; import os, sys; sys.path.append(os.path.dirname(find_pylintrc()))"

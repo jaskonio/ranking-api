@@ -1,64 +1,31 @@
 import logging
-from app.aplication.person_service import PersonService
-from app.domain.model.person import Person
+from typing import List
+from app.aplication.league_service import LeagueService
+from app.domain.model.league_model import LeagueRAWModel
+from app.domain.model.person_model import PersonModel
+from app.infrastructure.cloud.aws_repository import AWS_Repository
+from app.infrastructure.rest_api.controller.base_controller import BaseController
+from app.infrastructure.rest_api.model.custom_responses import CustomStaticJSONResponse
 
-
-class PersonController():
-    def __init__(self, person_service:PersonService):
-        self.__person_service = person_service
+class PersonController(BaseController):
+    def __init__(self, person_service:LeagueService, api_model, domain_model, image_service: AWS_Repository):
+        super().__init__(person_service, api_model, domain_model)
         self.logger = logging.getLogger(__name__)
+        self.__image_service = image_service
 
-    def get_all(self):
+    def delete_by_id(self, model_id: str):
         try:
-            return self.__person_service.get_all()
-        except Exception as exception_error:
-            self.logger.error("Error retrieving all items: %s", exception_error)
-            raise TypeError('An error occurred while retrieving all items.') from None
+            model:PersonModel = self.base_service.get_by_id(model_id)
 
-    def get_by_id(self, person_id):
-        try:
-            person = self.__person_service.get_by_id(person_id)
+            if model.photo_url != "":
+                self.__image_service.remove_file(model.photo_url)
 
-            if person:
-                return person
+            domain_model = self.base_service.delete_by_id(model_id)
 
-            return {}
-        except Exception as exception_error:
-            self.logger.error("Error retrieving item: %s", exception_error)
-            raise TypeError('An error occurred while retrieving item.') from None
+            if domain_model is False:
+                return CustomStaticJSONResponse.error(status_code=404, message=f"El ID {model_id} no se ha encontrado")
 
-    def add(self, person: Person):
-        try:
-            person = self.__person_service.add(person)
-
-            if person:
-                return person
-
-            return {}
-        except Exception as exception_error:
-            self.logger.error("Error saving: %s", exception_error)
-            raise TypeError('An error occurred while saving.') from None
-
-    def update_by_id(self, person_id:str, new_person):
-        try:
-            person = self.__person_service.update_by_id(person_id, new_person)
-
-            if person:
-                return person
-
-            return {}
+            return CustomStaticJSONResponse.success(data= {"success" : True})
         except Exception as exception_error:
             self.logger.error("Error updating: %s", exception_error)
-            raise TypeError('An error occurred while updating.') from None
-
-    def delete_by_id(self, person_id):
-        try:
-            status = self.__person_service.delete_by_id(person_id)
-
-            if status:
-                return status
-
-            return {}
-        except Exception as exception_error:
-            self.logger.error("Error deleting: %s", exception_error)
-            raise TypeError('An error occurred while deleting.') from None
+            return CustomStaticJSONResponse.invalid_request(status_code=500,errors="Error al processar la peticion")

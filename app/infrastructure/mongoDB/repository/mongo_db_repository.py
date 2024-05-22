@@ -1,63 +1,78 @@
 import logging
+from typing import List, Optional
 from bson import ObjectId
+from app.infrastructure.mongoDB.repository.mongo_db_session import MongoDBSession
 from pymongo import collection
-from pymongo.database import Database
-from app.domain.model.base_entity import BaseEntity
-from app.core.mapper_utils import dict_to_class, dicts_to_class
+from pymongo.errors import ServerSelectionTimeoutError
+from app.domain.model.base_object_model import BaseObjectModel
 from app.domain.repository.igeneric_repository import IGenericRepository
+from app.infrastructure.mongoDB.model.base_mongo_entity import BaseMongoEntity
 
-
-logger = logging.getLogger(__name__)
 
 class MongoDBRepository(IGenericRepository):
-    def __init__(self, db_client: Database, collection_name, entity_type):
-        name = collection_name
-        self.database = db_client
-        self.collection:collection.Collection = self.database.get_collection(name)
-        self.entity_type = entity_type
+    def __init__(self, collection_name:str, entity_type:BaseMongoEntity, model_type:BaseObjectModel):
+        self.database = MongoDBSession()
+        self.collection:collection.Collection = self.database.get_collection(collection_name)
+        self.entity_type:BaseMongoEntity = entity_type
+        self.model_type:BaseObjectModel = model_type
+        self.logger = logging.getLogger(__name__)
 
-    def get_all(self):
+    def get_all(self) -> List[BaseObjectModel]:
         try:
-            results = self.collection.find({})
+            result_dict = list(self.collection.find({}))
 
-            return dicts_to_class(self.entity_type, list(results ))
+            if len(result_dict) == 0:
+                return []
+
+            result_entities:List[BaseMongoEntity] = [self.entity_type(**entity) for entity in result_dict]
+            models = [entity.to_domain_model(self.model_type) for entity in result_entities]
+            return models
         except Exception as exception:
-            logger.error("Error al obtener todos los registros: %s", str(exception))
+            self.logger.error("Error al obtener todos los registros: %s", str(exception))
             return []
 
-    def get_by_id(self, entity_id:str):
+    def get_by_id(self, model_id:str) -> Optional[BaseObjectModel]:
         try:
-            entity = self.collection.find_one({"_id": ObjectId(entity_id)})
-            return dict_to_class(self.entity_type,entity) if entity else None
+            mongo_dict = self.collection.find_one({"_id": ObjectId(model_id)})
+
+            if mongo_dict is None:
+                return None
+
+            entity:BaseMongoEntity = self.entity_type(**mongo_dict)
+            return entity.to_domain_model(self.model_type)
+        except ServerSelectionTimeoutError as timeout_exception:
+            self.logger.error(f'Time out al conectar con la base de datos: {timeout_exception}')
+            raise
         except Exception as exception:
-            logger.error("Error al obtener el registro con ID %s: %s"
-                         , str(entity_id), str(exception))
+            self.logger.exception(f"Error al obtener el registro con ID {model_id}: {exception}")
             return None
 
-    def add(self, new_entity: BaseEntity):
+    def add(self, new_model: BaseObjectModel) -> Optional[BaseObjectModel]:
         try:
-            entity_id = self.collection.insert_one(new_entity.to_dict()).inserted_id
+            entity:BaseMongoEntity = self.entity_type().create_by_domain_model(new_model)
+            entity_id = self.collection.insert_one(entity.to_dict_db()).inserted_id
 
-            return str(entity_id)
+            return self.get_by_id(entity_id)
         except Exception as exception:
-            logger.error("Error al agregar un nuevo registro: %s", str(exception))
-            return ""
+            self.logger.error("Error al agregar un nuevo registro: %s", str(exception))
+            return None
 
-    def update_by_id(self, entity_id, new_entity):
+    def update_by_id(self, model_id:str, new_model:BaseObjectModel) -> Optional[BaseObjectModel]:
         try:
-            result = self.collection.update_one({"_id": ObjectId(entity_id)},
-                                                {"$set": new_entity.to_dict()})
-            return result.modified_count > 0
+            entity:BaseMongoEntity = self.entity_type().create_by_domain_model(new_model)
+            dict_update = entity.to_dict_db()
+            result = self.collection.update_one({"_id": ObjectId(model_id)},
+                                                {"$set": dict_update})
+
+            return self.get_by_id(model_id)
         except Exception as exception:
-            logger.error("Error al actualizar el registro con ID %s: %s"
-                         , str(entity_id), str(exception))
-            return False
+            self.logger.error("Error al actualizar el registro con ID %s: %s", str(model_id), str(exception))
+            return None
 
-    def delete_by_id(self, entity_id:str):
+    def delete_by_id(self, model_id:str) -> bool:
         try:
-            result = self.collection.delete_one({"_id": ObjectId(entity_id)})
+            result = self.collection.delete_one({"_id": ObjectId(model_id)})
             return result.deleted_count > 0
         except Exception as exception:
-            logger.error("Error al eliminar el registro con ID %s: %s"
-                         , str(entity_id), str(exception))
+            self.logger.error("Error al eliminar el registro con ID %s: %s", str(model_id), str(exception))
             return False

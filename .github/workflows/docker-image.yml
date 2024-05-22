@@ -1,0 +1,48 @@
+name: Build and Publish Docker Image
+
+on:
+  push:
+    branches:
+    - main
+    - development
+
+jobs:
+
+  build-docker-image:
+    permissions: write-all
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Chekout the code
+      uses: actions/checkout@v4
+
+    - name: Login Github Container Registry
+      uses: docker/login-action@v3.1.0
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Build the Docker image
+      run: | 
+        docker build -t ghcr.io/$GITHUB_REPOSITORY:v1 .
+        docker push ghcr.io/$GITHUB_REPOSITORY:v1
+
+  deploy-aws:
+    needs: build-docker-image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.IP_HOST }}
+          username: ubuntu
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            mkdir -p ranking-app
+            cd ranking-app
+            echo "${{secrets.APP_ENV}}" > .env
+            docker login ghcr.io -i ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
+            docker pull ghcr.io/jaskonio/ranking-api:v1
+            docker stop app-ranking && docker rm app-ranking
+            docker run -d -p 8000:8000 --env-file .env --restart always --name app-ranking ghcr.io/jaskonio/ranking-api:v1

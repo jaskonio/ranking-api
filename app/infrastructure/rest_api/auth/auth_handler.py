@@ -1,78 +1,104 @@
-"""_summary_
-
-Returns:
-    _type_: _description_
-"""
 import datetime
+from enum import Enum
 import logging
-from typing import Dict
-import os
-import time
+from typing import Dict, List
 import jwt
-
-from app.model.user_model import UserModel
+from pydantic import BaseModel# [import-error]
+from app.core.config import Settings
 
 logger = logging.getLogger(__name__)
 
-JWT_SECRET = os.getenv("JWT_KEY")
-JWT_ALGORITHM = os.getenv("JWT_ALGORITHM")
+class UserAuthModel(BaseModel):
+    user_name: str
+    password: str
+    roles: List[str]
 
-USER_ADMIN = os.getenv("USER_ADMIN")
-PASSWORD_ADMIN = os.getenv("PASSWORD_ADMIN")
+class UserAuthRequests(BaseModel):
+    user_name: str
+    password: str
 
+class Roles(str, Enum):
+    VIEW = "view"
+    ADMIN = "admin"
 
-def user_is_valid(user:UserModel):
-    """_summary_
+class UserDBService():
+    db_users:List[UserAuthModel] = []
 
-    Args:
-        user (UserModel): _description_
+    guest_user = UserAuthModel(user_name=Settings.AUTH_GUEST_USER, password=Settings.AUTH_GUEST_PASSWORD, roles=Settings.AUTH_GUEST_ROLES)
 
-    Returns:
-        _type_: _description_
-    """
-    return user.user_name == USER_ADMIN and user.password == PASSWORD_ADMIN
+    def __init__(self) -> None:
+        self.db_users.append(UserAuthModel(user_name=Settings.AUTH_ADMIN_USER, password=Settings.AUTH_ADMIN_PASSWORD, roles=Settings.AUTH_ADMIN_ROLES))
+        self.db_users.append(self.guest_user)
 
-def token_response(token: str):
-    """_summary_
+    def getUserByName(self, user:UserAuthRequests):
+        for db_user in self.db_users:
+            if db_user.user_name == user.user_name and db_user.password == user.password:
+                return db_user
 
-    Args:
-        token (str): _description_
+        return None
 
-    Returns:
-        _type_: _description_
-    """
-    return {
-        "access_token": token
-    }
+user_db_service = UserDBService()
 
-def sign_jwt(user: UserModel) -> Dict[str, str]:
-    """_summary_
+def user_is_valid(user:UserAuthRequests):
+    user_exist_in_db = user_db_service.getUserByName(user)
 
-    Returns:
-        _type_: _description_
-    """
+    if user_exist_in_db is None or not user_exist_in_db:
+        return False
+
+    return True
+
+def generate_jwt(user: UserAuthRequests) -> Dict[str, str]:
+    db_user = user_db_service.getUserByName(user)
+    time = datetime.datetime.now(datetime.timezone.utc)
+    time_expired = time + datetime.timedelta(minutes=Settings.AUTH_ACCESS_TOKEN_EXPIRE_MINUTES)
+
+    time_epoch = int(time.timestamp())
+    time_expired_epoch = int(time_expired.timestamp())
+       
     payload = {
-        "user_name": user.user_name,
-        "expires": datetime.datetime.now(datetime.timezone.utc).timestamp() + 6000
+        "iat": time_epoch,
+        "exp": time_expired_epoch,
+        "user_name": db_user.user_name,
+        "roles": db_user.roles,
     }
 
-    token = jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
+    token = jwt.encode(payload, Settings.AUTH_SECRET_KEY, algorithm=Settings.AUTH_ALGORITHM)
 
-    return token_response(token)
+    token_response = {
+        "access_token": token,
+        "expires_in": time_expired_epoch,
+        "token_type": "bearer",
+        "roles": db_user.roles,
+        "success": True
+    }
+
+    return token_response
 
 def decode_jwt(token: str):
-    """_summary_
-
-    Args:
-        token (str): _description_
-
-    Returns:
-        _type_: _description_
-    """
     try:
-        decoded_token = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+        decoded_token = jwt.decode(token, Settings.AUTH_SECRET_KEY, algorithms=[Settings.AUTH_ALGORITHM])
         logger.info("decoded_token: %s", str(decoded_token))
 
         return decoded_token
-    except:
+    except Exception as exception_error:
+        logger.error(exception_error)
         return None
+
+def is_valid_jwt(jwtoken: str):
+    payload = decode_jwt(jwtoken)
+
+    if not payload:
+        return False
+
+    is_token_valid: bool = False
+
+    current_time = datetime.datetime.now(datetime.timezone.utc).timestamp()
+    logger.info("current_time: %s", str(current_time))
+
+    if payload["expires"] >= current_time:
+        is_token_valid = True
+
+    return is_token_valid
+
+def generate_guest_jwt():
+    return generate_jwt(UserDBService.guest_user)
