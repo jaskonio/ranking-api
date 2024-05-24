@@ -1,18 +1,22 @@
-from typing import List
+from typing import List, Optional
 from app.domain.model.base_object_model import BaseModel
 from app.domain.model.participant_league_model import ParticipantLeagueModel
 from app.domain.model.race_league_model import RaceLeagueRawModel
 from app.domain.model.ranking_league_model import RankingLeagueModel
 
-
+class LeagueRaceInfo(BaseModel):
+    name: str
+    order: int
+    runner_ids: Optional[List[str]]
+    race_info_id: str
 class LeagueModel(BaseModel):
     id:str = ''
     name: str = ''
-    order: int = 0
-    race_ids: List[str] = []
-    runner_participant_ids: List[str] = []
-    ranking_id: str = []
-    history_ranking_ids: List[str] = []
+    order: Optional[int]
+    races: Optional[List[LeagueRaceInfo]]
+    runner_participant_ids: Optional[List[str]]
+    ranking_id: Optional[str]
+    history_ranking_ids: Optional[List[str]]
 
 class LeagueRAWModel(BaseModel):
     id:str = ''

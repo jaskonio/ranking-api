@@ -5,12 +5,17 @@ from app.infrastructure.rest_api.model.participant_league_model import Participa
 from app.infrastructure.rest_api.model.race_league_model import RaceLeagueRawResponse
 from app.infrastructure.rest_api.model.ranking_league_model import RankingLeagueResponse
 
+class LeagueRaceInfo(BaseAPI_Model):
+    name: str
+    order: int
+    runner_ids: Optional[List[str]]
+    race_info_id: str
 
 class LeagueResponse(BaseAPI_Model):
     id: str = ''
     name: str = ''
     order: int = 0
-    race_ids: List[str] = []
+    races: List[LeagueRaceInfo] = []
     runner_participant_ids: List[str] = []
     ranking_id: str = ''
     history_ranking_ids: List[str] = []
@@ -18,7 +23,7 @@ class LeagueResponse(BaseAPI_Model):
 class LeagueRequest(BaseAPI_Model):
     name: Optional[str]
     order: Optional[int]
-    race_ids: Optional[List[str]]
+    races: Optional[List[LeagueRaceInfo]]
     runner_participant_ids: Optional[List[str]]
     ranking_id: Optional[str]
     history_ranking_ids: Optional[List[str]]
