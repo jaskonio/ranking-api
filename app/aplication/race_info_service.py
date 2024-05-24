@@ -30,18 +30,20 @@ class RaceInfoService(BaseService):
 
         # Filter by club and person
         club_info_model:ClubInfoModel =self.__club_info_repository.get_all()
-
+        club_info_model_names = []
+    
         if len(club_info_model) == 0:
             raise TypeError("Falta informacion del club")
         else:
             club_info_model = club_info_model[0]
+            club_info_model_names = [name.lower() for name in club_info_model.names]
 
         person_models:List[PersonModel] = self.__person_repository.get_all()
 
         new_race_data_model = RaceDataModel()
 
         for runner_model in runners_race_data_model:
-            if runner_model.club.lower() in club_info_model.names:
+            if runner_model.club.lower() in club_info_model_names:
                 for person_model in person_models:
                     if person_model == runner_model:
                         runner_model.person_id = person_model.id

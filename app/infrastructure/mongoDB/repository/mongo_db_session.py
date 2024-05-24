@@ -5,7 +5,7 @@ from app.core.config import Settings
 logger = logging.getLogger(__name__)
 
 def build_connection_string():
-    connection_string = f"{Settings.MONGODB_DRIVER}://{Settings.MONGODB_USER}:{Settings.MONGODB_PASSWORD}@{Settings.MONGODB_HOST}/{Settings.MONGODB_NAME}"
+    connection_string = f"{Settings.MONGODB_DRIVER}://{Settings.MONGODB_USER}:{Settings.MONGODB_PASSWORD}@{Settings.MONGODB_HOST}/{Settings.MONGODB_NAME}?authSource=admin"
 
     return connection_string
 

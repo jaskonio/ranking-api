@@ -5,7 +5,7 @@ from app.domain.model.race_data_model import RaceDataRawModel
 class Platform(str, Enum):
     SPORTMANIACS_LATEST = "SPORTMANIACS_LATEST"
     VALENCIACIUDADDELRUNNING_LATEST = "VALENCIACIUDADDELRUNNING_LATEST"
-    TOPRUN_LATEST = "VALENCIACIUDADDELRUNNING_LATEST"
+    TOPRUN_LATEST = "TOPRUN_LATEST"
 
 class RaceInfoModel(BaseObjectModel):
     id:str = ''

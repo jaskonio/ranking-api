@@ -11,7 +11,9 @@ class PersonModel(BaseObjectModel):
 
     @property
     def full_name(self) -> str:
-        return f"{self.first_name} {self.last_name}" if self.first_name or self.last_name else ""
+        last_name = "" if self.last_name == "" else " " + self.last_name
+
+        return f"{self.first_name}{last_name}" if self.first_name != "" or self.last_name != "" else ""
 
     def __eq__(self, other) -> bool:
         if self is other:  # Comparar identidades

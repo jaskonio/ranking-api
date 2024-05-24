@@ -32,6 +32,7 @@ class SportmaniacsMapperService(IMapperService):
     def __build_runner_model(self, row) -> RunnerRaceDataModel:
         runner = RunnerRaceDataModel()
         runner.first_name = " ".join(row["name"].split()) if "name" in row else None
+        runner.last_name = ""
         runner.gender = self.__convert_to_gender(row["gender"]) if "gender" in row else None
         runner.dorsal = row["dorsal"] if "dorsal" in row else None
         runner.category = row["category"] if "category" in row else None
