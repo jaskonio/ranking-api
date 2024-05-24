@@ -19,17 +19,6 @@ class LeagueService(BaseService):
         self.__ranking_league_repository = ranking_league_repository
         self.__race_info_repository = race_info_repository
 
-    def add(self, new_model:LeagueModel) -> Optional[LeagueModel]:
-        for race in new_model.races:
-            race.runner_ids = new_model.runner_participant_ids
-        
-        new_model = self.repository.add(new_model)
-
-        if new_model is None:
-            return None
-
-        return new_model
-
     def run_process(self, league_id:str) -> LeagueRAWModel:
         # elimina los ranking ids y procesa de nuevo
         # ordernar Race league por order, empezar de menor a mayor

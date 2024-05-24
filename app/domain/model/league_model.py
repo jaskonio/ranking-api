@@ -14,7 +14,7 @@ class LeagueModel(BaseModel):
     name: str = ''
     order: Optional[int]
     races: Optional[List[LeagueRaceInfo]]
-    runner_participant_ids: Optional[List[str]]
+    runner_participants: Optional[List[ParticipantLeagueModel]]
     ranking_id: Optional[str]
     history_ranking_ids: Optional[List[str]]
 
