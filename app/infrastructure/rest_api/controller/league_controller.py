@@ -26,18 +26,19 @@ class LeagueController(BaseController):
             for league_model in league_models:
                 league_response = LeagueResponse().create_by_domain_model(league_model)
                 
-                runner_participant_merged = []
-                participant_ids = [p.person_id for p in league_response.runner_participants]
-                persons_in_league = list(filter(lambda p: p.id in participant_ids, all_persons))
-                for runner_participant in league_response.runner_participants:
-                    for person_in_league in persons_in_league:
-                        if runner_participant.person_id == person_in_league.id:
-                            runner_participant_dict = runner_participant.dict()
-                            person_in_league_dict = person_in_league.dict()
-                            runner_participant_dict.update(person_in_league_dict)
-                            runner_participant = RunnerParticipantLeague(**runner_participant_dict)
-                            runner_participant_merged.append(runner_participant)
-                league_response.runner_participants = runner_participant_merged
+                if league_response.runner_participants is not None:
+                    runner_participant_merged = []
+                    participant_ids = [p.person_id for p in league_response.runner_participants]
+                    persons_in_league = list(filter(lambda p: p.id in participant_ids, all_persons))
+                    for runner_participant in league_response.runner_participants:
+                        for person_in_league in persons_in_league:
+                            if runner_participant.person_id == person_in_league.id:
+                                runner_participant_dict = runner_participant.dict()
+                                person_in_league_dict = person_in_league.dict()
+                                runner_participant_dict.update(person_in_league_dict)
+                                runner_participant = RunnerParticipantLeague(**runner_participant_dict)
+                                runner_participant_merged.append(runner_participant)
+                    league_response.runner_participants = runner_participant_merged
 
                 leagues_response.append(league_response)
 
