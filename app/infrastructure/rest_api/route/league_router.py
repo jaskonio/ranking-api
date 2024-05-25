@@ -4,12 +4,12 @@ from app.infrastructure.rest_api.auth.auth_bearer import JWTBearer
 from app.infrastructure.rest_api.auth.auth_handler import Roles
 from app.infrastructure.rest_api.controller.league_controller import LeagueController
 from app.infrastructure.rest_api.model.league_model import LeagueRequest, LeagueResponse, SuccessJsonLeagueRawResponse, SuccessJsonLeagueResponse, SuccessJsonLeaguesRawResponse
-from app.core.services import league_service
+from app.core.services import league_service, person_repository
 
 
 league_router = APIRouter()
 
-controller = LeagueController(league_service, LeagueResponse, LeagueModel)
+controller = LeagueController(league_service, LeagueResponse, LeagueModel, person_repository)
 
 @league_router.get('/raw', dependencies=[Depends(JWTBearer([Roles.VIEW]))])
 def get_all_raw() -> SuccessJsonLeaguesRawResponse:

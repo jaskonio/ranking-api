@@ -9,10 +9,6 @@ class RaceLeagueInfo(BaseModel):
     race_info_id: str
 
 class ParticipantLeague(BaseModel):
-    first_name: Optional[str]
-    last_name: Optional[str]
-    gender: Optional[str]
-    photo_url: Optional[str]
     person_id: Optional[str]
     dorsal: Optional[int]
     category: Optional[str]

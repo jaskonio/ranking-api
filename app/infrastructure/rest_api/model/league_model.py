@@ -11,12 +11,29 @@ class LeagueRaceInfo(BaseAPI_Model):
     runner_ids: Optional[List[str]]
     race_info_id: str
 
+class ParticipantLeague(BaseAPI_Model):
+    person_id: str
+    dorsal: Optional[int]
+    category: Optional[str]
+    disqualified_order_race: Optional[int]
+
+class RunnerParticipantLeague(BaseAPI_Model):
+    first_name:Optional[str]
+    last_name:Optional[str]
+    nationality: Optional[str]
+    gender: Optional[str]
+    photo_url: Optional[str]
+    person_id: str
+    dorsal: Optional[int]
+    category: Optional[str]
+    disqualified_order_race: Optional[int]
+
 class LeagueResponse(BaseAPI_Model):
     id: str = ''
     name: str = ''
     order: int = 0
     races: List[LeagueRaceInfo] = []
-    runner_participants: Optional[List[ParticipantLeagueRequest]]
+    runner_participants: Optional[List[RunnerParticipantLeague]]
     ranking_id: str = ''
     history_ranking_ids: List[str] = []
 
@@ -24,7 +41,7 @@ class LeagueRequest(BaseAPI_Model):
     name: Optional[str]
     order: Optional[int]
     races: Optional[List[LeagueRaceInfo]]
-    runner_participants: Optional[List[ParticipantLeagueRequest]]
+    runner_participants: Optional[List[ParticipantLeague]]
     ranking_id: Optional[str]
     history_ranking_ids: Optional[List[str]]
 

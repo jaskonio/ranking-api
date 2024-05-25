@@ -9,12 +9,19 @@ class LeagueRaceInfo(BaseModel):
     order: int
     runner_ids: Optional[List[str]]
     race_info_id: str
+    
+class RunnerParticipantLeague(BaseModel):
+    person_id: Optional[str]
+    dorsal: Optional[int]
+    category: Optional[str]
+    disqualified_order_race: Optional[int]
+
 class LeagueModel(BaseModel):
     id:str = ''
     name: str = ''
     order: Optional[int]
     races: Optional[List[LeagueRaceInfo]]
-    runner_participants: Optional[List[ParticipantLeagueModel]]
+    runner_participants: Optional[List[RunnerParticipantLeague]]
     ranking_id: Optional[str]
     history_ranking_ids: Optional[List[str]]
 
