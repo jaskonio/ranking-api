@@ -7,6 +7,7 @@ from app.infrastructure.rest_api.model.league_model import LeagueRawResponse
 class SeasonResponse(BaseAPI_Model):
     id: str = ''
     name: str = ''
+    order: str = ''
     league_ids:List[str] = []
 
 class SeasonRequest(BaseAPI_Model):
@@ -16,6 +17,7 @@ class SeasonRequest(BaseAPI_Model):
 class SeasonRawResponse(BaseAPI_Model):
     id:str = ''
     name: str = ''
+    order:str = ''
     leagues:List[LeagueRawResponse] = []
 
 class SuccessJsonSeasonResponse(BaseSuccessJsonResponse):
