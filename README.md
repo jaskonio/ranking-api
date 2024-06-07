@@ -150,7 +150,7 @@ mongo:5.0.24
 Active admin user:
 
 ```bash
-docker exec -it api-mongo_db-1 bash
+docker exec -it ranking-api-mongo_db-1 bash
 mongosh -u admin
 use rankings
 db.createUser(
@@ -183,4 +183,26 @@ docker stop app-ranking && docker rm app-ranking
 sudo cp ranking-app.com /etc/nginx/sites-available/ranking-app.com
 sudo ln -s /etc/nginx/sites-available/ranking-app.com /etc/nginx/sites-enabled/
 sudo systemctl restart nginx
+```
+
+## JWT
+
+Use [jwt.io](https://jwt.io/).
+
+
+Body to admin json:
+
+Algorithm: HS256
+Use AUTH_SECRET_KEY: asdas
+
+```bash
+{
+  "iat": 1715787060,
+  "exp": 1905089318,
+  "user_name": "jonatan",
+  "roles": [
+    "view",
+    "admin"
+  ]
+}
 ```
