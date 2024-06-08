@@ -9,11 +9,11 @@ from app.core.services import person_service, aws_repository
 person_router = APIRouter()
 controller = PersonController(person_service, PersonResponse, PersonModel, aws_repository)
 
-@person_router.get('/', dependencies=[Depends(JWTBearer([Roles.VIEW]))])
+@person_router.get('/')
 def get_all() -> SuccessJsonPersonResponse:
     return controller.get_all()
 
-@person_router.get('/{person_id}', dependencies=[Depends(JWTBearer([Roles.VIEW]))])
+@person_router.get('/{person_id}')
 def get_by_id(person_id:str) -> SuccessJsonPersonResponse:
     return controller.get_by_id(person_id)
 

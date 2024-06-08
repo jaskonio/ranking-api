@@ -11,19 +11,19 @@ race_info_router = APIRouter()
 
 controller = RaceInfoController(race_info_service, RaceInfoResponse, RaceInfoModel)
 
-@race_info_router.get('/raw', dependencies=[Depends(JWTBearer([Roles.VIEW]))])
+@race_info_router.get('/raw')
 def get_all_raw() -> SuccessJsonRaceInfoRAW_Response:
     return controller.get_all_raw()
 
-@race_info_router.get('/raw/{race_id}', dependencies=[Depends(JWTBearer([Roles.VIEW]))])
+@race_info_router.get('/raw/{race_id}')
 def get_raw_by_id(race_id:str) -> SuccessJsonRaceInfoRAW_Response:
     return controller.get_raw_by_id(race_id)
 
-@race_info_router.get('/', dependencies=[Depends(JWTBearer([Roles.VIEW]))])
+@race_info_router.get('/')
 def get_all() -> SuccessJsonRaceInfoResponse:
     return controller.get_all()
 
-@race_info_router.get('/{race_id}', dependencies=[Depends(JWTBearer([Roles.VIEW]))])
+@race_info_router.get('/{race_id}')
 def get_by_id(race_id:str) -> SuccessJsonRaceInfoResponse:
     return controller.get_by_id(race_id)
 
@@ -31,7 +31,7 @@ def get_by_id(race_id:str) -> SuccessJsonRaceInfoResponse:
 def add(race: RaceInfoRequest) -> SuccessJsonRaceInfoResponse:
     return controller.add(race)
 
-@race_info_router.get('/run_process/{race_id}', dependencies=[Depends(JWTBearer([Roles.VIEW]))])
+@race_info_router.get('/run_process/{race_id}')
 def run_process(race_id:str) -> SuccessJsonRaceInfoResponse:
     return controller.run_process(race_id)
 

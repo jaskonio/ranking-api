@@ -189,7 +189,6 @@ sudo systemctl restart nginx
 
 Use [jwt.io](https://jwt.io/).
 
-
 Body to admin json:
 
 Algorithm: HS256

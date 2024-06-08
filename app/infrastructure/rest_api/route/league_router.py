@@ -11,11 +11,11 @@ league_router = APIRouter()
 
 controller = LeagueController(league_service, LeagueResponse, LeagueModel, person_repository)
 
-@league_router.get('/raw', dependencies=[Depends(JWTBearer([Roles.VIEW]))])
+@league_router.get('/raw')
 def get_all_raw() -> SuccessJsonLeaguesRawResponse:
     return controller.get_all_raw()
 
-@league_router.get('/raw/{league_id}', dependencies=[Depends(JWTBearer([Roles.VIEW]))])
+@league_router.get('/raw/{league_id}')
 def get_raw_by_id(league_id:str) -> SuccessJsonLeagueRawResponse:
     return controller.get_raw_by_id(league_id)
 
@@ -23,7 +23,7 @@ def get_raw_by_id(league_id:str) -> SuccessJsonLeagueRawResponse:
 def run_process_by_id(league_id:str) -> SuccessJsonLeagueRawResponse:
     return controller.run_process_by_id(league_id)
 
-@league_router.get('/', dependencies=[Depends(JWTBearer([Roles.VIEW]))])
+@league_router.get('/')
 def get_all() -> SuccessJsonLeagueResponse:
     return controller.get_all()
 

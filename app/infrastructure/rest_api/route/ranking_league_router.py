@@ -12,11 +12,11 @@ ranking_league_router = APIRouter()
 
 controller = BaseController(ranking_league_service, RankingLeagueResponse, RankingLeagueModel)
 
-@ranking_league_router.get('/', dependencies=[Depends(JWTBearer([Roles.VIEW]))])
+@ranking_league_router.get('/')
 def get_all() -> List[RankingLeagueResponse]:
     return controller.get_all()
 
-@ranking_league_router.get('/{ranking_id}', dependencies=[Depends(JWTBearer([Roles.VIEW]))])
+@ranking_league_router.get('/{ranking_id}')
 def get_by_id(ranking_id:str) -> RankingLeagueResponse:
     return controller.get_by_id(ranking_id)
 

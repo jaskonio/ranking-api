@@ -11,11 +11,11 @@ participant_league_router = APIRouter()
 
 controller = BaseController(participant_league_service, ParticipantLeagueResponse, ParticipantLeagueModel)
 
-@participant_league_router.get('/', dependencies=[Depends(JWTBearer([Roles.VIEW]))])
+@participant_league_router.get('/')
 def get_all() -> List[ParticipantLeagueResponse]:
     return controller.get_all()
 
-@participant_league_router.get('/{person_id}', dependencies=[Depends(JWTBearer([Roles.VIEW]))])
+@participant_league_router.get('/{person_id}')
 def get_by_id(person_id:str) -> ParticipantLeagueResponse:
     return controller.get_by_id(person_id)
 

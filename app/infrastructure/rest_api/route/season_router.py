@@ -11,15 +11,15 @@ season_router = APIRouter()
 
 controller = SeasonController(seasson_service, SeasonResponse, SeasonModel)
 
-@season_router.get('/raw', dependencies=[Depends(JWTBearer([Roles.VIEW]))])
+@season_router.get('/raw')
 def get_all_raw() -> SuccessJsonSeasonRawResponse:
     return controller.get_all_raw()
 
-@season_router.get('/raw/{season_id}', dependencies=[Depends(JWTBearer([Roles.VIEW]))])
+@season_router.get('/raw/{season_id}')
 def get_raw_by_id(season_id:str) -> SuccessJsonSeasonRawResponse:
     return controller.get_raw_by_id(season_id)
 
-@season_router.get('/', dependencies=[Depends(JWTBearer([Roles.VIEW]))])
+@season_router.get('/')
 def get_all() -> SuccessJsonSeasonResponse:
     return controller.get_all()
 
@@ -27,7 +27,7 @@ def get_all() -> SuccessJsonSeasonResponse:
 def add(model: SeasonRequest) -> SuccessJsonSeasonResponse:
     return controller.add(model)
 
-@season_router.get('/{season_id}', dependencies=[Depends(JWTBearer([Roles.VIEW]))])
+@season_router.get('/{season_id}')
 def get_by_id(season_id:str) -> SuccessJsonSeasonResponse:
     return controller.get_by_id(season_id)
 

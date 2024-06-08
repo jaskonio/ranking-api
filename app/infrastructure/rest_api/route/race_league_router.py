@@ -11,11 +11,11 @@ race_league_router = APIRouter()
 
 controller = RaceLeagueController(race_league_repository, RaceLeagueResponse, RaceLeagueModel, race_league_service)
 
-@race_league_router.get('/raw', dependencies=[Depends(JWTBearer([Roles.VIEW]))])
+@race_league_router.get('/raw')
 def get_all_raw() -> List[RaceLeagueRawResponse]:
     return controller.get_all_raw()
 
-@race_league_router.get('/raw/{race_id}', dependencies=[Depends(JWTBearer([Roles.VIEW]))])
+@race_league_router.get('/raw/{race_id}')
 def get_raw_by_id(race_id:str) -> RaceLeagueRawResponse:
     return controller.get_raw_by_id(race_id)
 
@@ -23,11 +23,11 @@ def get_raw_by_id(race_id:str) -> RaceLeagueRawResponse:
 def add(race: RaceLeagueRequest) -> RaceLeagueResponse:
     return controller.add(race)
 
-@race_league_router.get('/{race_id}', dependencies=[Depends(JWTBearer([Roles.VIEW]))])
+@race_league_router.get('/{race_id}')
 def get_by_id(race_id:str) -> RaceLeagueResponse:
     return controller.get_by_id(race_id)
 
-@race_league_router.get('/', dependencies=[Depends(JWTBearer([Roles.VIEW]))])
+@race_league_router.get('/')
 def get_all() -> List[RaceLeagueResponse]:
     return controller.get_all()
 
