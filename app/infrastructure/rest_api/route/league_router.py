@@ -31,9 +31,9 @@ def get_all() -> SuccessJsonLeagueResponse:
 def add(new_league: LeagueRequest) -> SuccessJsonLeagueResponse:
     return controller.add(new_league)
 
-@league_router.get('/{league_id}', dependencies=[Depends(JWTBearer([Roles.VIEW]))])
+@league_router.get('/{league_id}')
 def get_by_id(league_id:str) -> SuccessJsonLeagueResponse:
-    return controller.get_by_id(league_id)
+    return controller.get_by_id(league_id) 
 
 @league_router.put('/{league_id}', dependencies=[Depends(JWTBearer([Roles.ADMIN]))])
 def update_by_id(league_id: str, league: LeagueRequest) -> SuccessJsonLeagueResponse:

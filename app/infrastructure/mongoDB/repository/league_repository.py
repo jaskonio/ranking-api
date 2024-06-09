@@ -58,7 +58,9 @@ class LeagueRepository(MongoDBRepository):
         participant_league_models = self.__participant_league_service.get_all()
         ranking_league_raw_models = self.__ranking_league_service.get_all()
 
-        league_raw_model:LeagueRAWModel = league_entity.to_domain_model(LeagueRAWModel)
+        league_raw_model = LeagueRAWModel()
+        league_raw_model.id = league_entity.id
+        league_raw_model.name = league_entity.name
 
         for race_league_raw_model in race_league_raw_models:
             for race_league_raw_model.id in league_entity.race_ids:
