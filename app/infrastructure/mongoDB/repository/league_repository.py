@@ -1,10 +1,10 @@
 from typing import List
 from app.domain.model.league_model import LeagueModel, LeagueRAWModel
-from app.domain.model.race_data_model import RaceDataRawModel
+from app.domain.model.person_model import PersonModel
 from app.domain.model.race_info_model import RaceInfoRawModel
 from app.domain.model.race_league_model import RaceLeagueRawModel
-from app.domain.model.runner_race_data_model import RunnerRaceDataModel
 from app.infrastructure.mongoDB.model.league_entity import LeagueEntity
+from app.infrastructure.mongoDB.model.person_entity import PersonEntity
 from app.infrastructure.mongoDB.repository.mongo_db_repository import MongoDBRepository
 from app.infrastructure.mongoDB.repository.race_data_repository import RaceDataRepository
 from app.infrastructure.mongoDB.repository.race_info_repository import RaceInfoRepository
@@ -21,6 +21,7 @@ class LeagueRepository(MongoDBRepository):
         self.__race_info_repository = RaceInfoRepository()
         self.__participant_league_service = MongoDBRepository('participant_league', ParticipantLeagueEntity, ParticipantLeagueModel)
         self.__ranking_league_service = MongoDBRepository('ranking_league', RankingLeagueEntity, RankingLeagueModel)
+        self.__person_service = MongoDBRepository('person', PersonEntity, PersonModel)
 
     def get_all_raw(self) -> List[LeagueRAWModel]:
         league_models: List[LeagueModel] = self.get_all()
@@ -59,13 +60,12 @@ class LeagueRepository(MongoDBRepository):
         league_entity: LeagueEntity = self.get_by_id(model_id)
 
         race_info_raw_models:List[RaceInfoRawModel] = self.__race_info_repository.get_all_raw()
-        # participant_league_models = self.__participant_league_service.get_all()
+        person_models: List[PersonModel] = self.__person_service.get_all()
         ranking_league_raw_models: List[RankingLeagueModel] = self.__ranking_league_service.get_all()
 
         league_raw_model = LeagueRAWModel()
         league_raw_model.id = league_entity.id
         league_raw_model.name = league_entity.name
-        league_raw_model.runner_participants = league_entity.runner_participants
 
         for race_league_raw_model in race_info_raw_models:
             for league_entity_race in league_entity.races:
@@ -81,5 +81,22 @@ class LeagueRepository(MongoDBRepository):
                 league_raw_model.ranking_latest = ranking_league_raw_model
             if ranking_league_raw_model.id in league_entity.history_ranking_ids:
                 league_raw_model.history_ranking.append(ranking_league_raw_model)
+
+        for runner_participant in league_entity.runner_participants:
+            for person_model in person_models:
+                if runner_participant.person_id == person_model.id:
+                    participant_model = ParticipantLeagueModel()
+                    participant_model.id = person_model.id
+                    participant_model.first_name = person_model.first_name
+                    participant_model.last_name = person_model.last_name
+                    participant_model.gender = person_model.gender
+                    participant_model.photo_url = person_model.photo_url
+                    
+                    participant_model.person_id = person_model.id
+                    participant_model.dorsal = runner_participant.dorsal
+                    participant_model.category = runner_participant.category
+                    participant_model.disqualified_order_race = runner_participant.disqualified_order_race
+
+                    league_raw_model.runner_participants.append(participant_model)
 
         return league_raw_model
