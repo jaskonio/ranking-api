@@ -64,7 +64,7 @@ class League:
                     dorsal=runner.dorsal,
                     category=runner.category,
                     is_disqualified=not runner.finished,
-                    position=runner.official_pos,
+                    position=idx+1,
                     points=points,
                     pos_last_race=0,  # Será actualizada en la próxima carrera
                     top_five=1 if runner.official_pos <= 5 else 0,
