@@ -99,7 +99,7 @@ class LeagueController(BaseController):
         try:
             league_model = self.__league_service.run_process(league_id)
 
-            if league_model:
+            if league_model is None:
                 return CustomStaticJSONResponse.error(status_code=404, message=f"El ID {league_id} no se ha encontrado")
 
             result = LeagueRawResponse().create_by_domain_model(league_model)

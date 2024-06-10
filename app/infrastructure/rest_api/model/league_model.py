@@ -2,6 +2,7 @@ from typing import List, Optional
 from app.infrastructure.rest_api.model.base_api_model import BaseAPI_Model
 from app.infrastructure.rest_api.model.custom_responses import BaseSuccessJsonResponse
 from app.infrastructure.rest_api.model.participant_league_model import ParticipantLeagueRequest, ParticipantLeagueResponse
+from app.infrastructure.rest_api.model.race_info import RaceInfoRAW_Response
 from app.infrastructure.rest_api.model.race_league_model import RaceLeagueRawResponse
 from app.infrastructure.rest_api.model.ranking_league_model import RankingLeagueResponse
 
@@ -49,10 +50,10 @@ class LeagueRawResponse(BaseAPI_Model):
     id: str = ''
     name: str = ''
     order: int = 0
-    races: List[RaceLeagueRawResponse] = []
-    runner_participants: List[ParticipantLeagueResponse] = []
-    ranking_latest: RankingLeagueResponse = []
-    history_ranking: List[RankingLeagueResponse] = []
+    races = []
+    runner_participants = []
+    ranking_latest = {}
+    history_ranking = []
 
 class SuccessJsonLeagueResponse(BaseSuccessJsonResponse):
     data: LeagueResponse

@@ -1,7 +1,7 @@
 import logging
 from typing import List, Optional
 from app.aplication.base_service import BaseService
-from app.domain.model.league_model import LeagueModel, LeagueRAWModel
+from app.domain.model.league_model import League, LeagueModel, LeagueRAWModel
 from app.domain.model.participant_league_model import ParticipantLeagueModel
 from app.domain.model.participant_ranking_model import ParticipantRankingModel
 from app.domain.model.race_info_model import RaceInfoRawModel
@@ -31,23 +31,42 @@ class LeagueService(BaseService):
         for history_ranking in league_raw_model.history_ranking:
             self.__ranking_league_repository.delete_by_id(history_ranking.id)
 
-        # start process Race League and ranking
-        all_race_league_updated:List[RaceLeagueRawModel] = []
+        league_updated = League()
+        
         for race_league_raw_model in race_league_raw_models:
-            race_league_updated = self.__fill_race_league_by_league_id(league_id, race_league_raw_model.id)
-            all_race_league_updated.append(race_league_updated)
+            runners_in_league = []
+            for runner in race_league_raw_model.runners:
+                for runner_participant in league_raw_model.runner_participants:
+                    if runner.person_id == runner_participant.person_id:
+                        runners_in_league.append(runner)
+            league_updated.add_race(runners_in_league)
+        
+        rankings_models = []
+        for rankings in league_updated.rankings:
+            ranking: List[ParticipantRankingModel]= []
+            for runner_id in rankings:
+                ranking.append(rankings[str(runner_id)])
+            rankings_models.append(ranking)
 
-        new_history_ranking_id = self.__fill_ranking_league(league_raw_model.runner_participants, all_race_league_updated)
+        league_raw_model.history_ranking = []
+        history_ranking_ids = []
+        for index, rankings_model in enumerate(rankings_models):
+            ranking_league_model = RankingLeagueModel()
+            ranking_league_model.order = index
+            ranking_league_model.data = rankings_model
+            ranking_result:RankingLeagueModel = self.__ranking_league_repository.add(ranking_league_model)
+            history_ranking_ids.append(ranking_result.id)
+
+        if len(league_raw_model.history_ranking) != 0:
+            league_raw_model.ranking_latest = league_raw_model.history_ranking[-1]
+        
 
         league_model:LeagueModel = self.get_by_id(league_id)
-        league_model.ranking_id = new_history_ranking_id[-1]
-        league_model.history_ranking_ids = new_history_ranking_id
+        league_model.history_ranking_ids = history_ranking_ids
+        if len(history_ranking_ids) != 0:
+            league_model.ranking_id = history_ranking_ids[-1]
 
-        # update values
-        status = self.update_by_id(league_id, league_model)
-
-        if status is None:
-            return None
+        self.update_by_id(league_id, league_model)
 
         return self.get_raw_by_id(league_id)
 
