@@ -25,24 +25,24 @@ jobs:
 
     - name: Build the Docker image
       run: | 
-        docker build -t ghcr.io/$GITHUB_REPOSITORY:v1 .
-        docker push ghcr.io/$GITHUB_REPOSITORY:v1
+        docker build -t ghcr.io/$GITHUB_REPOSITORY:$GITHUB_REF_NAME .
+        docker push ghcr.io/$GITHUB_REPOSITORY:$GITHUB_REF_NAME
 
-  # deploy-aws:
-  #   needs: build-docker-image
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Deploy
-  #       uses: appleboy/ssh-action@master
-  #       with:
-  #         host: ${{ secrets.IP_HOST }}
-  #         username: ubuntu
-  #         key: ${{ secrets.SSH_PRIVATE_KEY }}
-  #         script: |
-  #           mkdir -p ranking-app
-  #           cd ranking-app
-  #           echo "${{secrets.APP_ENV}}" > .env
-  #           docker login ghcr.io -i ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
-  #           docker pull ghcr.io/jaskonio/ranking-api:v1
-  #           docker stop app-ranking && docker rm app-ranking
-  #           docker run -d -p 8000:8000 --env-file .env --restart always --name app-ranking ghcr.io/jaskonio/ranking-api:v1
+  deploy-aws:
+    needs: build-docker-image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.IP_HOST }}
+          username: ubuntu
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            mkdir -p ranking-app
+            cd ranking-app
+            echo "${{secrets.APP_ENV}}" > .env
+            docker login ghcr.io -i ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
+            docker pull ghcr.io/$GITHUB_REPOSITORY:$GITHUB_REF_NAME
+            docker stop app-ranking && docker rm app-ranking
+            docker run -d -p 8000:8000 --env-file .env --restart always --name app-ranking ghcr.io/$GITHUB_REPOSITORY:$GITHUB_REF_NAME
