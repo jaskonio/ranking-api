@@ -2,6 +2,7 @@ from typing import List, Optional
 from app.domain.model.race_info_model import RaceInfoRawModel
 from app.domain.model.race_league_model import RaceLeagueRawModel, RaceLeagueModel
 from app.domain.model.runner_race_data_model import RunnerRaceDataModel
+from app.domain.repository.igeneric_repository import IGenericRepository
 from app.infrastructure.mongoDB.model.race_league_entity import RaceLeagueEntity
 from app.infrastructure.mongoDB.repository.mongo_db_repository import MongoDBRepository
 from app.infrastructure.mongoDB.repository.race_info_repository import RaceInfoRepository
@@ -9,10 +10,10 @@ from app.infrastructure.mongoDB.model.runner_race_data_entity import RunnerRaceD
 
 
 class RaceLeagueRepository(MongoDBRepository):
-    def __init__(self):
+    def __init__(self, runner_race_data_repository:IGenericRepository, race_info_repository:IGenericRepository):
         super().__init__('race_league', RaceLeagueEntity, RaceLeagueModel)
-        self.__runner_race_data_repository = MongoDBRepository('runner_race_data', RunnerRaceDataEntity, RunnerRaceDataModel)
-        self.__race_info_repository = RaceInfoRepository()
+        self.__runner_race_data_repository = runner_race_data_repository
+        self.__race_info_repository = race_info_repository
 
     def get_all_raw(self) -> List[RaceLeagueRawModel]:
         all_race_league_models:List[RaceLeagueModel] = self.get_all()

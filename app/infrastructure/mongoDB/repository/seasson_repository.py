@@ -6,9 +6,9 @@ from app.infrastructure.mongoDB.repository.mongo_db_repository import MongoDBRep
 
 
 class SeassonRepository(MongoDBRepository):
-    def __init__(self):
+    def __init__(self, league_repository:LeagueRepository):
         super().__init__('seasson', SeasonEntity, SeasonModel)
-        self.__league_repository = LeagueRepository()
+        self.__league_repository = league_repository
 
     def get_all_raw(self) -> List[SeasonRawModel]:
         all_season_models: List[SeasonModel] = self.get_all()

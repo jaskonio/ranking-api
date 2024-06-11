@@ -1,15 +1,16 @@
 from typing import List, Optional
 from app.domain.model.race_data_model import RaceDataRawModel
 from app.domain.model.race_info_model import RaceInfoRawModel, RaceInfoModel
+from app.domain.repository.igeneric_repository import IGenericRepository
 from app.infrastructure.mongoDB.model.race_info_entity import RaceInfoEntity
 from app.infrastructure.mongoDB.repository.mongo_db_repository import MongoDBRepository
 from app.infrastructure.mongoDB.repository.race_data_repository import RaceDataRepository
 
 
 class RaceInfoRepository(MongoDBRepository):
-    def __init__(self):
+    def __init__(self, race_data_repository:IGenericRepository):
         super().__init__('race_info', RaceInfoEntity, RaceInfoModel)
-        self.__race_data_repository = RaceDataRepository()
+        self.__race_data_repository = race_data_repository
 
     def get_all_raw(self) -> List[RaceInfoRawModel]:
         all_race_info_models:List[RaceInfoModel] = self.get_all()

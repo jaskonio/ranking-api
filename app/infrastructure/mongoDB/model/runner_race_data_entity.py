@@ -4,12 +4,6 @@ from app.infrastructure.mongoDB.model.base_mongo_entity import BaseMongoEntity
 
 class RunnerRaceDataEntity(BaseMongoEntity):
     person_id: Optional[str]
-    first_name: Optional[str]
-    last_name: Optional[str]
-    nationality: Optional[str]
-    gender: Optional[str]
-
-    photo_url: Optional[str]
     dorsal: Optional[int]
     club: Optional[str]
     category: Optional[str]
