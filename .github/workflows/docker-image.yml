@@ -34,8 +34,8 @@ jobs:
     steps:
       - name: Set $GITHUB_REF_NAME
         run: |
-          echo "GITHUB_REF_NAME=`echo $GITHUB_REF_NAME"` >> $GITHUB_ENV
-          echo "GITHUB_REPOSITORY=`echo $GITHUB_REPOSITORY" >> $GITHUB_ENV
+          echo "GITHUB_REF_NAME=`echo $GITHUB_REF_NAME`" >> $GITHUB_ENV
+          echo "GITHUB_REPOSITORY=`echo $GITHUB_REPOSITORY`" >> $GITHUB_ENV
       - name: Deploy
         uses: appleboy/ssh-action@master
         # env:
