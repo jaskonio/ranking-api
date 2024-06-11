@@ -34,9 +34,10 @@ jobs:
     steps:
       - name: Deploy
         uses: appleboy/ssh-action@master
-        env:
-          GITHUB_REPOSITORY: $GITHUB_REPOSITORY
-          GITHUB_REF_NAME: $GITHUB_REF_NAME
+        allenvs: true
+        # env:
+        #   GITHUB_REPOSITORY: $GITHUB_REPOSITORY
+        #   GITHUB_REF_NAME: $GITHUB_REF_NAME
         with:
           host: ${{ secrets.IP_HOST }}
           username: ubuntu
