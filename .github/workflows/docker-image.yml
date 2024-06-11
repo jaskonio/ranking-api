@@ -32,6 +32,10 @@ jobs:
     needs: build-docker-image
     runs-on: ubuntu-latest
     steps:
+      - name: Set $GITHUB_REF_NAME
+        run: |
+          echo "GITHUB_REF_NAME=`echo $GITHUB_REF_NAME"` >> $GITHUB_ENV
+          echo "GITHUB_REPOSITORY=`echo $GITHUB_REPOSITORY" >> $GITHUB_ENV
       - name: Deploy
         uses: appleboy/ssh-action@master
         # env:
@@ -46,10 +50,10 @@ jobs:
             mkdir -p ranking-app
             cd ranking-app
             echo "${{secrets.APP_ENV}}" > .env
-            echo "docker pull ghcr.io/$GITHUB_REPOSITORY:$GITHUB_REF_NAME"
-            docker pull ghcr.io/$GITHUB_REPOSITORY:$GITHUB_REF_NAME
+            echo "docker pull ghcr.io/${{ env.GITHUB_REPOSITORY }}:${{ env.GITHUB_REF_NAME }}"
+            docker pull ghcr.io/${{ env.GITHUB_REPOSITORY }}:${{ env.GITHUB_REF_NAME }}
             docker stop app-ranking 2> /dev/null
             docker rm app-ranking 2> /dev/null
             echo "Run APP"
-            echo "docker run -d -p 8000:8000 --env-file .env --restart always --name app-ranking ghcr.io/$GITHUB_REPOSITORY:$GITHUB_REF_NAME"
-            docker run -d -p 8000:8000 --env-file .env --restart always --name app-ranking ghcr.io/$GITHUB_REPOSITORY:$GITHUB_REF_NAME
+            echo "docker run -d -p 8000:8000 --env-file .env --restart always --name app-ranking ghcr.io/${{ env.GITHUB_REPOSITORY }}:${{ env.GITHUB_REF_NAME }}"
+            docker run -d -p 8000:8000 --env-file .env --restart always --name app-ranking ghcr.io/${{ env.GITHUB_REPOSITORY }}:${{ env.GITHUB_REF_NAME }}
