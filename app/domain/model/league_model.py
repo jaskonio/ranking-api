@@ -48,7 +48,7 @@ class League:
 
     def update_rankings(self, race_data: List[RunnerRaceDataModel]):
         race_data_sorted_by_real_pos = sorted(race_data, key=lambda x: x.real_pos)
-        points_distribution = {i + 1: 10 - i for i in range(10)}
+        points_distribution = {i + 1: 15 - i for i in [25, 18, 15, 12, 10, 8, 6, 4, 2, 1, 0.75, 0.50, 0.25, 0.10, 0.05]}
 
         for idx, runner in enumerate(race_data_sorted_by_real_pos):
             points = points_distribution.get(idx + 1, 0)
