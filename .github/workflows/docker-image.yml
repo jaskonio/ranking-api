@@ -42,7 +42,7 @@ jobs:
             mkdir -p ranking-app
             cd ranking-app
             echo "${{secrets.APP_ENV}}" > .env
-            docker login ghcr.io -i ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
+            docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
             echo $GITHUB_REPOSITORY:$GITHUB_REF_NAME
             docker pull ghcr.io/$GITHUB_REPOSITORY:$GITHUB_REF_NAME
             docker stop app-ranking 2> /dev/null
