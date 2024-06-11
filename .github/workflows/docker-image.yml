@@ -34,6 +34,9 @@ jobs:
     steps:
       - name: Deploy
         uses: appleboy/ssh-action@master
+        env:
+          GITHUB_REPOSITORY: $GITHUB_REPOSITORY
+          GITHUB_REF_NAME: $GITHUB_REF_NAME
         with:
           host: ${{ secrets.IP_HOST }}
           username: ubuntu
@@ -42,10 +45,10 @@ jobs:
             mkdir -p ranking-app
             cd ranking-app
             echo "${{secrets.APP_ENV}}" > .env
+            echo "docker pull ghcr.io/$GITHUB_REPOSITORY:$GITHUB_REF_NAME"
             docker pull ghcr.io/$GITHUB_REPOSITORY:$GITHUB_REF_NAME
             docker stop app-ranking 2> /dev/null
             docker rm app-ranking 2> /dev/null
             echo "Run APP"
             echo "docker run -d -p 8000:8000 --env-file .env --restart always --name app-ranking ghcr.io/$GITHUB_REPOSITORY:$GITHUB_REF_NAME"
             docker run -d -p 8000:8000 --env-file .env --restart always --name app-ranking ghcr.io/$GITHUB_REPOSITORY:$GITHUB_REF_NAME
-            echo "Deployed"
