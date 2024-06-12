@@ -7,9 +7,3 @@ class ParticipantLeagueModel(PersonModel):
     dorsal: Optional[int]
     category: Optional[str]
     disqualified_order_race: Optional[int] = -1
-
-    def __eq__(self, other_person):
-        if self.person_id == other_person.person_id:
-            return True
-
-        return False

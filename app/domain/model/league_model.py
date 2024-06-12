@@ -48,13 +48,13 @@ class League:
 
     def update_rankings(self, race_data: List[RunnerRaceDataModel]):
         race_data_sorted_by_real_pos = sorted(race_data, key=lambda x: x.real_pos)
-        points_distribution = {i + 1: 15 - i for i in [25, 18, 15, 12, 10, 8, 6, 4, 2, 1, 0.75, 0.50, 0.25, 0.10, 0.05]}
+        points_distribution = {i : v for (i,v) in enumerate([25, 18, 15, 12, 10, 8, 6, 4, 2, 1, 0.75, 0.50, 0.25, 0.10, 0.05])}
 
         for idx, runner in enumerate(race_data_sorted_by_real_pos):
-            points = points_distribution.get(idx + 1, 0)
+            points = points_distribution.get(idx, 0)
 
-            if runner.person_id not in self.final_ranking:
-                self.final_ranking[runner.person_id] = ParticipantRankingModel(
+            if runner.id not in self.final_ranking:
+                self.final_ranking[runner.id] = ParticipantRankingModel(
                     first_name=runner.first_name,
                     last_name=runner.last_name,
                     nationality=runner.nationality,
@@ -75,13 +75,13 @@ class League:
                     best_position_real=runner.real_pos
                 )
             else:
-                participant = self.final_ranking[runner.person_id]
+                participant = self.final_ranking[runner.id]
                 participant.participations += 1
                 participant.pos_last_race = participant.last_position_race
                 participant.last_position_race = runner.official_pos
                 participant.top_five += 1 if runner.official_pos <= 5 else 0
                 
-                if runner.official_pos < participant.best_position:
+                if runner.official_pos < int(participant.best_position):
                     participant.best_position = runner.official_pos
                 
                 if runner.official_avg_time and (not participant.best_avegare_peace or runner.official_avg_time < participant.best_avegare_peace):
@@ -94,7 +94,7 @@ class League:
                     participant.is_disqualified = False
                 
                 participant.points += points
-                self.final_ranking[runner.person_id] = participant
+                self.final_ranking[runner.id] = participant
 
         self.rankings.append(self.final_ranking.copy())
 

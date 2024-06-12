@@ -27,7 +27,9 @@ class LeagueService(BaseService):
             runners_in_league = []
             for runner in race_league_raw_model.runners:
                 for runner_participant in league_raw_model.runner_participants:
-                    if runner.person_id == runner_participant.person_id:
+                    if runner.dorsal == runner_participant.dorsal:
+                        runner.id = runner_participant.id
+                        runner.photo_url = runner_participant.photo_url
                         runners_in_league.append(runner)
             league_updated.add_race(runners_in_league)
         

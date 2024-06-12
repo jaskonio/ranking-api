@@ -66,6 +66,7 @@ class LeagueRepository(MongoDBRepository):
                     participant_model.photo_url = person_model.photo_url
                     
                     participant_model.person_id = person_model.id
+
                     participant_model.dorsal = runner_participant.dorsal
                     participant_model.category = runner_participant.category
                     participant_model.disqualified_order_race = runner_participant.disqualified_order_race

@@ -4,6 +4,7 @@ from app.domain.model.person_model import PersonModel
 
 class RunnerRaceDataModel(PersonModel):
     id: str = ''
+
     first_name: Optional[str]
     last_name: Optional[str]
     nationality: str = ''
