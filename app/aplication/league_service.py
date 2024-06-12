@@ -1,7 +1,8 @@
 import logging
-from typing import List
+from typing import Dict, List
 from app.aplication.base_service import BaseService
 from app.domain.model.league_model import League, LeagueModel, LeagueRAWModel
+from app.domain.model.participant_league_model import ParticipantLeagueModel
 from app.domain.model.participant_ranking_model import ParticipantRankingModel
 from app.domain.model.race_league_model import RaceLeagueRawModel
 from app.domain.model.ranking_league_model import RankingLeagueModel
@@ -16,47 +17,56 @@ class LeagueService(BaseService):
 
     def run_process(self, league_id:str) -> LeagueRAWModel:
         league_raw_model:LeagueRAWModel = self.get_raw_by_id(league_id)
-        race_league_raw_models:List[RaceLeagueRawModel] = list(sorted(league_raw_model.races, key=lambda x: x.order, reverse=True))
+        league_model:LeagueModel = self.get_by_id(league_id)
+
+        race_league_raw_models:List[RaceLeagueRawModel] = list(sorted(league_raw_model.races, key=lambda x: x.order))
 
         for history_ranking in league_raw_model.history_ranking:
             self.__ranking_league_repository.delete_by_id(history_ranking.id)
 
-        league_updated = League()
-        
-        for race_league_raw_model in race_league_raw_models:
-            runners_in_league = []
-            for runner in race_league_raw_model.runners:
-                for runner_participant in league_raw_model.runner_participants:
-                    if runner.dorsal == runner_participant.dorsal:
-                        runner.id = runner_participant.id
-                        runner.photo_url = runner_participant.photo_url
-                        runners_in_league.append(runner)
-            league_updated.add_race(runners_in_league)
-        
-        rankings_models = []
-        for rankings in league_updated.rankings:
-            ranking: List[ParticipantRankingModel]= []
-            for runner_id in rankings:
-                ranking.append(rankings[str(runner_id)])
-            rankings_models.append(ranking)
+        rankings = self.build_rankings(race_league_raw_models, league_raw_model.runner_participants)
 
         league_raw_model.history_ranking = []
         history_ranking_ids = []
-        for index, rankings_model in enumerate(rankings_models):
-            ranking_league_model = RankingLeagueModel()
-            ranking_league_model.order = index
-            ranking_league_model.data = rankings_model
-            ranking_result:RankingLeagueModel = self.__ranking_league_repository.add(ranking_league_model)
-            history_ranking_ids.append(ranking_result.id)
+
+        for race_id in rankings:
+            for race_league in race_league_raw_models:
+                if race_id == race_league.race_info.id:
+                    ranking_league_model = RankingLeagueModel()
+                    ranking_league_model.order = race_league.order
+                    ranking_league_model.data = rankings[race_id]
+                    ranking_result:RankingLeagueModel = self.__ranking_league_repository.add(ranking_league_model)
+                    history_ranking_ids.append(ranking_result.id)
 
         if len(league_raw_model.history_ranking) != 0:
             league_raw_model.ranking_latest = league_raw_model.history_ranking[-1]
-        
-        league_model:LeagueModel = self.get_by_id(league_id)
+
         league_model.history_ranking_ids = history_ranking_ids
+
         if len(history_ranking_ids) != 0:
             league_model.ranking_id = history_ranking_ids[-1]
 
         self.update_by_id(league_id, league_model)
 
         return self.get_raw_by_id(league_id)
+
+    def build_rankings(self, race_league_raw_models:List[RaceLeagueRawModel], runner_participants:List[ParticipantLeagueModel]):
+        league_updated = League()
+        
+        for race_league_raw_model in race_league_raw_models:
+            runners_in_league = []
+            for runner in race_league_raw_model.runners:
+                for runner_participant in runner_participants:
+                    if runner.finished and runner.dorsal == runner_participant.dorsal:
+                        runner.id = runner_participant.id
+                        runner.photo_url = runner_participant.photo_url
+                        runners_in_league.append(runner)
+            league_updated.add_race(race_league_raw_model.race_info.id, runners_in_league)
+        
+        rankings:Dict[str, List[ParticipantRankingModel]] = {}
+    
+        for race_id in league_updated.races:
+            runners_list = league_updated.races[race_id]
+            rankings[race_id] = runners_list
+
+        return rankings

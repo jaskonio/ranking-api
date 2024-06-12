@@ -44,7 +44,7 @@ class LeagueRepository(MongoDBRepository):
             for league_entity_race in league_entity.races:
                 if league_entity_race.race_info_id == race_league_raw_model.id:
                     new_race_league_model = RaceLeagueRawModel()
-                    new_race_league_model.race_info = race_league_raw_model.id
+                    new_race_league_model.race_info = race_league_raw_model
                     new_race_league_model.order = league_entity_race.order
                     new_race_league_model.runners = race_league_raw_model.race_data.runners
                     league_raw_model.races.append(new_race_league_model)

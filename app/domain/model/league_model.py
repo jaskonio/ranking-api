@@ -38,16 +38,15 @@ class LeagueRAWModel(BaseModel):
 
 class League:
     def __init__(self):
-        self.races: List[List[RunnerRaceDataModel]] = []
+        self.races: Dict[str, List[Dict[str, ParticipantRankingModel]]] = {}
         self.rankings: List[Dict[str, ParticipantRankingModel]] = []
         self.final_ranking: Dict[str, ParticipantRankingModel] = {}
 
-    def add_race(self, race_data: List[RunnerRaceDataModel]):
-        self.races.append(race_data)
-        self.update_rankings(race_data)
+    def add_race(self, race_id, race_data: List[RunnerRaceDataModel]):
+        self.update_rankings(race_id, race_data)
 
-    def update_rankings(self, race_data: List[RunnerRaceDataModel]):
-        race_data_sorted_by_real_pos = sorted(race_data, key=lambda x: x.real_pos)
+    def update_rankings(self, race_id:str, race_data: List[RunnerRaceDataModel]):
+        race_data_sorted_by_real_pos = sorted(race_data, key=lambda x: x.real_pos, reverse=False)
         points_distribution = {i : v for (i,v) in enumerate([25, 18, 15, 12, 10, 8, 6, 4, 2, 1, 0.75, 0.50, 0.25, 0.10, 0.05])}
 
         for idx, runner in enumerate(race_data_sorted_by_real_pos):
@@ -96,7 +95,15 @@ class League:
                 participant.points += points
                 self.final_ranking[runner.id] = participant
 
-        self.rankings.append(self.final_ranking.copy())
+        self.races[race_id] = self.__get_final_ranking()
 
-    def get_final_ranking(self):
-        return sorted(self.final_ranking.values(), key=lambda x: x.points, reverse=True)
+    def __get_final_ranking(self):
+        results = []
+        for id in self.final_ranking:
+            results.append(self.final_ranking[id])
+        results_sorted:List[ParticipantRankingModel]= sorted(results, key=lambda x: x.points, reverse=True)
+
+        for index, runner in enumerate(results_sorted):
+            runner.position = index + 1
+
+        return results_sorted
