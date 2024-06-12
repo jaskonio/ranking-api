@@ -66,7 +66,7 @@ class League:
                     position=idx+1,
                     points=points,
                     pos_last_race=0,  # Será actualizada en la próxima carrera
-                    top_five=1 if runner.official_pos <= 5 else 0,
+                    top_five=1 if idx+1 <= 5 else 0,
                     participations=1,
                     best_position=runner.official_pos,
                     last_position_race=runner.official_pos,
@@ -78,7 +78,7 @@ class League:
                 participant.participations += 1
                 participant.pos_last_race = participant.last_position_race
                 participant.last_position_race = runner.official_pos
-                participant.top_five += 1 if runner.official_pos <= 5 else 0
+                participant.top_five += 1 if participant.position <= 5 else 0
                 
                 if runner.official_pos < int(participant.best_position):
                     participant.best_position = runner.official_pos
@@ -93,6 +93,7 @@ class League:
                     participant.is_disqualified = False
                 
                 participant.points += points
+                participant.position = idx + 1
                 self.final_ranking[runner.id] = participant
 
         self.races[race_id] = self.__get_final_ranking()
