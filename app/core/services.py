@@ -4,16 +4,11 @@ from app.aplication.race_info_service import RaceInfoService
 from app.domain.model.club_info_model import ClubInfoModel
 from app.domain.model.participant_league_model import ParticipantLeagueModel
 from app.domain.model.person_model import PersonModel
-from app.domain.model.runner_race_data_model import RunnerRaceDataModel
 from app.domain.services.downloader_runners_service import DownloaderRunnersService
-from app.domain.services.http_downloader_service import HTTPDownloaderService
-from app.domain.services.mappe_runners_factory import MappeRunnersFactory
-from app.domain.services.race_downloader_options_factory import RaceDownloaderOptionsFactory
 from app.infrastructure.cloud.aws_repository import AWS_Repository
 from app.infrastructure.mongoDB.model.club_info_entity import ClubInfoEntity
 from app.infrastructure.mongoDB.model.participant_league_entity import ParticipantLeagueEntity
 from app.infrastructure.mongoDB.model.person_entity import PersonEntity
-from app.infrastructure.mongoDB.model.runner_race_data_entity import RunnerRaceDataEntity
 from app.infrastructure.mongoDB.repository.league_repository import LeagueRepository
 from app.infrastructure.mongoDB.repository.mongo_db_repository import MongoDBRepository
 from app.infrastructure.mongoDB.repository.race_data_repository import RaceDataRepository
@@ -46,6 +41,6 @@ ranking_league_service = BaseService(ranking_league_repository)
 race_league_service = BaseService(race_league_repository)
 seasson_service = BaseService(season_repository)
 
-downloader_runners_service = DownloaderRunnersService(HTTPDownloaderService(), MappeRunnersFactory(), RaceDownloaderOptionsFactory())
-race_info_service = RaceInfoService(race_info_repository, downloader_runners_service, race_data_repository, club_info_repository, runner_race_data_repository, person_repository)
+downloader_runners_service = DownloaderRunnersService(club_info_repository)
+race_info_service = RaceInfoService(race_info_repository, downloader_runners_service, race_data_repository, runner_race_data_repository)
 league_service = LeagueService(league_repository, ranking_league_repository)

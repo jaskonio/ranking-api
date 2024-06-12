@@ -48,3 +48,23 @@ def convert_timedelta_to_string(td:timedelta, format_type):
         td_string = "{}:{} / km".format(minutes, seconds)
 
     return td_string
+
+def time_seconds_to_string_format(time):
+    total_seconds = time // 1000
+    hours = total_seconds // 3600
+    minutes = (total_seconds % 3600) // 60
+    seconds = total_seconds % 60
+    formatted_time = f"{hours:02}:{minutes:02}:{seconds:02}"
+
+    return formatted_time
+
+def average_to_format_string(average):
+    ms_per_km = average  # ms/km
+    s_per_km = ms_per_km * 1000      # s/km
+    min_per_km = s_per_km / 60       # min/km
+
+    ritmo_minutes = int(min_per_km)
+    ritmo_seconds = int((min_per_km - ritmo_minutes) * 60)
+    formatted_ritmo = f"{ritmo_minutes}'{ritmo_seconds:02}\"/km"
+
+    return formatted_ritmo

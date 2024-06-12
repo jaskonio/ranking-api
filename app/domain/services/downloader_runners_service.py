@@ -1,30 +1,42 @@
 import logging
 from typing import List
-from app.domain.model.race_info_model import RaceInfoModel
+from app.domain.model.club_info_model import ClubInfoModel
+from app.domain.model.race_info_model import Platform, RaceInfoModel
 from app.domain.model.runner_race_data_model import RunnerRaceDataModel
-from app.domain.services.http_downloader_service import HTTPDownloaderService
-from app.domain.services.mappe_runners_factory import MappeRunnersFactory
-# from app.domain.model.person_model import PersonModel
-from app.domain.services.race_downloader_options_factory import RaceDownloaderOptionsFactory
-
+from app.domain.repository.idownloader_service import IDownloaderService
+from app.domain.repository.igeneric_repository import IGenericRepository
+from app.infrastructure.downloader_services.sportmaniacs_downloader_v1_service import SportmaniacsDownloaderV1Service
+from app.infrastructure.downloader_services.sportmaniacs_downloader_v2_service import SportmaniacsDownloaderV2Service
 
 class DownloaderRunnersService:
-    def __init__(self, http_service: HTTPDownloaderService, mapper_runners_factory: MappeRunnersFactory, race_downloader_options_factory:RaceDownloaderOptionsFactory):
-        self.__http_service = http_service
-        self.__mapper_runners_factory = mapper_runners_factory
-        self.__race_downloader_options_factory = race_downloader_options_factory
-
+    def __init__(self, club_info_repository:IGenericRepository):
         self.logger = logging.getLogger(__name__)
+        self.__club_info_repository = club_info_repository
+    
+
+    def get_club_names(self):
+        club_info_model_names  = []
+        club_info_model:ClubInfoModel =self.__club_info_repository.get_all()
+    
+        if len(club_info_model) == 0:
+            raise TypeError("Falta informacion del club")
+        else:
+            club_info_model = club_info_model[0]
+            club_info_model_names = [name.lower() for name in club_info_model.names]
+
+        return club_info_model_names
 
     def get_all_runners(self, race_info_simplified_model: RaceInfoModel) -> List[RunnerRaceDataModel]:
         try:
-            race_options = self.__race_downloader_options_factory.factory_method(race_info_simplified_model)
+            dowloader_service:IDownloaderService = None
+            club_names = self.get_club_names()
 
-            response = self.__http_service.get_data(race_options)
+            if race_info_simplified_model.platform == Platform.SPORTMANIACS_V1:
+                dowloader_service = SportmaniacsDownloaderV1Service(race_info_simplified_model, club_names)
+            elif race_info_simplified_model.platform == Platform.SPORTMANIACS_V2:
+                dowloader_service = SportmaniacsDownloaderV2Service(race_info_simplified_model, club_names)
 
-            mapper = self.__mapper_runners_factory.factory_method(race_options)
-
-            runners = mapper.execute(response)
+            runners = dowloader_service.get_data()
 
             return runners
         except Exception as exception_error:

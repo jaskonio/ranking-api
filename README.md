@@ -129,10 +129,10 @@ docker compose build && docker compose up -d
 docker compose stop && docker compose rm -f # stop and delete
 docker volume rm ranking-mongo-db
 
-docker-compose logs -f
+docker compose logs -f
 
-docker-compose stop
-docker-compose start
+docker compose stop
+docker compose start
 ```
 
 Create MongoDB Container
