@@ -31,7 +31,7 @@ class DownloaderRunnersService:
             dowloader_service:IDownloaderService = None
             club_names = self.get_club_names()
 
-            if race_info_simplified_model.platform == Platform.SPORTMANIACS_V1:
+            if race_info_simplified_model.platform == Platform.SPORTMANIACS_V1 or race_info_simplified_model.platform == Platform.SPORTMANIACS_LATEST:
                 dowloader_service = SportmaniacsDownloaderV1Service(race_info_simplified_model, club_names)
             elif race_info_simplified_model.platform == Platform.SPORTMANIACS_V2:
                 dowloader_service = SportmaniacsDownloaderV2Service(race_info_simplified_model, club_names)

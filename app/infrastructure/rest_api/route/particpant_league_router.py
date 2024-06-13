@@ -1,6 +1,6 @@
 from typing import List
 from fastapi import APIRouter, Depends
-from app.domain.model.participant_league_model import ParticipantLeagueModel
+from app.domain.model.league_model import ParticipantLeagueModel
 from app.infrastructure.rest_api.auth.auth_bearer import JWTBearer
 from app.infrastructure.rest_api.auth.auth_handler import Roles
 from app.infrastructure.rest_api.controller.base_controller import BaseController

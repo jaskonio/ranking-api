@@ -4,9 +4,7 @@ from app.infrastructure.rest_api.model.custom_responses import BaseSuccessJsonRe
 
 
 class LeagueRaceInfo(BaseAPI_Model):
-    name: str
     order: int
-    runner_ids: Optional[List[str]]
     race_info_id: str
 
 class ParticipantLeague(BaseAPI_Model):
@@ -14,6 +12,7 @@ class ParticipantLeague(BaseAPI_Model):
     dorsal: Optional[int]
     category: Optional[str]
     disqualified_order_race: Optional[int]
+    unique_dorsal: Optional[bool]
 
 class LeagueResponse(BaseAPI_Model):
     id: str = ''
@@ -29,8 +28,6 @@ class LeagueRequest(BaseAPI_Model):
     order: Optional[int]
     races: Optional[List[LeagueRaceInfo]]
     runner_participants: Optional[List[ParticipantLeague]]
-    ranking_id: Optional[str]
-    history_ranking_ids: Optional[List[str]]
 
 class LeagueRawResponse(BaseAPI_Model):
     id: str = ''

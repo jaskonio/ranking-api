@@ -1,8 +1,8 @@
 from typing import Optional
-from app.infrastructure.mongoDB.model.person_entity import PersonEntity
+from app.infrastructure.mongoDB.model.person_entity import PersonWithoutEntity
 
 
-class ParticipantLeagueEntity(PersonEntity):
+class ParticipantLeagueEntity(PersonWithoutEntity):
     person_id: Optional[str]
     dorsal: Optional[int]
     category: Optional[str]

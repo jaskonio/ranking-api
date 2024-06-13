@@ -1,5 +1,5 @@
 from app.aplication.base_service import BaseService
-# from app.aplication.league_service import LeagueService
+from app.aplication.league_service import LeagueService
 from app.aplication.race_info_service import RaceInfoService
 from app.domain.model.club_info_model import ClubInfoModel
 from app.domain.model.league_model import ParticipantLeagueModel
@@ -23,24 +23,24 @@ club_info_repository = MongoDBRepository('club_info', ClubInfoEntity, ClubInfoMo
 person_repository = MongoDBRepository('person', PersonEntity, PersonModel)
 aws_repository = AWS_Repository()
 
-runner_race_data_repository = RunnerRaceDataRepository()
+runner_race_data_repository = RunnerRaceDataRepository(person_repository)
 race_data_repository = RaceDataRepository(runner_race_data_repository)
 race_info_repository = RaceInfoRepository(race_data_repository)
 
 participant_league_repository = MongoDBRepository('participant_league', ParticipantLeagueEntity, ParticipantLeagueModel)
 
 ranking_league_repository = RankingLeagueRepository()
-race_league_repository = RaceLeagueRepository(runner_race_data_repository, race_info_repository)
-league_repository = LeagueRepository(race_info_repository, person_repository)
+race_league_repository = RaceLeagueRepository(race_info_repository)
+league_repository = LeagueRepository(race_info_repository)
 season_repository = SeassonRepository(league_repository)
 
 # club_service = BaseService(club_info_repository, PersonModel, ClubInfoEntity)
 person_service = BaseService(person_repository)
-# participant_league_service = BaseService(participant_league_repository)
-# ranking_league_service = BaseService(ranking_league_repository)
-# race_league_service = BaseService(race_league_repository)
-# seasson_service = BaseService(season_repository)
+participant_league_service = BaseService(participant_league_repository)
+ranking_league_service = BaseService(ranking_league_repository)
+race_league_service = BaseService(race_league_repository)
+seasson_service = BaseService(season_repository)
 
 downloader_runners_service = DownloaderRunnersService(club_info_repository)
 race_info_service = RaceInfoService(race_info_repository, downloader_runners_service, race_data_repository, runner_race_data_repository)
-# league_service = LeagueService(league_repository, ranking_league_repository)
+league_service = LeagueService(league_repository, ranking_league_repository)

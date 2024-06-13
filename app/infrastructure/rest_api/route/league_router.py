@@ -9,7 +9,7 @@ from app.core.services import league_service, person_repository
 
 league_router = APIRouter()
 
-controller = LeagueController(league_service, LeagueResponse, LeagueModel, person_repository)
+controller = LeagueController(league_service, LeagueResponse, LeagueModel)
 
 @league_router.get('/raw')
 def get_all_raw() -> SuccessJsonLeaguesRawResponse:

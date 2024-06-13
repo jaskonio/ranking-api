@@ -1,6 +1,5 @@
 from typing import List
 from fastapi import APIRouter, Depends
-from app.domain.model.race_league_model import RaceLeagueModel
 from app.infrastructure.rest_api.auth.auth_bearer import JWTBearer
 from app.infrastructure.rest_api.auth.auth_handler import Roles
 from app.infrastructure.rest_api.controller.race_league_controller import RaceLeagueController
@@ -9,7 +8,7 @@ from app.core.services import race_league_repository, race_league_service
 
 race_league_router = APIRouter()
 
-controller = RaceLeagueController(race_league_repository, RaceLeagueResponse, RaceLeagueModel, race_league_service)
+controller = RaceLeagueController(race_league_repository, race_league_service)
 
 @race_league_router.get('/raw')
 def get_all_raw() -> List[RaceLeagueRawResponse]:

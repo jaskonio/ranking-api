@@ -1,62 +1,121 @@
+from bson import ObjectId
 from typing import List, Optional
-from app.domain.model.race_info_model import RaceInfoRawModel
-from app.domain.repository.igeneric_repository import IGenericRepository
+from app.domain.model.league_model import LeagueRaceInfo, LeagueRaceRaw
+from app.domain.model.race_info_model import RaceInfoModel, RaceInfoRawModel
 from app.infrastructure.mongoDB.model.race_league_entity import RaceLeagueEntity
 from app.infrastructure.mongoDB.repository.mongo_db_repository import MongoDBRepository
+from app.infrastructure.mongoDB.repository.race_info_repository import RaceInfoRepository
 
 
 class RaceLeagueRepository(MongoDBRepository):
-    def __init__(self, runner_race_data_repository:IGenericRepository, race_info_repository:IGenericRepository):
-        super().__init__('race_league', RaceLeagueEntity, RaceLeagueModel)
-        self.__runner_race_data_repository = runner_race_data_repository
+    def __init__(self, race_info_repository:RaceInfoRepository):
+        super().__init__('race_league', RaceLeagueEntity, LeagueRaceInfo)
         self.__race_info_repository = race_info_repository
 
-    def get_all_raw(self) -> List[RaceLeagueRawModel]:
-        all_race_league_models:List[RaceLeagueModel] = self.get_all()
+    def get_all(self) -> List[LeagueRaceInfo]:
+        try:
+            result_dict = list(self.collection.find({}))
 
-        if len(all_race_league_models) == 0:
-            return all_race_league_models
+            if len(result_dict) == 0:
+                return []
 
+            result_entities:List[RaceLeagueEntity] = [RaceLeagueEntity(**entity) for entity in result_dict]
+
+            all_race_info:List[RaceInfoModel] = self.__race_info_repository.get_all()
+
+            models:List[LeagueRaceInfo] = []
+
+            for result_entity in result_entities:
+                race_league_model = LeagueRaceInfo()
+                race_league_model.id = result_entity.id
+                race_league_model.order = result_entity.order
+
+                for race_info in all_race_info:
+                    if race_info.id in result_entity.race_info_id:
+                        race_league_model.url = race_info.url
+                        race_league_model.platform = race_info.platform
+                        race_league_model.processed = race_info.processed
+                        race_league_model.race_data_id = race_info.race_data_id
+
+                models.append(race_league_model)
+            return models
+        except Exception as exception:
+            self.logger.error("Error al obtener todos los registros: %s", str(exception))
+            return []
+
+    def get_by_id(self, model_id:str) -> Optional[LeagueRaceInfo]:
+        try:
+            mongo_dict = self.collection.find_one({"_id": ObjectId(model_id)})
+
+            if mongo_dict is None:
+                return None
+
+            result_entity:RaceLeagueEntity = RaceLeagueEntity(**mongo_dict)
+                
+            race_league_model = LeagueRaceInfo()
+            race_league_model.id = result_entity.id
+            race_league_model.order = result_entity.order
+
+            race_info:RaceInfoModel = self.__race_info_repository.get_by_id(result_entity.race_info_id)
+
+            if race_info is not None:
+                race_league_model.name = race_info.name
+                race_league_model.url = race_info.url
+                race_league_model.platform = race_info.platform
+                race_league_model.processed = race_info.processed
+                race_league_model.race_data_id = race_info.race_data_id
+            
+            return race_league_model
+        except Exception as exception:
+            self.logger.exception(f"Error al obtener el registro con ID {model_id}: {exception}")
+            return None
+
+    def get_all_raw(self) -> List[LeagueRaceRaw]:
+        result_dicts = list(self.collection.find({}))
+
+        if len(result_dicts) == 0:
+            return []
+
+        race_league_entities:List[RaceLeagueEntity] = [RaceLeagueEntity(**entity) for entity in result_dicts]
+            
         all_raw_race_info_models:List[RaceInfoRawModel] = self.__race_info_repository.get_all_raw()
-        all_runner_race_data_models:List[RunnerRaceDataModel] = self.__runner_race_data_repository.get_all()
 
-        all_raw_race_league_models: List[RaceLeagueRawModel] = []
+        all_raw_race_league_models: List[LeagueRaceRaw] = []
 
-        for race_league_model in all_race_league_models:
-            raw_race_league_model: RaceLeagueRawModel = RaceLeagueRawModel()
-            raw_race_league_model.id = race_league_model.id
-            raw_race_league_model.order = race_league_model.order
+        for race_league_entity in race_league_entities:
+            raw_race_league: LeagueRaceRaw = LeagueRaceRaw()
+            raw_race_league.id = race_league_entity.id
+            raw_race_league.order = race_league_entity.order
 
             for raw_race_info_model in all_raw_race_info_models:
-                if race_league_model.race_row_id == raw_race_info_model.id:
-                    raw_race_league_model.race_info = raw_race_info_model
+                if raw_race_info_model.id == race_league_entity.race_info_id:
+                    raw_race_league.url = raw_race_info_model.url
+                    raw_race_league.processed = raw_race_info_model.processed
+                    raw_race_league.platform = raw_race_info_model.platform
+                    raw_race_league.race_data = raw_race_info_model.race_data
 
-            for runners_id in race_league_model.ranking:
-                for runner_race_data_model in all_runner_race_data_models:
-                    if runners_id == runner_race_data_model.id:
-                        raw_race_league_model.runners.append(runner_race_data_model)
-
-            all_raw_race_league_models.append(raw_race_league_model)
+            all_raw_race_league_models.append(raw_race_league)
 
         return all_raw_race_league_models
 
-    def get_raw_by_id(self, model_id:str) -> Optional[RaceLeagueRawModel]:
-        race_league_model:RaceLeagueModel = self.get_by_id(model_id)
+    def get_raw_by_id(self, model_id:str) -> Optional[LeagueRaceRaw]:
+        mongo_dict = self.collection.find_one({"_id": ObjectId(model_id)})
 
-        if race_league_model is None:
+        if mongo_dict is None:
             return None
 
-        raw_race_info_model:RaceInfoRawModel = self.__race_info_repository.get_raw_by_id(race_league_model.race_row_id)
-        all_runner_race_data_models:List[RunnerRaceDataModel] = self.__runner_race_data_repository.get_all()
+        race_league_entity:RaceLeagueEntity = RaceLeagueEntity(**mongo_dict)
 
-        raw_race_league_model: RaceLeagueRawModel = RaceLeagueRawModel()
-        raw_race_league_model.id = race_league_model.id
-        raw_race_league_model.order = race_league_model.order
-        raw_race_league_model.race_info = raw_race_info_model
+        raw_race_league: LeagueRaceRaw = LeagueRaceRaw()
+        raw_race_league.id = race_league_entity.id
+        raw_race_league.order = race_league_entity.order
 
-        for runners_id in race_league_model.ranking:
-            for runner_race_data_model in all_runner_race_data_models:
-                if runners_id == runner_race_data_model.id:
-                    raw_race_league_model.runners.append(runner_race_data_model)
+        raw_race_info_model:RaceInfoRawModel = self.__race_info_repository.get_all_raw(race_league_entity.race_info_id)
 
-        return raw_race_league_model
+        if raw_race_info_model is not None:
+            raw_race_league.url = raw_race_info_model.url
+            raw_race_league.processed = raw_race_info_model.processed
+            raw_race_league.platform = raw_race_info_model.platform
+            raw_race_league.race_data = raw_race_info_model.race_data
+
+        return raw_race_league

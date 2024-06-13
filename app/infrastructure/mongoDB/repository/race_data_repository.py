@@ -1,12 +1,12 @@
 from typing import List, Optional
 from app.domain.model.race_data_model import RaceDataRawModel, RaceDataModel, RunnerRaceDataModel
-from app.domain.repository.igeneric_repository import IGenericRepository
 from app.infrastructure.mongoDB.model.race_data_entity import RaceDataEntity
 from app.infrastructure.mongoDB.repository.mongo_db_repository import MongoDBRepository
+from app.infrastructure.mongoDB.repository.runner_race_data_repository import RunnerRaceDataRepository
 
 
 class RaceDataRepository(MongoDBRepository):
-    def __init__(self, runner_race_data_repository:IGenericRepository):
+    def __init__(self, runner_race_data_repository:RunnerRaceDataRepository):
         super().__init__('race_data', RaceDataEntity, RaceDataModel)
         self.__runner_race_data_repository = runner_race_data_repository
 
@@ -17,7 +17,8 @@ class RaceDataRepository(MongoDBRepository):
         all_raw_race_data_model: List[RaceDataRawModel] = []
 
         for race_data_model in all_race_data_model:
-            raw_race_data_model:RaceDataRawModel = RaceDataRawModel(id=race_data_model.id)
+            raw_race_data_model:RaceDataRawModel = RaceDataRawModel()
+            raw_race_data_model.id = race_data_model.id
 
             for runner_id in race_data_model.runner_ids:
                 for runner_race_data_model in all_runner_race_data_models:
@@ -32,7 +33,8 @@ class RaceDataRepository(MongoDBRepository):
         race_data_model:RaceDataModel = self.get_by_id(model_id)
         all_runner_race_data_models:List[RunnerRaceDataModel] = self.__runner_race_data_repository.get_all()
 
-        raw_race_data_model:RaceDataRawModel = RaceDataRawModel(id=race_data_model.id)
+        raw_race_data_model:RaceDataRawModel = RaceDataRawModel()
+        raw_race_data_model.id = race_data_model.id
 
         for runner_id in race_data_model.runner_ids:
             for runner_race_data_model in all_runner_race_data_models:
