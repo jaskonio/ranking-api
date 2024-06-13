@@ -59,7 +59,7 @@ class LeagueService(BaseService):
                 for runner_participant in runner_participants:
                     if runner.finished and runner.dorsal == runner_participant.dorsal:
                         runner.id = runner_participant.id
-                        runner.photo_url = runner_participant.photo_url
+                        runner.photo_url = '' if runner_participant.photo_url is None else runner_participant.photo_url
                         runners_in_league.append(runner)
             league_updated.add_race(race_league_raw_model.race_info.id, runners_in_league)
         
