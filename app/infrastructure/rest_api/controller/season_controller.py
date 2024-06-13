@@ -31,6 +31,13 @@ class SeasonController(BaseController):
         try:
             results = self.base_service.get_all_raw()
             results = [SeasonRawResponse().create_by_domain_model(result) for result in results]
+
+            new_results_ordered = sorted(results, key=operator.attrgetter('order'), reverse=True)
+            for s in new_results_ordered:
+                if s.order == -1:
+                    new_results_ordered.remove(s)
+                    new_results_ordered.insert(0, s)
+
             return CustomStaticJSONResponse.success(data=results)
         except Exception as exception_error:
             self.logger.error("Error retrieving all items: %s", exception_error)

@@ -1,15 +1,8 @@
 from typing import Optional
-from app.infrastructure.mongoDB.model.base_entity_property import BaseEntityProperty
+from app.infrastructure.mongoDB.model.participant_league_entity import ParticipantLeagueEntity
 
 
-class ParticipantRankingEntityProperty(BaseEntityProperty):
-    person_id: Optional[str]
-    first_name: Optional[str]
-    last_name: Optional[str]
-    gender: Optional[str]
-    photo_url: Optional[str]
-    dorsal: Optional[int]
-    category: Optional[str]
+class ParticipantRankingEntityProperty(ParticipantLeagueEntity):
     is_disqualified: Optional[bool]
     position: Optional[int]
     points: Optional[float]

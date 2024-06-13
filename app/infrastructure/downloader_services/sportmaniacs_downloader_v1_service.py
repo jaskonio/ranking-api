@@ -2,8 +2,8 @@ import logging
 import re
 import requests
 from typing import List
+from app.domain.model.race_data_model import RunnerRaceDataModel
 from app.domain.model.race_info_model import RaceInfoModel
-from app.domain.model.runner_race_data_model import RunnerRaceDataModel
 from app.domain.repository.idownloader_service import IDownloaderService
 from app.domain.services.UtilsRunner import strtobool
 

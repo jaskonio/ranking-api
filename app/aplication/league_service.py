@@ -1,11 +1,7 @@
 import logging
 from typing import Dict, List
 from app.aplication.base_service import BaseService
-from app.domain.model.league_model import League, LeagueModel, LeagueRAWModel
-from app.domain.model.participant_league_model import ParticipantLeagueModel
-from app.domain.model.participant_ranking_model import ParticipantRankingModel
-from app.domain.model.race_league_model import RaceLeagueRawModel
-from app.domain.model.ranking_league_model import RankingLeagueModel
+from app.domain.model.league_model import League, LeagueModel, LeagueRaw
 from app.infrastructure.mongoDB.repository.ranking_league_repository import RankingLeagueRepository
 
 
@@ -15,8 +11,8 @@ class LeagueService(BaseService):
         self.logger = logging.getLogger(__name__)
         self.__ranking_league_repository = ranking_league_repository
 
-    def run_process(self, league_id:str) -> LeagueRAWModel:
-        league_raw_model:LeagueRAWModel = self.get_raw_by_id(league_id)
+    def run_process(self, league_id:str) -> LeagueRaw:
+        league_raw_model:LeagueRaw = self.get_raw_by_id(league_id)
         league_model:LeagueModel = self.get_by_id(league_id)
 
         race_league_raw_models:List[RaceLeagueRawModel] = list(sorted(league_raw_model.races, key=lambda x: x.order))

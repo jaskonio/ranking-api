@@ -1,14 +1,8 @@
 from typing import Optional
-from app.infrastructure.mongoDB.model.base_mongo_entity import BaseMongoEntity
+from app.infrastructure.mongoDB.model.person_entity import PersonEntity
 
 
-class RunnerRaceDataEntity(BaseMongoEntity):
-    first_name: Optional[str]
-    last_name: Optional[str]
-    nationality: str = ''
-    gender: str = ''
-    photo_url: str = ''
-
+class RunnerRaceDataEntity(PersonEntity):
     person_id: Optional[str]
     dorsal: Optional[int]
     club: Optional[str]

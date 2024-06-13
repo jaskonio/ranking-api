@@ -1,8 +1,7 @@
 from typing import List
 from app.aplication.base_service import BaseService
-from app.domain.model.race_data_model import RaceDataModel
+from app.domain.model.race_data_model import RaceDataModel, RunnerRaceDataModel
 from app.domain.model.race_info_model import RaceInfoModel
-from app.domain.model.runner_race_data_model import RunnerRaceDataModel
 from app.domain.repository.igeneric_repository import IGenericRepository
 from app.domain.services.downloader_runners_service import DownloaderRunnersService
 

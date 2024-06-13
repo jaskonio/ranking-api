@@ -7,3 +7,4 @@ class ParticipantLeagueEntity(PersonEntity):
     dorsal: Optional[int]
     category: Optional[str]
     disqualified_order_race: Optional[int] = -1
+    unique_dorsal = True

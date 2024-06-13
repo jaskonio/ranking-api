@@ -1,8 +1,8 @@
 from app.aplication.base_service import BaseService
-from app.aplication.league_service import LeagueService
+# from app.aplication.league_service import LeagueService
 from app.aplication.race_info_service import RaceInfoService
 from app.domain.model.club_info_model import ClubInfoModel
-from app.domain.model.participant_league_model import ParticipantLeagueModel
+from app.domain.model.league_model import ParticipantLeagueModel
 from app.domain.model.person_model import PersonModel
 from app.domain.services.downloader_runners_service import DownloaderRunnersService
 from app.infrastructure.cloud.aws_repository import AWS_Repository
@@ -36,11 +36,11 @@ season_repository = SeassonRepository(league_repository)
 
 # club_service = BaseService(club_info_repository, PersonModel, ClubInfoEntity)
 person_service = BaseService(person_repository)
-participant_league_service = BaseService(participant_league_repository)
-ranking_league_service = BaseService(ranking_league_repository)
-race_league_service = BaseService(race_league_repository)
-seasson_service = BaseService(season_repository)
+# participant_league_service = BaseService(participant_league_repository)
+# ranking_league_service = BaseService(ranking_league_repository)
+# race_league_service = BaseService(race_league_repository)
+# seasson_service = BaseService(season_repository)
 
 downloader_runners_service = DownloaderRunnersService(club_info_repository)
 race_info_service = RaceInfoService(race_info_repository, downloader_runners_service, race_data_repository, runner_race_data_repository)
-league_service = LeagueService(league_repository, ranking_league_repository)
+# league_service = LeagueService(league_repository, ranking_league_repository)

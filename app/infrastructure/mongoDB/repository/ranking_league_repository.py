@@ -1,6 +1,6 @@
 from typing import List
+from app.domain.model.league_model import RankingLeagueModel
 from app.domain.model.person_model import PersonModel
-from app.domain.model.ranking_league_model import RankingLeagueModel
 from app.infrastructure.mongoDB.model.person_entity import PersonEntity
 from app.infrastructure.mongoDB.model.ranking_league_entity import RankingLeagueEntity
 from app.infrastructure.mongoDB.repository.mongo_db_repository import MongoDBRepository

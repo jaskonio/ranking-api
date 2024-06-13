@@ -1,22 +1,38 @@
 from typing import Dict, List, Optional
 from app.domain.model.base_object_model import BaseModel
-from app.domain.model.participant_league_model import ParticipantLeagueModel
-from app.domain.model.participant_ranking_model import ParticipantRankingModel
-from app.domain.model.race_league_model import RaceLeagueRawModel
-from app.domain.model.ranking_league_model import RankingLeagueModel
-from app.domain.model.runner_race_data_model import RunnerRaceDataModel
+from app.domain.model.person_model import PersonModel
+from app.domain.model.race_data_model import RunnerRaceDataModel
+from app.domain.model.race_info_model import RaceInfoModel, RaceInfoRawModel
 
-class LeagueRaceInfo(BaseModel):
-    name: str
+class LeagueRaceInfo(RaceInfoModel):
     order: int
-    runner_ids: Optional[List[str]]
-    race_info_id: str
-    
-class RunnerParticipantLeague(BaseModel):
+
+class LeagueRaceRaw(RaceInfoRawModel):
+    order: int
+
+class ParticipantLeagueModel(PersonModel):
     person_id: Optional[str]
     dorsal: Optional[int]
     category: Optional[str]
-    disqualified_order_race: Optional[int]
+    disqualified_order_race: Optional[int] = -1
+    unique_dorsal = True
+
+class ParticipantRankingModel(ParticipantLeagueModel):
+    is_disqualified: bool = False
+    position: int = 0
+    points: float = 0
+    pos_last_race: int = 0
+    top_five: int = 0
+    participations: int = 0
+    best_position: str = ''
+    last_position_race: int = 0
+    best_avegare_peace: str = ''
+    best_position_real: int = 0
+
+class RankingLeagueModel(BaseModel):
+    id: str = ''
+    order: Optional[int]
+    data: Optional[List[ParticipantRankingModel]]
 
 class LeagueModel(BaseModel):
     id:str = ''
@@ -27,11 +43,11 @@ class LeagueModel(BaseModel):
     ranking_id: Optional[str]
     history_ranking_ids: Optional[List[str]]
 
-class LeagueRAWModel(BaseModel):
+class LeagueRaw(BaseModel):
     id:str = ''
     name: str = ''
     order: int = 0
-    races: List[RaceLeagueRawModel] = []
+    races: List[LeagueRaceRaw] = []
     runner_participants: List[ParticipantLeagueModel] = []
     ranking_latest: RankingLeagueModel = []
     history_ranking: List[RankingLeagueModel] = []

@@ -20,12 +20,13 @@ class SeassonRepository(MongoDBRepository):
             raw_season_model:SeasonRawModel = SeasonRawModel()
             raw_season_model.id = season_model.id
             raw_season_model.name = season_model.name
+            raw_season_model.order = season_model.order
 
             for raw_league_model in all_raw_league_models:
                 if raw_league_model.id in season_model.league_ids:
                     raw_season_model.leagues.append(raw_league_model)
 
-            all_raw_season_models.append(season_model)
+            all_raw_season_models.append(raw_season_model)
 
         return all_raw_season_models
 

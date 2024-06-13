@@ -1,9 +1,7 @@
 from typing import List, Optional
-from app.domain.model.race_data_model import RaceDataRawModel, RaceDataModel
-from app.domain.model.runner_race_data_model import RunnerRaceDataModel
+from app.domain.model.race_data_model import RaceDataRawModel, RaceDataModel, RunnerRaceDataModel
 from app.domain.repository.igeneric_repository import IGenericRepository
 from app.infrastructure.mongoDB.model.race_data_entity import RaceDataEntity
-from app.infrastructure.mongoDB.model.runner_race_data_entity import RunnerRaceDataEntity
 from app.infrastructure.mongoDB.repository.mongo_db_repository import MongoDBRepository
 
 

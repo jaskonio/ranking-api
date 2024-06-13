@@ -1,6 +1,7 @@
 from typing import List, Optional
 from pydantic import BaseModel
 from app.infrastructure.mongoDB.model.base_mongo_entity import BaseMongoEntity
+from app.infrastructure.mongoDB.model.participant_league_entity import ParticipantLeagueEntity
 
 class RaceLeagueInfo(BaseModel):
     name: str
@@ -8,16 +9,10 @@ class RaceLeagueInfo(BaseModel):
     runner_ids: Optional[List[str]]
     race_info_id: str
 
-class ParticipantLeague(BaseModel):
-    person_id: Optional[str]
-    dorsal: Optional[int]
-    category: Optional[str]
-    disqualified_order_race: Optional[int] = -1
-
 class LeagueEntity(BaseMongoEntity):
     name: Optional[str]
     order: Optional[int]
     races: Optional[List[RaceLeagueInfo]]
-    runner_participants: Optional[List[ParticipantLeague]]
+    runner_participants: Optional[List[ParticipantLeagueEntity]]
     ranking_id: Optional[str]
     history_ranking_ids: Optional[List[str]]

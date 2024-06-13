@@ -2,11 +2,10 @@ import logging
 import re
 import requests
 from typing import List
-from app.domain.model.person_model import PersonModel
+from app.domain.model.race_data_model import RunnerRaceDataModel
 from app.domain.model.race_info_model import RaceInfoModel
-from app.domain.model.runner_race_data_model import RunnerRaceDataModel
 from app.domain.repository.idownloader_service import IDownloaderService
-from app.domain.services.UtilsRunner import average_to_format_string, strtobool, time_seconds_to_string_format
+from app.domain.services.UtilsRunner import average_to_format_string, time_seconds_to_string_format
 
 
 class SportmaniacsDownloaderV2Service(IDownloaderService):
