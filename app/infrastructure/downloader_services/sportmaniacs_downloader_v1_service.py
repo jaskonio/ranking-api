@@ -1,3 +1,4 @@
+import logging
 import re
 import requests
 from typing import List
@@ -9,26 +10,30 @@ from app.domain.services.UtilsRunner import strtobool
 
 class SportmaniacsDownloaderV1Service(IDownloaderService):
     def __init__(self, race_info:RaceInfoModel, club_names:List[str]):
+        self.logger = logging.getLogger(__name__)
         self.race_info = race_info
         self.club_names = club_names
 
     def get_data(self):
-        reponse_json = self.__request(self.race_info)
+        try:
+            reponse_json = self.__request(self.race_info)
 
-        if 'data' not in reponse_json:
-            return []
+            if 'data' not in reponse_json:
+                return []
 
-        if 'Rankings' not in reponse_json['data']:
-            return []
-        
-        race_data:List[RunnerRaceDataModel] = self.__build_runners_model(reponse_json['data']['Rankings'])
-
-        return race_data
+            if 'Rankings' not in reponse_json['data']:
+                return []
+            
+            race_data:List[RunnerRaceDataModel] = self.__build_runners_model(reponse_json['data']['Rankings'])
+            return race_data
+        except Exception as exception_error:
+            self.logger.error("Error process request: ", exception_error)
+            raise TypeError(f'SportmaniacsDownloaderV1Service no supported url: {self.race_info.url}')
 
     def __request(self, race_info:RaceInfoModel):
         race_id = 'None'
 
-        pattern = r'/([a-f0-9-]{36})(?:/|$)'
+        pattern = r'([a-f0-9-]{36})'
         match = re.search(pattern, race_info.url)
         if match:
             race_id = match.group(0)
@@ -36,7 +41,6 @@ class SportmaniacsDownloaderV1Service(IDownloaderService):
         url = 'https://sportmaniacs.com/es/races/rankings/' + race_id
         response = requests.get(url, timeout=60)
         response_json = response.json()
-
         return response_json
 
     def __build_runners_model(self, runners) -> List[RunnerRaceDataModel]:

@@ -19,10 +19,10 @@ class RaceInfoService(BaseService):
     def process(self, race_id:str) -> RaceInfoModel:
         race_info_model: RaceInfoModel = self.repository.get_by_id(race_id)
 
+        runners_race_data_model:List[RunnerRaceDataModel] = self.__downloader_runners_service.get_all_runners(race_info_model)
+
         if race_info_model.race_data_id != '':
             self.__race_data_repository.delete_by_id(race_info_model.race_data_id)
-
-        runners_race_data_model:List[RunnerRaceDataModel] = self.__downloader_runners_service.get_all_runners(race_info_model)
 
         new_race_data_model = RaceDataModel()
 
