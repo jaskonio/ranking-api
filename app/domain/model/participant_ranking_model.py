@@ -12,7 +12,7 @@ class ParticipantRankingModel(BaseObjectModel):
     category: str = ''
     is_disqualified: bool = False
     position: int = 0
-    points: int = 0
+    points: float = 0
     pos_last_race: int = 0
     top_five: int = 0
     participations: int = 0

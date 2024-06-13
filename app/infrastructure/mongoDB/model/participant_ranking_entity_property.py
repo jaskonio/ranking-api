@@ -12,7 +12,7 @@ class ParticipantRankingEntityProperty(BaseEntityProperty):
     category: Optional[str]
     is_disqualified: Optional[bool]
     position: Optional[int]
-    points: Optional[int]
+    points: Optional[float]
     pos_last_race: Optional[int]
     top_five: Optional[int]
     participations: Optional[int]
