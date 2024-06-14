@@ -35,7 +35,12 @@ class LeagueRepository(MongoDBRepository):
             league_model.id = league_entity.id
             league_model.name = league_entity.name
             league_model.order = league_entity.order
+        
+            if league_entity.ranking_latest is not None:
+                league_model.ranking_latest = LeagueRanking(**league_entity.ranking_latest.dict())
 
+            if league_entity.history_rankings is not None:
+                league_model.history_ranking = [LeagueRanking(**history_ranking.dict()) for history_ranking in league_entity.history_rankings]
             
             if league_entity.race_leagues is not None:
                 for race_league in league_entity.race_leagues:
@@ -82,6 +87,12 @@ class LeagueRepository(MongoDBRepository):
         league_model.id = league_entity.id
         league_model.name = league_entity.name
         league_model.order = league_entity.order
+        
+        if league_entity.ranking_latest is not None:
+            league_model.ranking_latest = LeagueRanking(**league_entity.ranking_latest.dict())
+
+        if league_entity.history_rankings is not None:
+            league_model.history_ranking = [LeagueRanking(**history_ranking.dict()) for history_ranking in league_entity.history_rankings]
 
         if league_entity.race_leagues is not None:
             for race_league in league_entity.race_leagues:
@@ -128,15 +139,15 @@ class LeagueRepository(MongoDBRepository):
             if new_model.runner_participants is not None:
                 runner_participants = [ParticipantLeagueEntity(**runner_participant.dict()) for runner_participant in new_model.runner_participants]
 
-            rankings_final = None
+            ranking_latest = None
             if len(history_rankings) != 0:
-                rankings_final = history_rankings[-1]
+                ranking_latest = history_rankings[-1]
 
             entity:LeagueEntity = LeagueEntity(name=new_model.name,
                                                 order=new_model.order,
                                                 race_leagues=race_leagues,
                                                 runner_participants=runner_participants,
-                                                rankings_final= rankings_final,
+                                                ranking_latest= ranking_latest,
                                                 history_rankings=history_rankings)
 
             dict_update = entity.to_dict_db()

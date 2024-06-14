@@ -7,10 +7,4 @@ class SeasonModel(BaseObjectModel):
     id: str = ''
     name: Optional[str]
     order: Optional[int]
-    league_ids:Optional[List[str]]
-
-class SeasonRawModel(BaseObjectModel):
-    id: str = ''
-    name: str = ''
-    order: Optional[int]
     leagues:List[LeagueModel] = []

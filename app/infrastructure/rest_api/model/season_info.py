@@ -8,7 +8,7 @@ class SeasonResponse(BaseAPI_Model):
     id: str = ''
     name: str = ''
     order: int = 0
-    league_ids:List[str] = []
+    leagues:List[LeagueResponse] = []
 
 class SeasonRequest(BaseAPI_Model):
     name: Optional[str]

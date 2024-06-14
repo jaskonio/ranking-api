@@ -17,5 +17,5 @@ class LeagueEntity(BaseMongoEntity):
     order: Optional[int]
     race_leagues: Optional[List[RaceLeague]]
     runner_participants: Optional[List[ParticipantLeagueEntity]]
-    rankings_final: Optional[LeagueRanking]
+    ranking_latest: Optional[LeagueRanking]
     history_rankings: Optional[List[LeagueRanking]]
