@@ -8,7 +8,7 @@ from app.domain.repository.igeneric_repository import IGenericRepository
 class BaseService(IGenericService):
     def __init__(self, repository:IGenericRepository) -> None:
         self.repository = repository
-        self.logguer = logging.getLogger(__name__)
+        self.logger = logging.getLogger(__name__)
 
     def get_all(self):
         models = self.repository.get_all()
