@@ -2,6 +2,7 @@ from typing import List, Optional
 from bson import ObjectId
 from app.domain.model.league_model import LeagueRace, LeagueModel, ParticipantLeagueModel, RankingLeagueModel
 from app.domain.model.person_model import PersonModel
+from app.domain.model.race_data_model import RaceDataModel
 from app.domain.model.race_info_model import RaceModel
 from app.domain.repository.igeneric_repository import IGenericRepository
 from app.infrastructure.mongoDB.model.league_entity import LeagueEntity, LeagueRanking, RaceLeague
@@ -12,7 +13,8 @@ from app.infrastructure.mongoDB.repository.ranking_league_repository import Rank
 
 
 class LeagueRepository(MongoDBRepository):
-    def __init__(self, race_info_repository:RaceInfoRepository, person_repository:IGenericRepository,rankingLeagueRepository:RankingLeagueRepository):
+    def __init__(self, race_info_repository:RaceInfoRepository, person_repository:IGenericRepository,
+                 rankingLeagueRepository:RankingLeagueRepository):
         super().__init__('league', LeagueEntity, LeagueModel)
         self.__race_info_repository = race_info_repository
         self.__league_ranking_repository = rankingLeagueRepository
@@ -78,7 +80,7 @@ class LeagueRepository(MongoDBRepository):
         league_entity:LeagueEntity = LeagueEntity(**result_dict)
 
         persons:List[PersonModel] = self.__person_repository.get_all()
-        race_info_models:List[RaceModel] = self.__race_info_repository.get_all_raw()
+        race_info_models:List[RaceModel] = self.__race_info_repository.get_all()
         ranking_league_models: List[RankingLeagueModel] = self.__league_ranking_repository.get_all()
 
         league_model = LeagueModel()

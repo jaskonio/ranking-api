@@ -1,6 +1,6 @@
 from enum import Enum
+from typing import Optional
 from app.domain.model.base_object_model import BaseObjectModel
-from app.domain.model.race_data_model import RaceDataRawModel
 
 class Platform(str, Enum):
     SPORTMANIACS_LATEST = "SPORTMANIACS_LATEST"
@@ -15,4 +15,4 @@ class RaceModel(BaseObjectModel):
     url:str = ''
     platform:Platform = Platform.SPORTMANIACS_LATEST
     processed: bool = False
-    race_data: RaceDataRawModel = None
+    race_data_id: Optional[str]

@@ -31,8 +31,4 @@ class RunnerRaceDataModel(PersonModel):
     
 class RaceDataModel(BaseObjectModel):
     id: str = ''
-    runner_ids:List[str] = []
-
-class RaceDataRawModel(BaseObjectModel):
-    id: str = ''
     runners:List[RunnerRaceDataModel] = []

@@ -40,4 +40,4 @@ seasson_service = BaseService(season_repository)
 
 downloader_runners_service = DownloaderRunnersService(club_info_repository)
 race_info_service = RaceInfoService(race_info_repository, downloader_runners_service, race_data_repository, runner_race_data_repository)
-league_service = LeagueService(league_repository, ranking_league_repository)
+league_service = LeagueService(league_repository, ranking_league_repository, race_data_repository)
