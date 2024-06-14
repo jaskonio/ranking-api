@@ -1,14 +1,13 @@
 import logging
 from typing import List
-from app.aplication.league_service import LeagueService
-from app.domain.model.league_model import LeagueRAWModel
+from app.aplication.iservice import IGenericService
 from app.domain.model.person_model import PersonModel
 from app.infrastructure.cloud.aws_repository import AWS_Repository
 from app.infrastructure.rest_api.controller.base_controller import BaseController
 from app.infrastructure.rest_api.model.custom_responses import CustomStaticJSONResponse
 
 class PersonController(BaseController):
-    def __init__(self, person_service:LeagueService, api_model, domain_model, image_service: AWS_Repository):
+    def __init__(self, person_service:IGenericService, api_model, domain_model, image_service: AWS_Repository):
         super().__init__(person_service, api_model, domain_model)
         self.logger = logging.getLogger(__name__)
         self.__image_service = image_service

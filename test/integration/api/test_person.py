@@ -27,7 +27,7 @@ person_json_schema = {
             "required": ["status_code", "status", "message", "data"]
         }
 
-class TestAPI(unittest.TestCase):
+class TestPersonsAPI(unittest.TestCase):
     def setUp(self):
         # Configurar la aplicación para pruebas
         self.app = TestClient(start_application())

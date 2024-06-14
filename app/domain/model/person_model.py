@@ -3,7 +3,7 @@ from app.domain.model.base_object_model import BaseObjectModel
 
 
 class PersonModel(BaseObjectModel):
-    id: str=''
+    id = ''
     first_name: Optional[str]
     last_name: Optional[str]
     gender: Optional[Literal['H', 'M']]

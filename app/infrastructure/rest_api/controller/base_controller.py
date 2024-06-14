@@ -29,7 +29,7 @@ class BaseController(IBaseController):
             if result_model_domain is None:
                 return CustomStaticJSONResponse.error(status_code=404, message=f"El ID {model_id} no se ha encontrado")
 
-            return CustomStaticJSONResponse.success(data= {"success" : True})
+            return CustomStaticJSONResponse.success(data=self.api_response_model().create_by_domain_model(result_model_domain))
         except Exception as exception_error:
             self.logger.error("Error retrieving item: %s", exception_error)
             return CustomStaticJSONResponse.invalid_request(status_code=500,errors="Error al processar la peticion")

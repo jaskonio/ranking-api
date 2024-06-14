@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends
-from app.domain.model.race_info_model import RaceInfoModel
+from app.domain.model.race_info_model import RaceModel
 from app.infrastructure.rest_api.auth.auth_bearer import JWTBearer
 from app.infrastructure.rest_api.auth.auth_handler import Roles
 from app.infrastructure.rest_api.controller.race_info_controller import RaceInfoController
@@ -9,7 +9,7 @@ from app.core.services import race_info_service
 race_info_router = APIRouter()
 
 
-controller = RaceInfoController(race_info_service, RaceInfoResponse, RaceInfoModel)
+controller = RaceInfoController(race_info_service, RaceInfoResponse, RaceModel)
 
 @race_info_router.get('/raw')
 def get_all_raw() -> SuccessJsonRaceInfoRAW_Response:

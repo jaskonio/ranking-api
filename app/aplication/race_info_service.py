@@ -1,40 +1,39 @@
 from typing import List
 from app.aplication.base_service import BaseService
-from app.domain.model.race_data_model import RaceDataModel
-from app.domain.model.race_info_model import RaceInfoModel
-from app.domain.model.runner_race_data_model import RunnerRaceDataModel
+from app.domain.model.race_data_model import RaceDataModel, RunnerRaceDataModel
+from app.domain.model.race_info_model import RaceModel
 from app.domain.repository.igeneric_repository import IGenericRepository
 from app.domain.services.downloader_runners_service import DownloaderRunnersService
+from app.infrastructure.mongoDB.repository.race_data_repository import RaceDataRepository
 
 
 class RaceInfoService(BaseService):
-    def __init__(self, repository:IGenericRepository,downloader_runners_service: DownloaderRunnersService, race_data_repository: IGenericRepository
-                 , runner_race_data_repository: IGenericRepository):
+    def __init__(self, repository:IGenericRepository,downloader_runners_service: DownloaderRunnersService, race_data_repository: RaceDataRepository):
         super().__init__(repository)
         self.__downloader_runners_service = downloader_runners_service
         self.__race_data_repository = race_data_repository
-        self.__runner_race_data_repository = runner_race_data_repository
 
     # Common
-    def process(self, race_id:str) -> RaceInfoModel:
-        race_info_model: RaceInfoModel = self.repository.get_by_id(race_id)
+    def process(self, race_id:str) -> RaceModel:
+        try:
+            race_info_model: RaceModel = self.repository.get_by_id(race_id)
 
-        runners_race_data_model:List[RunnerRaceDataModel] = self.__downloader_runners_service.get_all_runners(race_info_model)
+            runners_race_data_model:List[RunnerRaceDataModel] = self.__downloader_runners_service.get_all_runners(race_info_model)
 
-        if race_info_model.race_data_id != '':
-            self.__race_data_repository.delete_by_id(race_info_model.race_data_id)
+            if race_info_model.race_data_id != '':
+                self.__race_data_repository.delete_by_id(race_info_model.race_data_id)
 
-        new_race_data_model = RaceDataModel()
+            new_race_data_model = RaceDataModel()
+            new_race_data_model.runners = runners_race_data_model
 
-        for runner_race_data_model in runners_race_data_model:
-            new_runner_race_data_model:RunnerRaceDataModel = self.__runner_race_data_repository.add(runner_race_data_model)
-            new_race_data_model.runner_ids.append(str(new_runner_race_data_model.id))
+            new_race_data_model:RaceDataModel = self.__race_data_repository.add(new_race_data_model)
 
-        new_race_data_model:RaceDataModel = self.__race_data_repository.add(new_race_data_model)
+            race_info_model.race_data_id = str(new_race_data_model.id)
+            race_info_model.processed = True
 
-        race_info_model.race_data_id = str(new_race_data_model.id)
-        race_info_model.processed = True
+            race_info_model = self.repository.update_by_id(race_id, race_info_model)
 
-        race_info_model = self.repository.update_by_id(race_id, race_info_model)
-
-        return race_info_model
+            return race_info_model
+        except Exception as exception_error:
+            self.logger.error("Error process race. ", exception_error)
+            return None
