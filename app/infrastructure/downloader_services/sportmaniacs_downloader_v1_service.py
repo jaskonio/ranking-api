@@ -3,13 +3,13 @@ import re
 import requests
 from typing import List
 from app.domain.model.race_data_model import RunnerRaceDataModel
-from app.domain.model.race_info_model import RaceInfoModel
+from app.domain.model.race_info_model import RaceModel
 from app.domain.repository.idownloader_service import IDownloaderService
 from app.domain.services.UtilsRunner import strtobool
 
 
 class SportmaniacsDownloaderV1Service(IDownloaderService):
-    def __init__(self, race_info:RaceInfoModel, club_names:List[str]):
+    def __init__(self, race_info:RaceModel, club_names:List[str]):
         self.logger = logging.getLogger(__name__)
         self.race_info = race_info
         self.club_names = club_names
@@ -30,7 +30,7 @@ class SportmaniacsDownloaderV1Service(IDownloaderService):
             self.logger.error("Error process request: ", exception_error)
             raise TypeError(f'SportmaniacsDownloaderV1Service no supported url: {self.race_info.url}')
 
-    def __request(self, race_info:RaceInfoModel):
+    def __request(self, race_info:RaceModel):
         race_id = 'None'
 
         pattern = r'([a-f0-9-]{36})'

@@ -1,7 +1,7 @@
 import logging
 from typing import Dict, List
 from app.aplication.base_service import BaseService
-from app.domain.model.league_model import League, LeagueModel, LeagueRaceRaw, LeagueRaw, ParticipantLeagueModel, RankingLeagueModel
+from app.domain.model.league_model import League, LeagueRace, LeagueModel, ParticipantLeagueModel, RankingLeagueModel
 from app.infrastructure.mongoDB.repository.ranking_league_repository import RankingLeagueRepository
 
 
@@ -11,11 +11,11 @@ class LeagueService(BaseService):
         self.logger = logging.getLogger(__name__)
         self.__ranking_league_repository = ranking_league_repository
 
-    def run_process(self, league_id:str) -> LeagueRaw:
-        league_raw_model:LeagueRaw = self.get_raw_by_id(league_id)
-        league_model:LeagueModel = self.get_by_id(league_id)
+    def run_process(self, league_id:str) -> LeagueModel:
+        league_raw_model:LeagueModel = self.get_raw_by_id(league_id)
+        league_model = self.get_by_id(league_id)
 
-        race_league_raw_models:List[LeagueRaceRaw] = list(sorted(league_raw_model.races, key=lambda x: x.order))
+        race_league_raw_models:List[LeagueRace] = list(sorted(league_raw_model.races, key=lambda x: x.order))
 
         for history_ranking in league_raw_model.history_ranking:
             self.__ranking_league_repository.delete_by_id(history_ranking.id)
@@ -46,7 +46,7 @@ class LeagueService(BaseService):
 
         return self.get_raw_by_id(league_id)
 
-    def build_rankings(self, race_league_raw_models:List[LeagueRaceRaw], runner_participants:List[ParticipantLeagueModel]):
+    def build_rankings(self, race_league_raw_models:List[LeagueRace], runner_participants:List[ParticipantLeagueModel]):
         league_updated = League()
         
         for race_league_raw_model in race_league_raw_models:

@@ -2,7 +2,7 @@ import logging
 from typing import List
 from app.domain.model.club_info_model import ClubInfoModel
 from app.domain.model.race_data_model import RunnerRaceDataModel
-from app.domain.model.race_info_model import Platform, RaceInfoModel
+from app.domain.model.race_info_model import Platform, RaceModel
 from app.domain.repository.idownloader_service import IDownloaderService
 from app.domain.repository.igeneric_repository import IGenericRepository
 from app.infrastructure.downloader_services.sportmaniacs_downloader_v1_service import SportmaniacsDownloaderV1Service
@@ -26,7 +26,7 @@ class DownloaderRunnersService:
 
         return club_info_model_names
 
-    def get_all_runners(self, race_info_simplified_model: RaceInfoModel) -> List[RunnerRaceDataModel]:
+    def get_all_runners(self, race_info_simplified_model: RaceModel) -> List[RunnerRaceDataModel]:
         try:
             dowloader_service:IDownloaderService = None
             club_names = self.get_club_names()

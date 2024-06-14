@@ -4,5 +4,4 @@ from app.infrastructure.mongoDB.model.participant_ranking_entity_property import
 
 
 class RankingLeagueEntity(BaseMongoEntity):
-    order: Optional[int]
     data: Optional[List[ParticipantRankingEntityProperty]]

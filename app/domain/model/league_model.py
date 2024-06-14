@@ -2,13 +2,10 @@ from typing import Dict, List, Optional
 from app.domain.model.base_object_model import BaseModel
 from app.domain.model.person_model import PersonModel
 from app.domain.model.race_data_model import RunnerRaceDataModel
-from app.domain.model.race_info_model import RaceInfoModel, RaceInfoRawModel
+from app.domain.model.race_info_model import RaceModel
 
-class LeagueRaceInfo(RaceInfoModel):
-    order: int
-
-class LeagueRaceRaw(RaceInfoRawModel):
-    order: int
+class LeagueRace(RaceModel):
+    order: int = 0
 
 class ParticipantLeagueModel(PersonModel):
     person_id: Optional[str]
@@ -31,26 +28,19 @@ class ParticipantRankingModel(ParticipantLeagueModel):
 
 class RankingLeagueModel(BaseModel):
     id: str = ''
-    order: Optional[int]
     data: Optional[List[ParticipantRankingModel]]
+
+class LeagueRanking(RankingLeagueModel):
+    order: int = 0
 
 class LeagueModel(BaseModel):
     id:str = ''
     name: str = ''
-    order: Optional[int]
-    races: Optional[List[LeagueRaceInfo]]
-    runner_participants: Optional[List[ParticipantLeagueModel]]
-    ranking_id: Optional[str]
-    history_ranking_ids: Optional[List[str]]
-
-class LeagueRaw(BaseModel):
-    id:str = ''
-    name: str = ''
     order: int = 0
-    races: List[LeagueRaceRaw] = []
+    races: List[LeagueRace] = []
     runner_participants: List[ParticipantLeagueModel] = []
-    ranking_latest: RankingLeagueModel = []
-    history_ranking: List[RankingLeagueModel] = []
+    ranking_latest: LeagueRanking = []
+    history_ranking: List[LeagueRanking] = []
 
 class League:
     def __init__(self):

@@ -1,7 +1,7 @@
 from typing import List
 from app.aplication.base_service import BaseService
 from app.domain.model.race_data_model import RaceDataModel, RunnerRaceDataModel
-from app.domain.model.race_info_model import RaceInfoModel
+from app.domain.model.race_info_model import RaceModel
 from app.domain.repository.igeneric_repository import IGenericRepository
 from app.domain.services.downloader_runners_service import DownloaderRunnersService
 
@@ -15,8 +15,8 @@ class RaceInfoService(BaseService):
         self.__runner_race_data_repository = runner_race_data_repository
 
     # Common
-    def process(self, race_id:str) -> RaceInfoModel:
-        race_info_model: RaceInfoModel = self.repository.get_by_id(race_id)
+    def process(self, race_id:str) -> RaceModel:
+        race_info_model: RaceModel = self.repository.get_by_id(race_id)
 
         runners_race_data_model:List[RunnerRaceDataModel] = self.__downloader_runners_service.get_all_runners(race_info_model)
 

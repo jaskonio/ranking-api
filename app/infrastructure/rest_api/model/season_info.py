@@ -1,7 +1,7 @@
 from typing import List, Optional
 from app.infrastructure.rest_api.model.base_api_model import BaseAPI_Model
 from app.infrastructure.rest_api.model.custom_responses import BaseSuccessJsonResponse
-from app.infrastructure.rest_api.model.league_model import LeagueRawResponse
+from app.infrastructure.rest_api.model.league_model import LeagueResponse
 
 
 class SeasonResponse(BaseAPI_Model):
@@ -19,7 +19,7 @@ class SeasonRawResponse(BaseAPI_Model):
     id:str = ''
     name:str = ''
     order:int = 0
-    leagues:List[LeagueRawResponse] = []
+    leagues:List[LeagueResponse] = []
 
 class SuccessJsonSeasonResponse(BaseSuccessJsonResponse):
     data: SeasonResponse

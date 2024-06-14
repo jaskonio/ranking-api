@@ -9,15 +9,7 @@ class Platform(str, Enum):
     VALENCIACIUDADDELRUNNING_LATEST = "VALENCIACIUDADDELRUNNING_LATEST"
     TOPRUN_LATEST = "TOPRUN_LATEST"
 
-class RaceInfoModel(BaseObjectModel):
-    id:str = ''
-    name:str = ''
-    url:str = ''
-    platform:Platform = Platform.SPORTMANIACS_LATEST
-    processed: bool
-    race_data_id: str = ''
-
-class RaceInfoRawModel(BaseObjectModel):
+class RaceModel(BaseObjectModel):
     id:str = ''
     name:str = ''
     url:str = ''

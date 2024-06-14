@@ -1,7 +1,7 @@
 import logging
 from typing import List
 from app.aplication.race_info_service import RaceInfoService
-from app.domain.model.race_info_model import RaceInfoRawModel
+from app.domain.model.race_info_model import RaceModel
 from app.infrastructure.rest_api.controller.base_controller import BaseController
 from app.infrastructure.rest_api.model.custom_responses import CustomStaticJSONResponse
 from app.infrastructure.rest_api.model.race_info import RaceInfoRAW_Response, RaceInfoResponse
@@ -24,7 +24,7 @@ class RaceInfoController(BaseController):
 
     def get_raw_by_id(self, race_id: str) -> RaceInfoRAW_Response:
         try:
-            result:RaceInfoRawModel = self.base_service.get_raw_by_id(race_id)
+            result:RaceModel = self.base_service.get_raw_by_id(race_id)
             data_response = RaceInfoRAW_Response().create_by_domain_model(result)
 
             if data_response is None:

@@ -1,9 +1,10 @@
 from typing import List, Optional
+from app.domain.model.league_model import LeagueRace
 from app.infrastructure.rest_api.model.base_api_model import BaseAPI_Model
 from app.infrastructure.rest_api.model.custom_responses import BaseSuccessJsonResponse
 
 
-class LeagueRaceInfo(BaseAPI_Model):
+class LeagueRaceRequest(BaseAPI_Model):
     order: int
     race_info_id: str
 
@@ -18,34 +19,19 @@ class LeagueResponse(BaseAPI_Model):
     id: str = ''
     name: str = ''
     order: int = 0
-    races: List[LeagueRaceInfo] = []
-    runner_participants = []
-    ranking_id: str = ''
-    history_ranking_ids: List[str] = []
-
-class LeagueRequest(BaseAPI_Model):
-    name: Optional[str]
-    order: Optional[int]
-    races: Optional[List[LeagueRaceInfo]]
-    runner_participants: Optional[List[ParticipantLeague]]
-
-class LeagueRawResponse(BaseAPI_Model):
-    id: str = ''
-    name: str = ''
-    order: int = 0
     races = []
     runner_participants = []
     ranking_latest = {}
     history_ranking = []
 
+class LeagueRequest(BaseAPI_Model):
+    name: Optional[str]
+    order: Optional[int]
+    races: Optional[List[LeagueRaceRequest]]
+    runner_participants: Optional[List[ParticipantLeague]]
+
 class SuccessJsonLeagueResponse(BaseSuccessJsonResponse):
     data: LeagueResponse
 
-class SuccessJsonLeagueRawResponse(BaseSuccessJsonResponse):
-    data: LeagueRawResponse
-
 class SuccessJsonLeaguesResponse(BaseSuccessJsonResponse):
     data: List[LeagueResponse]
-
-class SuccessJsonLeaguesRawResponse(BaseSuccessJsonResponse):
-    data: List[LeagueRawResponse]

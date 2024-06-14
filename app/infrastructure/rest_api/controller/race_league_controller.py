@@ -1,13 +1,13 @@
 import logging
 from typing import List
-from app.domain.model.league_model import LeagueRaceInfo
+from app.domain.model.league_model import LeagueRace
 from app.infrastructure.rest_api.controller.base_controller import BaseController
 from app.infrastructure.rest_api.model.race_league_model import RaceLeagueRawResponse, RaceLeagueResponse
 
 
 class RaceLeagueController(BaseController):
     def __init__(self, race_league_repository, race_league_service):
-        super().__init__(race_league_repository, RaceLeagueResponse, LeagueRaceInfo)
+        super().__init__(race_league_repository, RaceLeagueResponse, LeagueRace)
         self.__race_league_service = race_league_service
         self.logger = logging.getLogger(__name__)
 

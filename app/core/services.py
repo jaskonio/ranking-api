@@ -28,10 +28,10 @@ race_data_repository = RaceDataRepository(runner_race_data_repository)
 race_info_repository = RaceInfoRepository(race_data_repository)
 
 participant_league_repository = MongoDBRepository('participant_league', ParticipantLeagueEntity, ParticipantLeagueModel)
-
+ 
 ranking_league_repository = RankingLeagueRepository()
 race_league_repository = RaceLeagueRepository(race_info_repository)
-league_repository = LeagueRepository(race_info_repository, person_repository)
+league_repository = LeagueRepository(race_info_repository, person_repository, race_league_repository, ranking_league_repository)
 season_repository = SeassonRepository(league_repository)
 
 # club_service = BaseService(club_info_repository, PersonModel, ClubInfoEntity)
