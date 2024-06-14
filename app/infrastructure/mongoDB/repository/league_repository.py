@@ -4,22 +4,19 @@ from app.domain.model.league_model import LeagueRace, LeagueModel, ParticipantLe
 from app.domain.model.person_model import PersonModel
 from app.domain.model.race_info_model import RaceModel
 from app.domain.repository.igeneric_repository import IGenericRepository
-from app.infrastructure.mongoDB.model.league_entity import LeagueEntity, LeagueRanking
+from app.infrastructure.mongoDB.model.league_entity import LeagueEntity, LeagueRanking, RaceLeague
 from app.infrastructure.mongoDB.model.participant_league_entity import ParticipantLeagueEntity
-from app.infrastructure.mongoDB.model.race_league_entity import RaceLeagueEntity
 from app.infrastructure.mongoDB.repository.mongo_db_repository import MongoDBRepository
 from app.infrastructure.mongoDB.repository.race_info_repository import RaceInfoRepository
-from app.infrastructure.mongoDB.repository.race_league_repository import RaceLeagueRepository
 from app.infrastructure.mongoDB.repository.ranking_league_repository import RankingLeagueRepository
 
 
 class LeagueRepository(MongoDBRepository):
-    def __init__(self, race_info_repository:RaceInfoRepository, person_repository:IGenericRepository, race_league_repository:RaceLeagueRepository,rankingLeagueRepository:RankingLeagueRepository):
+    def __init__(self, race_info_repository:RaceInfoRepository, person_repository:IGenericRepository,rankingLeagueRepository:RankingLeagueRepository):
         super().__init__('league', LeagueEntity, LeagueModel)
         self.__race_info_repository = race_info_repository
         self.__league_ranking_repository = rankingLeagueRepository
         self.__person_repository = person_repository
-        self.__race_league_repository = race_league_repository
 
     def get_all(self) -> List[LeagueModel]:
         result_dict = list(self.collection.find({}))
@@ -119,19 +116,22 @@ class LeagueRepository(MongoDBRepository):
 
     def update_by_id(self, model_id:str, new_model:LeagueModel) -> Optional[LeagueModel]:
         try:
-            race_leagues: List[RaceLeagueEntity]= []
+            race_leagues: List[RaceLeague]= []
             
-            # for race in new_model.races:
-            #     race_id = self.__race_league_repository.add(race)
-            #     new_race_league = RaceLeagueEntity(race_info_id=race_id, order=race.order)
-            #     race_leagues.append(new_race_league)
+            for race in new_model.races:
+                race_leagues.append(RaceLeague(race_info_id=race.id, order=race.order))
 
             history_rankings:List[LeagueRanking] = []
 
             # for ranking in new_model.history_ranking:
             #     ranking_id = self.__league_ranking_repository.add(ranking)
             #     history_rankings.append(LeagueRanking(order=ranking.order, ranking_id=ranking_id))
- 
+
+            runner_participants:List[ParticipantLeagueEntity] = []
+
+            for runner_participant in new_model.runner_participants:
+                runner_participants.append(ParticipantLeagueEntity(**runner_participant.dict()))
+
             last_ranking_id = None
             if len(history_rankings) != 0:
                 last_ranking_id = history_rankings[-1]
@@ -139,7 +139,7 @@ class LeagueRepository(MongoDBRepository):
             entity:LeagueEntity = LeagueEntity(name=new_model.name,
                                                 order=new_model.order,
                                                 race_leagues=race_leagues,
-                                                runner_participants= [],
+                                                runner_participants=runner_participants,
                                                 ranking= last_ranking_id,
                                                 history_rankings=history_rankings)
 
