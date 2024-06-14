@@ -9,13 +9,16 @@ from app.infrastructure.mongoDB.repository.ranking_league_repository import Rank
 
 
 class LeagueRepository(MongoDBRepository):
-    def __init__(self, race_info_repository:IGenericRepository):
+    def __init__(self, race_info_repository:IGenericRepository, person_repository:IGenericRepository):
         super().__init__('league', LeagueEntity, LeagueModel)
         self.__race_info_repository = race_info_repository
         self.__league_ranking_repository = RankingLeagueRepository()
+        self.__person_repository = person_repository
 
     def get_all_raw(self) -> List[LeagueRaw]:
         league_models: List[LeagueModel] = self.get_all()
+
+        persons:List[PersonModel] = self.__person_repository.get_all()
 
         race_info_raw_models:List[RaceInfoRawModel] = self.__race_info_repository.get_all_raw()
         ranking_league_raw_models: List[RankingLeagueModel] = self.__league_ranking_repository.get_all()
@@ -27,6 +30,17 @@ class LeagueRepository(MongoDBRepository):
             league_raw_model.id = league_model.id
             league_raw_model.name = league_model.name
             league_raw_model.order = league_model.order
+            
+            # runner_participant_updated = []
+            for runner_participant in league_model.runner_participants:
+                for person in persons:
+                    if person.id == runner_participant.person_id:
+                        runner_participant.id = person.id
+                        runner_participant.first_name = person.first_name
+                        runner_participant.last_name = person.last_name
+                        runner_participant.gender = person.gender
+                        runner_participant.photo_url = person.photo_url
+
             league_raw_model.runner_participants = league_model.runner_participants
 
             # for race_league_raw_model in race_info_raw_models:
