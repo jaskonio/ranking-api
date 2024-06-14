@@ -66,7 +66,7 @@ class SportmaniacsDownloaderV1Service(IDownloaderService):
         runner.dorsal = row["dorsal"] if "dorsal" in row else None
         runner.category = row["category"] if "category" in row else None
         runner.club = row["club"] if "club" in row else None
-        runner.nationality = row["nationality"] if "nationality" in row else None
+        # runner.nationality = row["nationality"] if "nationality" in row else None
         runner.finished = strtobool(row["finishedRace"]) if "finishedRace" in row else None
 
         if "pos" in row:
@@ -109,8 +109,8 @@ class SportmaniacsDownloaderV1Service(IDownloaderService):
         gender_value = ''
 
         if gender_string == 'gender_0':
-            gender_value = 'Masculino'
+            gender_value = 'H'
         else:
-            gender_value = 'Femenino'
+            gender_value = 'M'
 
         return gender_value

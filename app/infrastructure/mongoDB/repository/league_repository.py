@@ -1,6 +1,6 @@
 from typing import List, Optional
 from bson import ObjectId
-from app.domain.model.league_model import LeagueRace, LeagueModel, ParticipantLeagueModel, RankingLeagueModel
+from app.domain.model.league_model import LeagueRace, LeagueModel, ParticipantLeagueModel
 from app.domain.model.person_model import PersonModel
 from app.domain.model.race_data_model import RaceDataModel
 from app.domain.model.race_info_model import RaceModel
@@ -9,15 +9,12 @@ from app.infrastructure.mongoDB.model.league_entity import LeagueEntity, LeagueR
 from app.infrastructure.mongoDB.model.participant_league_entity import ParticipantLeagueEntity
 from app.infrastructure.mongoDB.repository.mongo_db_repository import MongoDBRepository
 from app.infrastructure.mongoDB.repository.race_info_repository import RaceInfoRepository
-from app.infrastructure.mongoDB.repository.ranking_league_repository import RankingLeagueRepository
 
 
 class LeagueRepository(MongoDBRepository):
-    def __init__(self, race_info_repository:RaceInfoRepository, person_repository:IGenericRepository,
-                 rankingLeagueRepository:RankingLeagueRepository):
+    def __init__(self, race_info_repository:RaceInfoRepository, person_repository:IGenericRepository,):
         super().__init__('league', LeagueEntity, LeagueModel)
         self.__race_info_repository = race_info_repository
-        self.__league_ranking_repository = rankingLeagueRepository
         self.__person_repository = person_repository
 
     def get_all(self) -> List[LeagueModel]:
@@ -29,8 +26,7 @@ class LeagueRepository(MongoDBRepository):
         league_entities:List[LeagueEntity] = [self.entity_type(**entity) for entity in result_dict]
 
         persons:List[PersonModel] = self.__person_repository.get_all()
-        race_info_models:List[RaceModel] = self.__race_info_repository.get_all_raw()
-        ranking_league_models: List[RankingLeagueModel] = self.__league_ranking_repository.get_all()
+        race_info_models:List[RaceModel] = self.__race_info_repository.get_all()
 
         league_models:List[LeagueModel] = []
 
@@ -58,14 +54,14 @@ class LeagueRepository(MongoDBRepository):
                             new_runner_participant = ParticipantLeagueModel(**new_runner_participant_dict)
                             league_model.runner_participants.append(new_runner_participant)
 
-            if league_entity.history_rankings is not None:
-                for history_ranking in league_entity.history_rankings:
-                    for ranking_league_model in ranking_league_models:
-                        if history_ranking.ranking_id == ranking_league_model.id:
-                            new_dict = ranking_league_model.dict()
-                            new_dict.update(history_ranking.dict())
-                            new_history_ranking = RankingLeagueModel(**new_dict)
-                            league_model.history_ranking.append(new_history_ranking)
+            # if league_entity.history_rankings is not None:
+            #     for history_ranking in league_entity.history_rankings:
+            #         for ranking_league_model in ranking_league_models:
+            #             if history_ranking.ranking_id == ranking_league_model.id:
+            #                 new_dict = ranking_league_model.dict()
+            #                 new_dict.update(history_ranking.dict())
+            #                 new_history_ranking = RankingLeagueModel(**new_dict)
+            #                 league_model.history_ranking.append(new_history_ranking)
 
             league_models.append(league_model)
 
@@ -81,7 +77,6 @@ class LeagueRepository(MongoDBRepository):
 
         persons:List[PersonModel] = self.__person_repository.get_all()
         race_info_models:List[RaceModel] = self.__race_info_repository.get_all()
-        ranking_league_models: List[RankingLeagueModel] = self.__league_ranking_repository.get_all()
 
         league_model = LeagueModel()
         league_model.id = league_entity.id
@@ -105,14 +100,14 @@ class LeagueRepository(MongoDBRepository):
                         new_runner_participant = ParticipantLeagueModel(**new_runner_participant_dict)
                         league_model.runner_participants.append(new_runner_participant)
 
-        if league_entity.history_rankings is not None:
-            for history_ranking in league_entity.history_rankings:
-                for ranking_league_model in ranking_league_models:
-                    if history_ranking.ranking_id == ranking_league_model.id:
-                        new_dict = ranking_league_model.dict()
-                        new_dict.update(history_ranking.dict())
-                        new_history_ranking = RankingLeagueModel(**new_dict)
-                        league_model.history_ranking.append(new_history_ranking)
+        # if league_entity.history_rankings is not None:
+        #     for history_ranking in league_entity.history_rankings:
+        #         for ranking_league_model in ranking_league_models:
+        #             if history_ranking.ranking_id == ranking_league_model.id:
+        #                 new_dict = ranking_league_model.dict()
+        #                 new_dict.update(history_ranking.dict())
+        #                 new_history_ranking = RankingLeagueModel(**new_dict)
+        #                 league_model.history_ranking.append(new_history_ranking)
 
         return league_model
 
@@ -125,24 +120,23 @@ class LeagueRepository(MongoDBRepository):
 
             history_rankings:List[LeagueRanking] = []
 
-            # for ranking in new_model.history_ranking:
-            #     ranking_id = self.__league_ranking_repository.add(ranking)
-            #     history_rankings.append(LeagueRanking(order=ranking.order, ranking_id=ranking_id))
+            if new_model.history_ranking is not None:
+                history_rankings = [LeagueRanking(**r.dict()) for r in  new_model.history_ranking]
 
             runner_participants:List[ParticipantLeagueEntity] = []
 
-            for runner_participant in new_model.runner_participants:
-                runner_participants.append(ParticipantLeagueEntity(**runner_participant.dict()))
+            if new_model.runner_participants is not None:
+                runner_participants = [ParticipantLeagueEntity(**runner_participant.dict()) for runner_participant in new_model.runner_participants]
 
-            last_ranking_id = None
+            rankings_final = None
             if len(history_rankings) != 0:
-                last_ranking_id = history_rankings[-1]
+                rankings_final = history_rankings[-1]
 
             entity:LeagueEntity = LeagueEntity(name=new_model.name,
                                                 order=new_model.order,
                                                 race_leagues=race_leagues,
                                                 runner_participants=runner_participants,
-                                                ranking= last_ranking_id,
+                                                rankings_final= rankings_final,
                                                 history_rankings=history_rankings)
 
             dict_update = entity.to_dict_db()

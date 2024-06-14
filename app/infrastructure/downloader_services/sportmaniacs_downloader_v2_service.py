@@ -76,7 +76,7 @@ class SportmaniacsDownloaderV2Service(IDownloaderService):
         try:
             runner.first_name = row['name']
             runner.last_name = row['surname']
-            runner.nationality = '' if 'nationality' not in row else row["nationality"]
+            # runner.nationality = '' if 'nationality' not in row else row["nationality"]
             runner.gender = self.__convert_to_gender(row["gender"])
 
             runner.dorsal = row["dorsal"]
@@ -110,8 +110,8 @@ class SportmaniacsDownloaderV2Service(IDownloaderService):
         gender_value = ''
 
         if gender_string == 'male':
-            gender_value = 'Masculino'
+            gender_value = 'H'
         else:
-            gender_value = 'Femenino'
+            gender_value = 'M'
 
         return gender_value

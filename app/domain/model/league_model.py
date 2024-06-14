@@ -26,12 +26,9 @@ class ParticipantRankingModel(ParticipantLeagueModel):
     best_avegare_peace: str = ''
     best_position_real: int = 0
 
-class RankingLeagueModel(BaseModel):
-    id: str = ''
-    data: Optional[List[ParticipantRankingModel]]
-
-class LeagueRanking(RankingLeagueModel):
+class LeagueRanking(BaseModel):
     order: int = 0
+    data: Optional[List[ParticipantRankingModel]]
 
 class LeagueModel(BaseModel):
     id:str = ''
@@ -62,7 +59,6 @@ class League:
                 self.final_ranking[runner.id] = ParticipantRankingModel(
                     first_name=runner.first_name,
                     last_name=runner.last_name,
-                    nationality=runner.nationality,
                     gender=runner.gender,
                     photo_url=runner.photo_url,
                     person_id=runner.person_id,

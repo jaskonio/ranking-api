@@ -3,14 +3,6 @@ from app.domain.model.base_object_model import BaseObjectModel
 from app.domain.model.person_model import PersonModel
 
 class RunnerRaceDataModel(PersonModel):
-    id: str = ''
-
-    first_name: Optional[str]
-    last_name: Optional[str]
-    nationality: str = ''
-    gender: str = ''
-    photo_url: str = ''
-
     person_id: str = ''
     dorsal: int = 0
     club: str = ''
