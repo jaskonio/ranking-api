@@ -26,7 +26,7 @@ class ParticipantRankingModel(ParticipantLeagueModel):
     best_avegare_peace: str = ''
     best_position_real: int = 0
 
-class LeagueRanking(BaseModel):
+class LeagueRankingModel(BaseModel):
     order: int = 0
     data: Optional[List[ParticipantRankingModel]]
 
@@ -36,8 +36,8 @@ class LeagueModel(BaseModel):
     order: int = 0
     races: List[LeagueRace] = []
     runner_participants: List[ParticipantLeagueModel] = []
-    ranking_latest: LeagueRanking = []
-    history_ranking: List[LeagueRanking] = []
+    ranking_latest: LeagueRankingModel = []
+    history_ranking: List[LeagueRankingModel] = []
 
 class League:
     def __init__(self):

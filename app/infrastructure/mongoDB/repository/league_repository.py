@@ -1,6 +1,6 @@
 from typing import List, Optional
 from bson import ObjectId
-from app.domain.model.league_model import LeagueRace, LeagueModel, ParticipantLeagueModel
+from app.domain.model.league_model import LeagueRace, LeagueModel, LeagueRankingModel, ParticipantLeagueModel, ParticipantRankingModel
 from app.domain.model.person_model import PersonModel
 from app.domain.model.race_data_model import RaceDataModel
 from app.domain.model.race_info_model import RaceModel
@@ -36,12 +36,6 @@ class LeagueRepository(MongoDBRepository):
             league_model.name = league_entity.name
             league_model.order = league_entity.order
         
-            if league_entity.ranking_latest is not None:
-                league_model.ranking_latest = LeagueRanking(**league_entity.ranking_latest.dict())
-
-            if league_entity.history_rankings is not None:
-                league_model.history_ranking = [LeagueRanking(**history_ranking.dict()) for history_ranking in league_entity.history_rankings]
-            
             if league_entity.race_leagues is not None:
                 for race_league in league_entity.race_leagues:
                     for race_info_model in race_info_models:
@@ -59,15 +53,21 @@ class LeagueRepository(MongoDBRepository):
                             new_runner_participant = ParticipantLeagueModel(**new_runner_participant_dict)
                             league_model.runner_participants.append(new_runner_participant)
 
-            # if league_entity.history_rankings is not None:
-            #     for history_ranking in league_entity.history_rankings:
-            #         for ranking_league_model in ranking_league_models:
-            #             if history_ranking.ranking_id == ranking_league_model.id:
-            #                 new_dict = ranking_league_model.dict()
-            #                 new_dict.update(history_ranking.dict())
-            #                 new_history_ranking = RankingLeagueModel(**new_dict)
-            #                 league_model.history_ranking.append(new_history_ranking)
+            if league_entity.history_rankings is not None:
+                for history_ranking in league_entity.history_rankings:
+                    new_history_ranking = LeagueRankingModel(order=history_ranking.order, data=[])
+                    for runner in history_ranking.data:
+                        for runner_participant in league_model.runner_participants:
+                            if runner.person_id == runner_participant.id:
+                                new_runner_participant_dict = runner_participant.dict()
+                                new_runner_participant_dict.update(runner.dict())
+                                new_runner_participant = ParticipantRankingModel(**new_runner_participant_dict)
+                                new_history_ranking.data.append(new_runner_participant)
+                    league_model.history_ranking.append(new_history_ranking)
 
+            if league_model.history_ranking is not None and len(league_model.history_ranking)!=0:
+                league_model.ranking_latest = league_model.history_ranking[-1]
+            
             league_models.append(league_model)
 
         return league_models
@@ -111,14 +111,20 @@ class LeagueRepository(MongoDBRepository):
                         new_runner_participant = ParticipantLeagueModel(**new_runner_participant_dict)
                         league_model.runner_participants.append(new_runner_participant)
 
-        # if league_entity.history_rankings is not None:
-        #     for history_ranking in league_entity.history_rankings:
-        #         for ranking_league_model in ranking_league_models:
-        #             if history_ranking.ranking_id == ranking_league_model.id:
-        #                 new_dict = ranking_league_model.dict()
-        #                 new_dict.update(history_ranking.dict())
-        #                 new_history_ranking = RankingLeagueModel(**new_dict)
-        #                 league_model.history_ranking.append(new_history_ranking)
+        if league_entity.history_rankings is not None:
+            for history_ranking in league_entity.history_rankings:
+                new_history_ranking = LeagueRankingModel(order=history_ranking.order, data=[])
+                for runner in history_ranking.data:
+                    for runner_participant in league_model.runner_participants:
+                        if runner.person_id == runner_participant.id:
+                            new_runner_participant_dict = runner_participant.dict()
+                            new_runner_participant_dict.update(runner.dict())
+                            new_runner_participant = ParticipantRankingModel(**new_runner_participant_dict)
+                            new_history_ranking.data.append(new_runner_participant)
+                league_model.history_ranking.append(new_history_ranking)
+
+        if league_model.history_ranking is not None and len(league_model.history_ranking)!=0:
+            league_model.ranking_latest = league_model.history_ranking[-1]
 
         return league_model
 

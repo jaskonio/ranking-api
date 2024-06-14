@@ -1,7 +1,7 @@
 import logging
 from typing import Dict, List
 from app.aplication.base_service import BaseService
-from app.domain.model.league_model import League, LeagueRace, LeagueModel, LeagueRanking, ParticipantLeagueModel
+from app.domain.model.league_model import League, LeagueRace, LeagueModel, LeagueRankingModel, ParticipantLeagueModel
 from app.domain.model.race_data_model import RaceDataModel
 from app.infrastructure.mongoDB.repository.race_data_repository import RaceDataRepository
 
@@ -22,7 +22,7 @@ class LeagueService(BaseService):
         for race_id in rankings:
             for race_league in league_model.races:
                 if race_id == race_league.id:
-                    ranking_league = LeagueRanking()
+                    ranking_league = LeagueRankingModel()
                     ranking_league.order = race_league.order
                     ranking_league.data = rankings[race_id]
                     league_model.history_ranking.append(ranking_league)
