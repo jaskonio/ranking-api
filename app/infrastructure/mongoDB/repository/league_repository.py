@@ -2,7 +2,6 @@ from typing import List, Optional
 from bson import ObjectId
 from app.domain.model.league_model import LeagueRace, LeagueModel, LeagueRankingModel, ParticipantLeagueModel, ParticipantRankingModel
 from app.domain.model.person_model import PersonModel
-from app.domain.model.race_data_model import RaceDataModel
 from app.domain.model.race_info_model import RaceModel
 from app.domain.repository.igeneric_repository import IGenericRepository
 from app.infrastructure.mongoDB.model.league_entity import LeagueEntity, LeagueRanking, RaceLeague
@@ -12,7 +11,7 @@ from app.infrastructure.mongoDB.repository.race_info_repository import RaceInfoR
 
 
 class LeagueRepository(MongoDBRepository):
-    def __init__(self, race_info_repository:RaceInfoRepository, person_repository:IGenericRepository,):
+    def __init__(self, race_info_repository:RaceInfoRepository, person_repository:IGenericRepository):
         super().__init__('league', LeagueEntity, LeagueModel)
         self.__race_info_repository = race_info_repository
         self.__person_repository = person_repository
@@ -28,49 +27,7 @@ class LeagueRepository(MongoDBRepository):
         persons:List[PersonModel] = self.__person_repository.get_all()
         race_info_models:List[RaceModel] = self.__race_info_repository.get_all()
 
-        league_models:List[LeagueModel] = []
-
-        for league_entity in league_entities:
-            league_model = LeagueModel()
-            league_model.id = league_entity.id
-            league_model.name = league_entity.name
-            league_model.order = league_entity.order
-        
-            if league_entity.race_leagues is not None:
-                for race_league in league_entity.race_leagues:
-                    for race_info_model in race_info_models:
-                        if race_league.race_info_id == race_info_model.id:
-                            new_race_league = LeagueRace(**race_info_model.dict())
-                            new_race_league.order = race_league.order
-                            league_model.races.append(new_race_league)
-
-            if league_entity.runner_participants is not None:
-                for runner_participant in league_entity.runner_participants:
-                    for person in persons:
-                        if runner_participant.person_id == person.id:
-                            new_runner_participant_dict = person.dict()
-                            new_runner_participant_dict.update(runner_participant.dict())
-                            new_runner_participant = ParticipantLeagueModel(**new_runner_participant_dict)
-                            league_model.runner_participants.append(new_runner_participant)
-
-            if league_entity.history_rankings is not None:
-                for history_ranking in league_entity.history_rankings:
-                    new_history_ranking = LeagueRankingModel(order=history_ranking.order, data=[])
-                    for runner in history_ranking.data:
-                        for runner_participant in league_model.runner_participants:
-                            if runner.person_id == runner_participant.id:
-                                new_runner_participant_dict = runner_participant.dict()
-                                new_runner_participant_dict.update(runner.dict())
-                                new_runner_participant = ParticipantRankingModel(**new_runner_participant_dict)
-                                new_history_ranking.data.append(new_runner_participant)
-                    league_model.history_ranking.append(new_history_ranking)
-
-            if league_model.history_ranking is not None and len(league_model.history_ranking)!=0:
-                league_model.ranking_latest = league_model.history_ranking[-1]
-            
-            league_models.append(league_model)
-
-        return league_models
+        return [self._populate_league_model(league_entity, persons, race_info_models) for league_entity in league_entities]
 
     def get_by_id(self, model_id:str) -> LeagueModel:
         result_dict = self.collection.find_one({"_id": ObjectId(model_id)})
@@ -83,84 +40,78 @@ class LeagueRepository(MongoDBRepository):
         persons:List[PersonModel] = self.__person_repository.get_all()
         race_info_models:List[RaceModel] = self.__race_info_repository.get_all()
 
-        league_model = LeagueModel()
-        league_model.id = league_entity.id
-        league_model.name = league_entity.name
-        league_model.order = league_entity.order
-        
-        if league_entity.ranking_latest is not None:
-            league_model.ranking_latest = LeagueRanking(**league_entity.ranking_latest.dict())
-
-        if league_entity.history_rankings is not None:
-            league_model.history_ranking = [LeagueRanking(**history_ranking.dict()) for history_ranking in league_entity.history_rankings]
-
-        if league_entity.race_leagues is not None:
-            for race_league in league_entity.race_leagues:
-                for race_info_model in race_info_models:
-                    if race_league.race_info_id == race_info_model.id:
-                        new_race_league = LeagueRace(**race_info_model.dict())
-                        new_race_league.order = race_league.order
-                        league_model.races.append(new_race_league)
-
-        if league_entity.runner_participants is not None:
-            for runner_participant in league_entity.runner_participants:
-                for person in persons:
-                    if runner_participant.person_id == person.id:
-                        new_runner_participant_dict = person.dict()
-                        new_runner_participant_dict.update(runner_participant.dict())
-                        new_runner_participant = ParticipantLeagueModel(**new_runner_participant_dict)
-                        league_model.runner_participants.append(new_runner_participant)
-
-        if league_entity.history_rankings is not None:
-            for history_ranking in league_entity.history_rankings:
-                new_history_ranking = LeagueRankingModel(order=history_ranking.order, data=[])
-                for runner in history_ranking.data:
-                    for runner_participant in league_model.runner_participants:
-                        if runner.person_id == runner_participant.id:
-                            new_runner_participant_dict = runner_participant.dict()
-                            new_runner_participant_dict.update(runner.dict())
-                            new_runner_participant = ParticipantRankingModel(**new_runner_participant_dict)
-                            new_history_ranking.data.append(new_runner_participant)
-                league_model.history_ranking.append(new_history_ranking)
-
-        if league_model.history_ranking is not None and len(league_model.history_ranking)!=0:
-            league_model.ranking_latest = league_model.history_ranking[-1]
-
-        return league_model
+        return self._populate_league_model(league_entity, persons, race_info_models)
 
     def update_by_id(self, model_id:str, new_model:LeagueModel) -> Optional[LeagueModel]:
         try:
-            race_leagues: List[RaceLeague]= []
+            race_leagues: List[RaceLeague] = [RaceLeague(race_info_id=race.id, order=race.order) for race in new_model.races]
             
-            for race in new_model.races:
-                race_leagues.append(RaceLeague(race_info_id=race.id, order=race.order))
+            history_rankings:List[LeagueRanking] = [LeagueRanking(**r.dict()) for r in  new_model.history_ranking]
 
-            history_rankings:List[LeagueRanking] = []
+            runner_participants:List[ParticipantLeagueEntity] = [ParticipantLeagueEntity(**runner_participant.dict()) for runner_participant in new_model.runner_participants]
 
-            if new_model.history_ranking is not None:
-                history_rankings = [LeagueRanking(**r.dict()) for r in  new_model.history_ranking]
+            ranking_latest = history_rankings[-1] if len(history_rankings)!=0 else None
 
-            runner_participants:List[ParticipantLeagueEntity] = []
+            entity:LeagueEntity = LeagueEntity(
+                                    name=new_model.name,
+                                    order=new_model.order,
+                                    race_leagues=race_leagues,
+                                    runner_participants=runner_participants,
+                                    ranking_latest= ranking_latest,
+                                    history_rankings=history_rankings)
 
-            if new_model.runner_participants is not None:
-                runner_participants = [ParticipantLeagueEntity(**runner_participant.dict()) for runner_participant in new_model.runner_participants]
-
-            ranking_latest = None
-            if len(history_rankings) != 0:
-                ranking_latest = history_rankings[-1]
-
-            entity:LeagueEntity = LeagueEntity(name=new_model.name,
-                                                order=new_model.order,
-                                                race_leagues=race_leagues,
-                                                runner_participants=runner_participants,
-                                                ranking_latest= ranking_latest,
-                                                history_rankings=history_rankings)
-
-            dict_update = entity.to_dict_db()
-            result = self.collection.update_one({"_id": ObjectId(model_id)},
-                                                {"$set": dict_update})
+            self.collection.update_one(
+                {"_id": ObjectId(model_id)},
+                {"$set": entity.to_dict_db()}
+            )
 
             return self.get_by_id(model_id)
         except Exception as exception:
-            self.logger.error("Error al actualizar el registro con ID %s: %s", str(model_id), str(exception))
+            self.logger.error(f"Error al actualizar el registro con ID {model_id}: {exception}")
             return None
+
+    def _populate_league_model(self, league_entity: LeagueEntity, persons: List[PersonModel], race_info_models: List[RaceModel]) -> LeagueModel:
+        league_model = LeagueModel(
+            id=league_entity.id,
+            name=league_entity.name,
+            order=league_entity.order
+        )
+
+        # Populate race leagues
+        if league_entity.race_leagues:
+            race_map = {race.id: race for race in race_info_models}
+            for race_league in league_entity.race_leagues:
+                race_info = race_map.get(race_league.race_info_id)
+                if race_info:
+                    new_race_league = LeagueRace(**race_info.dict(), order=race_league.order)
+                    league_model.races.append(new_race_league)
+
+        # Populate runner participants
+        if league_entity.runner_participants is not None:
+            person_map = {person.id: person for person in persons}
+            for runner_participant in league_entity.runner_participants:
+                person = person_map.get(runner_participant.person_id)
+                if person:
+                    new_runner_participant = ParticipantLeagueModel(
+                        **{**person.dict(), **runner_participant.dict()}
+                    )
+                    league_model.runner_participants.append(new_runner_participant)
+
+        # Populate history rankings
+        if league_entity.history_rankings is not None:
+            for history_ranking in league_entity.history_rankings:
+                new_history_ranking = LeagueRankingModel(order=history_ranking.order, data=[])
+                participant_map = {participant.id: participant for participant in league_model.runner_participants}
+                for runner in history_ranking.data:
+                    participant = participant_map.get(runner.person_id)
+                    if participant:
+                        new_runner_participant = ParticipantRankingModel(
+                            **{**participant.dict(), **runner.dict()}
+                        )
+                        new_history_ranking.data.append(new_runner_participant)
+                league_model.history_ranking.append(new_history_ranking)
+
+        if league_model.history_ranking is not None and len(league_model.history_ranking) != 0:
+            league_model.ranking_latest = league_model.history_ranking[-1]
+
+        return league_model

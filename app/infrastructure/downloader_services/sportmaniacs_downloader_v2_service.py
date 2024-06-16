@@ -23,7 +23,8 @@ class SportmaniacsDownloaderV2Service(IDownloaderService):
         runners_filtered = self.__filter_runners_by_club(runners)
         race_data:List[RunnerRaceDataModel] = self.__build_runners_model(runners_filtered)
 
-        return race_data
+        race_data_sorted = sorted(race_data, key=lambda x: (x.finished==False, x.real_pos))
+        return race_data_sorted
 
     def __get__all_runners(self, race_info:RaceModel):
         competition_id = self.__get_competition_id(race_info.url)
@@ -91,11 +92,11 @@ class SportmaniacsDownloaderV2Service(IDownloaderService):
                 runner.official_cat_pos = int(row["rankings"]['Meta']['posCat'])
                 runner.official_gen_pos = int(row["rankings"]['Meta']['posGen'])
 
-                runner.real_pos = int(row["rankings"]['Meta']['posNet'])
+                runner.real_pos = int(row["custom-rankings"][0]['pos'])
                 runner.real_time = time_seconds_to_string_format(row["rankings"]['Meta']['net'])
                 runner.real_avg_time = average_to_format_string(row["rankings"]['Meta']['averageNet'])
-                runner.real_cat_pos = int(row["rankings"]['Meta']['posCatNet'])
-                runner.real_gen_pos = int(row["rankings"]['Meta']['posGenNet'])
+                runner.real_cat_pos = int(row["custom-rankings"][2]['pos'])
+                runner.real_gen_pos = int(row["custom-rankings"][1]['pos'])
 
         except Exception as exception_error:
             self.logger.error(f'Error to build: {runner.first_name}')
