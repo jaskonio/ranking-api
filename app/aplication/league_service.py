@@ -3,6 +3,7 @@ from typing import Dict, List
 from app.aplication.base_service import BaseService
 from app.domain.model.league_model import League, LeagueRace, LeagueModel, LeagueRankingModel, ParticipantLeagueModel
 from app.domain.model.race_data_model import RaceDataModel, RunnerRaceDataModel
+from app.domain.utils.string_utils import remove_accents
 from app.infrastructure.mongoDB.repository.race_data_repository import RaceDataRepository
 
 
@@ -40,14 +41,28 @@ class LeagueService(BaseService):
         runner_map = {runner.person_id: runner for runner in runner_participants}
     
         for race in races:
-            race_runners = self._get_race_runners(race, all_race_data, runner_map)
-            race_runners_filtered:List[RunnerRaceDataModel] = []
-            for race_runner in race_runners:
-                for runner_participant in runner_participants:
-                    if race_runner.first_name.lower() == runner_participant.first_name.lower() and race_runner.last_name.lower() == runner_participant.last_name.lower():
-                        race_runners_filtered.append(race_runner)
+            for race_data in all_race_data:
+                if race.race_data_id == race_data.id:
+                    runners_data = race_data.runners
+                    # runers_data filter by participants
+                    runners_data_filtered = []
+                    for runner_data in runners_data:
+                        for runner_participant in runner_map.values():
+                            if runner_data.finished:
+                                if runner_participant.unique_dorsal and runner_data.dorsal == runner_participant.dorsal:
+                                    runner_data.id = runner_participant.id
+                                    runner_data.person_id = runner_participant.person_id
+                                    runners_data_filtered.append(runner_data)
+                                    continue
+                                if not runner_participant.unique_dorsal:
+                                    runner_participant_full_name = remove_accents(runner_participant.first_name.lower()) + ' ' + remove_accents(runner_participant.last_name.lower())
+                                    data_runner_full_name = remove_accents(runner_data.first_name.lower()) + ' ' + remove_accents(runner_data.last_name.lower())
 
-            league.add_race(race.id, race_runners_filtered)
+                                    if runner_participant_full_name == data_runner_full_name or (runner_participant_full_name in data_runner_full_name or data_runner_full_name in runner_participant_full_name):
+                                        runner_data.id = runner_participant.id
+                                        runner_data.person_id = runner_participant.person_id
+                                        runners_data_filtered.append(runner_data)
+                    league.add_race(race.id, runners_data_filtered)
 
         return {race_id: league.races[race_id] for race_id in league.races}
 
@@ -57,10 +72,16 @@ class LeagueService(BaseService):
         """
         for race_data in all_race_data:
             if race.race_data_id == race_data.id:
-                return [ self._match_runner(data_runner, runner_map) for data_runner in race_data.runners if data_runner.finished]
+                data_runners_filled = []
+                for data_runner in race_data.runners:
+                    if data_runner.finished:
+                        data_runner_filled = self._match_runner(data_runner, runner_map)
+                        if data_runner_filled is not None:
+                            data_runners_filled.append(data_runner_filled)
+                return data_runners_filled
         return []
 
-    def _match_runner(self, data_runner: RunnerRaceDataModel, runner_map: Dict[str, ParticipantLeagueModel]) -> RunnerRaceDataModel:
+    def _match_runner(self, data_runner: RunnerRaceDataModel, runner_map: Dict[str, ParticipantLeagueModel]) -> RunnerRaceDataModel|None:
         """
         Encuentra el participante correspondiente al corredor en los datos de la carrera.
         """
@@ -69,8 +90,14 @@ class LeagueService(BaseService):
                 data_runner.id = runner_participant.id
                 data_runner.person_id = runner_participant.person_id
                 return data_runner
-            if not runner_participant.unique_dorsal and runner_participant.first_name.lower() == data_runner.first_name.lower() and runner_participant.last_name.lower() == data_runner.last_name.lower():
-                data_runner.id = runner_participant.id
-                data_runner.person_id = runner_participant.person_id
-                return data_runner
-        return data_runner
+            if not runner_participant.unique_dorsal:
+                runner_participant_full_name = remove_accents(runner_participant.first_name.lower()) + ' ' + remove_accents(runner_participant.last_name.lower())
+                data_runner_full_name = remove_accents(data_runner.first_name.lower()) + ' ' + remove_accents(data_runner.last_name.lower())
+
+                if runner_participant_full_name == data_runner_full_name or (runner_participant_full_name in data_runner_full_name or data_runner_full_name in runner_participant_full_name):
+                    data_runner.id = runner_participant.id
+                    data_runner.person_id = runner_participant.person_id
+                    return data_runner
+            else:
+                pass
+        return None

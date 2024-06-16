@@ -87,7 +87,7 @@ class LeagueRepository(MongoDBRepository):
                     league_model.races.append(new_race_league)
 
         # Populate runner participants
-        if league_entity.runner_participants:
+        if league_entity.runner_participants is not None:
             person_map = {person.id: person for person in persons}
             for runner_participant in league_entity.runner_participants:
                 person = person_map.get(runner_participant.person_id)
@@ -98,7 +98,7 @@ class LeagueRepository(MongoDBRepository):
                     league_model.runner_participants.append(new_runner_participant)
 
         # Populate history rankings
-        if league_entity.history_rankings:
+        if league_entity.history_rankings is not None:
             for history_ranking in league_entity.history_rankings:
                 new_history_ranking = LeagueRankingModel(order=history_ranking.order, data=[])
                 participant_map = {participant.id: participant for participant in league_model.runner_participants}
@@ -111,7 +111,7 @@ class LeagueRepository(MongoDBRepository):
                         new_history_ranking.data.append(new_runner_participant)
                 league_model.history_ranking.append(new_history_ranking)
 
-        if league_model.history_ranking:
+        if league_model.history_ranking is not None and len(league_model.history_ranking) != 0:
             league_model.ranking_latest = league_model.history_ranking[-1]
 
         return league_model

@@ -33,10 +33,10 @@ class LeagueRankingModel(BaseModel):
 class LeagueModel(BaseModel):
     id:str = ''
     name: str = ''
-    order: int = 0
+    order: Optional[int] = 0
     races: List[LeagueRace] = []
-    runner_participants: List[ParticipantLeagueModel] = []
-    ranking_latest: LeagueRankingModel = []
+    runner_participants: List[ParticipantLeagueModel]  = []
+    ranking_latest: Optional[LeagueRankingModel]
     history_ranking: List[LeagueRankingModel] = []
 
 class League:
