@@ -1,7 +1,7 @@
 from typing import List, Optional
 from app.infrastructure.rest_api.model.base_api_model import BaseAPI_Model
 from app.infrastructure.rest_api.model.custom_responses import BaseSuccessJsonResponse
-from app.infrastructure.rest_api.model.league_model import LeagueResponse
+from app.infrastructure.rest_api.model.league_model import LeagueRequest, LeagueResponse
 
 
 class SeasonResponse(BaseAPI_Model):
@@ -13,7 +13,7 @@ class SeasonResponse(BaseAPI_Model):
 class SeasonRequest(BaseAPI_Model):
     name: Optional[str]
     order: Optional[int]
-    league_ids:Optional[List[str]]
+    leagues:Optional[List[LeagueResponse]]
 
 class SeasonRawResponse(BaseAPI_Model):
     id:str = ''
