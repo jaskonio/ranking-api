@@ -7,7 +7,7 @@ from app.domain.model.person_model import PersonModel
 from app.domain.services.downloader_runners_service import DownloaderRunnersService
 from app.infrastructure.cloud.aws_repository import AWS_Repository
 from app.infrastructure.mongoDB.model.club_info_entity import ClubInfoEntity
-from app.infrastructure.mongoDB.model.participant_league_entity import ParticipantLeagueEntity
+from app.infrastructure.mongoDB.model.league_entity import ParticipantLeague
 from app.infrastructure.mongoDB.model.person_entity import PersonEntity
 from app.infrastructure.mongoDB.repository.league_repository import LeagueRepository
 from app.infrastructure.mongoDB.repository.mongo_db_repository import MongoDBRepository
@@ -23,7 +23,7 @@ aws_repository = AWS_Repository()
 race_data_repository = RaceDataRepository()
 race_info_repository = RaceInfoRepository()
 
-participant_league_repository = MongoDBRepository('participant_league', ParticipantLeagueEntity, ParticipantLeagueModel)
+participant_league_repository = MongoDBRepository('participant_league', ParticipantLeague, ParticipantLeagueModel)
  
 league_repository = LeagueRepository(race_info_repository, person_repository)
 season_repository = SeassonRepository(league_repository)

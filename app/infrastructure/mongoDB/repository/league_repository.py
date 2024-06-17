@@ -4,8 +4,7 @@ from app.domain.model.league_model import LeagueRace, LeagueModel, LeagueRanking
 from app.domain.model.person_model import PersonModel
 from app.domain.model.race_info_model import RaceModel
 from app.domain.repository.igeneric_repository import IGenericRepository
-from app.infrastructure.mongoDB.model.league_entity import LeagueEntity, LeagueRanking, RaceLeague
-from app.infrastructure.mongoDB.model.participant_league_entity import ParticipantLeagueEntity
+from app.infrastructure.mongoDB.model.league_entity import LeagueEntity, LeagueRanking, ParticipantLeague, RaceLeague
 from app.infrastructure.mongoDB.repository.mongo_db_repository import MongoDBRepository
 from app.infrastructure.mongoDB.repository.race_info_repository import RaceInfoRepository
 
@@ -48,7 +47,7 @@ class LeagueRepository(MongoDBRepository):
             
             history_rankings:List[LeagueRanking] = [LeagueRanking(**r.dict()) for r in  new_model.history_ranking]
 
-            runner_participants:List[ParticipantLeagueEntity] = [ParticipantLeagueEntity(**runner_participant.dict()) for runner_participant in new_model.runner_participants]
+            runner_participants:List[ParticipantLeague] = [ParticipantLeague(**runner_participant.dict()) for runner_participant in new_model.runner_participants]
 
             ranking_latest = history_rankings[-1] if len(history_rankings)!=0 else None
 
