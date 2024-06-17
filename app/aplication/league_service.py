@@ -36,11 +36,14 @@ class LeagueService(BaseService):
         """
         Construye los rankings para las carreras de una liga.
         """
-        league  = League()
-        all_race_data:List[RaceDataModel] = self.__race_data_repository.get_all()
+        league = League()
+        races_sorted = sorted(races, key=lambda x: x.order)
+        all_race_data:List[RaceDataModel] = []
+        for race in races:
+            all_race_data.append(self.__race_data_repository.get_by_id(race.race_data_id))
         runner_map = {runner.person_id: runner for runner in runner_participants}
     
-        for race in races:
+        for race in races_sorted:
             for race_data in all_race_data:
                 if race.race_data_id == race_data.id:
                     runners_data = race_data.runners
@@ -52,8 +55,14 @@ class LeagueService(BaseService):
                                 if runner_participant.unique_dorsal and runner_data.dorsal == runner_participant.dorsal:
                                     runner_data.id = runner_participant.id
                                     runner_data.person_id = runner_participant.person_id
+
+                                    if runner_participant.disqualified_order_race != -1:
+                                        if runner_participant.disqualified_order_race <= race.order:
+                                            continue
+                                        
                                     runners_data_filtered.append(runner_data)
                                     continue
+
                                 if not runner_participant.unique_dorsal:
                                     runner_participant_full_name = remove_accents(runner_participant.first_name.lower()) + ' ' + remove_accents(runner_participant.last_name.lower())
                                     data_runner_full_name = remove_accents(runner_data.first_name.lower()) + ' ' + remove_accents(runner_data.last_name.lower())
@@ -61,6 +70,11 @@ class LeagueService(BaseService):
                                     if runner_participant_full_name == data_runner_full_name or (runner_participant_full_name in data_runner_full_name or data_runner_full_name in runner_participant_full_name):
                                         runner_data.id = runner_participant.id
                                         runner_data.person_id = runner_participant.person_id
+
+                                        if runner_participant.disqualified_order_race != -1:
+                                            if runner_participant.disqualified_order_race <= race.order:
+                                                continue
+
                                         runners_data_filtered.append(runner_data)
                     league.add_race(race.id, runners_data_filtered)
 
