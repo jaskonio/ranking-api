@@ -7,6 +7,7 @@ class PersonResponse(BaseAPI_Model):
     id: str = ''
     first_name: str = ''
     last_name: str = ''
+    full_name: str = ''
     gender: str = ''
     photo_url: str = ''
 
