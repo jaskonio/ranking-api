@@ -1,7 +1,7 @@
 import logging
 from typing import List, Optional
 from bson import ObjectId
-from app.infrastructure.exceptions import RepositoryNotFoundError, handle_repository_exceptions
+from app.infrastructure.exceptions import handle_repository_exceptions
 from app.infrastructure.mongoDB.repository.mongo_db_session import MongoDBSession
 from pymongo import collection
 from app.domain.model.base_object_model import BaseObjectModel
@@ -11,8 +11,7 @@ from app.infrastructure.mongoDB.model.base_mongo_entity import BaseMongoEntity
 
 class MongoDBRepository(IGenericRepository):
     def __init__(self, collection_name:str, entity_type:BaseMongoEntity, model_type:BaseObjectModel):
-        self.database = MongoDBSession()
-        self.collection:collection.Collection = self.database.get_collection(collection_name)
+        self.collection:collection.Collection = MongoDBSession.get_collection(collection_name)
         self.entity_type:BaseMongoEntity = entity_type
         self.model_type:BaseObjectModel = model_type
         self.logger = logging.getLogger(__name__)

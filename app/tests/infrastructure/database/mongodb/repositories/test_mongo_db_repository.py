@@ -2,10 +2,10 @@ import unittest
 from unittest.mock import patch
 from bson import ObjectId
 import mongomock
+
 from app.domain.model.base_object_model import BaseObjectModel
 from app.infrastructure.mongoDB.model.base_mongo_entity import BaseMongoEntity
 from app.infrastructure.mongoDB.repository.mongo_db_repository import MongoDBRepository
-from app.infrastructure.exceptions import RepositoryNotFoundError
 
 
 # Mocks for domain model and entity
@@ -60,8 +60,8 @@ class TestMongoDBRepository(unittest.TestCase):
 
     def test_get_by_id_not_found(self):
         # Call the method with a non-existing ID
-        with self.assertRaises(RepositoryNotFoundError):
-            self.repository.get_by_id(str(ObjectId()))
+        result = self.repository.get_by_id(str(ObjectId()))
+        self.assertEqual(result, None)
 
     def test_add(self):
         # Create a mock model
