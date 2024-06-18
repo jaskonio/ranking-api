@@ -53,7 +53,7 @@ pip install -r requirements.txt
 Execute unittest:
 
 ```cmd
-    python -m unittest discover -s tests/ -p 'test*.py' -v --locals
+    python -m unittest discover -s tests/ -p 'test_*.py' -v --locals
 ```
 
 ```cmd
