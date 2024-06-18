@@ -17,5 +17,11 @@ class MongoDBSession():
             connection_string = build_connection_string()
             client = MongoClient(connection_string)
             cls._instance_database = client.get_database()
+            logger.info("Nueva conexión MongoDB establecida.")
 
         return cls._instance_database
+
+    @staticmethod
+    def get_collection(collection_name: str):
+        db = MongoDBSession()
+        return db[collection_name]

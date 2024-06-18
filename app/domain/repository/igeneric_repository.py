@@ -1,12 +1,13 @@
 from abc import ABC
 from typing import Optional, List
 from app.domain.model.base_object_model import BaseObjectModel
+from app.infrastructure.exceptions import handle_repository_exceptions
 
 
 class IGenericRepository(ABC):
     def get_all(self) -> List[BaseObjectModel]:
         pass
-
+    
     def get_by_id(self, model_id: str) -> Optional[BaseObjectModel]:
         pass
 

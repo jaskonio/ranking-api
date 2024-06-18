@@ -13,6 +13,18 @@ class RaceInfoService(BaseService):
         self.__downloader_runners_service = downloader_runners_service
         self.__race_data_repository = race_data_repository
 
+    def delete_by_id(self, model_id: str) -> bool:
+        race_info_model:RaceModel = self.get_by_id(model_id)
+        if race_info_model is None:
+            return False
+
+        self.repository.delete_by_id(model_id)
+
+        if race_info_model.race_data_id is not None:
+            self.__race_data_repository.delete_by_id(race_info_model.race_data_id)
+
+        return True
+
     # Common
     def process(self, race_id:str) -> RaceModel:
         try:
