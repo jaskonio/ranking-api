@@ -10,6 +10,9 @@ class PersonModel(BaseObjectModel):
     gender: Optional[Literal['H', 'M']]
     photo_url: Optional[str]
 
+    def set_full_name(self):
+        self.full_name = f"{self.first_name or ''} {self.last_name or ''}".strip()
+
     def __eq__(self, other) -> bool:
         if self is other:  # Comparar identidades
             return True

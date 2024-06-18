@@ -21,7 +21,7 @@ class PersonRepository(MongoDBRepository):
             models = []
             for entity in result_entities:
                 model:PersonModel = entity.to_domain_model(PersonModel)
-                model.full_name = model.first_name + ' ' + model.last_name
+                model.set_full_name()
                 models.append(model)
             return models
         except Exception as exception:
@@ -37,7 +37,8 @@ class PersonRepository(MongoDBRepository):
 
             entity = PersonEntity(**mongo_dict)
             model: PersonModel= entity.to_domain_model(PersonModel)
-            model.full_name = model.first_name + ' ' + model.last_name
+            model.set_full_name()
+
             return model
         except ServerSelectionTimeoutError as timeout_exception:
             self.logger.error(f'Time out al conectar con la base de datos: {timeout_exception}')
