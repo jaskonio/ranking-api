@@ -1,6 +1,7 @@
 from typing import List, Optional
 from bson import ObjectId
 from app.domain.model.season_model import SeasonModel
+from app.infrastructure.exceptions import handle_repository_exceptions
 from app.infrastructure.mongoDB.model.season_entity import SeasonEntity
 from app.infrastructure.mongoDB.repository.league_repository import LeagueRepository
 from app.infrastructure.mongoDB.repository.mongo_db_repository import MongoDBRepository
@@ -11,6 +12,7 @@ class SeassonRepository(MongoDBRepository):
         super().__init__('seasson', SeasonEntity, SeasonModel)
         self.__league_repository = league_repository
 
+    @handle_repository_exceptions
     def get_all(self) -> List[SeasonModel]:
         result_dict = list(self.collection.find({}))
 
@@ -38,6 +40,7 @@ class SeassonRepository(MongoDBRepository):
 
         return all_season_model
 
+    @handle_repository_exceptions
     def get_by_id(self, model_id:str) -> Optional[SeasonModel]:
         mongo_dict = self.collection.find_one({"_id": ObjectId(model_id)})
 
@@ -58,18 +61,15 @@ class SeassonRepository(MongoDBRepository):
 
         return raw_season_model
 
+    @handle_repository_exceptions
     def update_by_id(self, model_id:str, new_model:SeasonModel) -> Optional[SeasonModel]:
-        try:
-            entity:SeasonEntity = SeasonEntity()
-            entity.id = new_model.id
-            entity.order = new_model.order
-            entity.league_ids = [league.id for league in new_model.leagues]
-        
-            dict_update = entity.to_dict_db()
-            result = self.collection.update_one({"_id": ObjectId(model_id)},
-                                                {"$set": dict_update})
+        entity:SeasonEntity = SeasonEntity()
+        entity.id = new_model.id
+        entity.order = new_model.order
+        entity.league_ids = [league.id for league in new_model.leagues]
+    
+        dict_update = entity.to_dict_db()
+        result = self.collection.update_one({"_id": ObjectId(model_id)},
+                                            {"$set": dict_update})
 
-            return self.get_by_id(model_id)
-        except Exception as exception:
-            self.logger.error("Error al actualizar el registro con ID %s: %s", str(model_id), str(exception))
-            return None
+        return self.get_by_id(model_id)
