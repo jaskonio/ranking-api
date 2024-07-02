@@ -4,6 +4,7 @@ from app.domain.model.league_model import LeagueRace, LeagueModel, LeagueRanking
 from app.domain.model.person_model import PersonModel
 from app.domain.model.race_info_model import RaceModel
 from app.domain.repository.igeneric_repository import IGenericRepository
+from app.infrastructure.exceptions import handle_repository_exceptions
 from app.infrastructure.mongoDB.model.league_entity import LeagueEntity, LeagueRanking, ParticipantLeague, RaceLeague
 from app.infrastructure.mongoDB.repository.mongo_db_repository import MongoDBRepository
 from app.infrastructure.mongoDB.repository.race_info_repository import RaceInfoRepository
@@ -15,6 +16,7 @@ class LeagueRepository(MongoDBRepository):
         self.__race_info_repository = race_info_repository
         self.__person_repository = person_repository
 
+    @handle_repository_exceptions
     def get_all(self) -> List[LeagueModel]:
         result_dict = list(self.collection.find({}))
         
@@ -28,6 +30,7 @@ class LeagueRepository(MongoDBRepository):
 
         return [self._populate_league_model(league_entity, persons, race_info_models) for league_entity in league_entities]
 
+    @handle_repository_exceptions
     def get_by_id(self, model_id:str) -> LeagueModel:
         result_dict = self.collection.find_one({"_id": ObjectId(model_id)})
         
@@ -41,33 +44,30 @@ class LeagueRepository(MongoDBRepository):
 
         return self._populate_league_model(league_entity, persons, race_info_models)
 
+    @handle_repository_exceptions
     def update_by_id(self, model_id:str, new_model:LeagueModel) -> Optional[LeagueModel]:
-        try:
-            race_leagues: List[RaceLeague] = [RaceLeague(race_info_id=race.id, order=race.order) for race in new_model.races]
-            
-            history_rankings:List[LeagueRanking] = [LeagueRanking(**r.dict()) for r in  new_model.history_ranking]
+        race_leagues: List[RaceLeague] = [RaceLeague(race_info_id=race.id, order=race.order) for race in new_model.races]
+        
+        history_rankings:List[LeagueRanking] = [LeagueRanking(**r.dict()) for r in  new_model.history_ranking]
 
-            runner_participants:List[ParticipantLeague] = [ParticipantLeague(**runner_participant.dict()) for runner_participant in new_model.runner_participants]
+        runner_participants:List[ParticipantLeague] = [ParticipantLeague(**runner_participant.dict()) for runner_participant in new_model.runner_participants]
 
-            ranking_latest = history_rankings[-1] if len(history_rankings)!=0 else None
+        ranking_latest = history_rankings[-1] if len(history_rankings)!=0 else None
 
-            entity:LeagueEntity = LeagueEntity(
-                                    name=new_model.name,
-                                    order=new_model.order,
-                                    race_leagues=race_leagues,
-                                    runner_participants=runner_participants,
-                                    ranking_latest= ranking_latest,
-                                    history_rankings=history_rankings)
+        entity:LeagueEntity = LeagueEntity(
+                                name=new_model.name,
+                                order=new_model.order,
+                                race_leagues=race_leagues,
+                                runner_participants=runner_participants,
+                                ranking_latest= ranking_latest,
+                                history_rankings=history_rankings)
 
-            self.collection.update_one(
-                {"_id": ObjectId(model_id)},
-                {"$set": entity.to_dict_db()}
-            )
+        self.collection.update_one(
+            {"_id": ObjectId(model_id)},
+            {"$set": entity.to_dict_db()}
+        )
 
-            return self.get_by_id(model_id)
-        except Exception as exception:
-            self.logger.error(f"Error al actualizar el registro con ID {model_id}: {exception}")
-            return None
+        return self.get_by_id(model_id)
 
     def _populate_league_model(self, league_entity: LeagueEntity, persons: List[PersonModel], race_info_models: List[RaceModel]) -> LeagueModel:
         league_model = LeagueModel(
