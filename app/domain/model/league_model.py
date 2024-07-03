@@ -44,66 +44,25 @@ class League:
         self.races: Dict[str, List[Dict[str, ParticipantRankingModel]]] = {}
         self.final_ranking: Dict[str, ParticipantRankingModel] = {}
 
-    def add_race(self, race_id, race_data: List[RunnerRaceDataModel]):
-        self._update_rankings(race_id, race_data)
+    def add_race(self, race_id, rankings: List[ParticipantRankingModel]):
+        self.races[race_id] = rankings
 
-    def _update_rankings(self, race_id:str, race_data: List[RunnerRaceDataModel]):
-        race_data_sorted_by_real_pos = sorted(race_data, key=lambda x: x.real_pos)
-        points_distribution = {i : v for (i,v) in enumerate([25, 18, 15, 12, 10, 8, 6, 4, 2, 1, 0.75, 0.50, 0.25, 0.10, 0.05])}
+    def update_final_ranking(self, participant_ranking: ParticipantRankingModel):
+        if participant_ranking.id not in self.final_ranking:
+            self.final_ranking[participant_ranking.id] = participant_ranking
+        else:
+            participant = self.final_ranking[participant_ranking.id]
+            participant.participations += 1
+            participant.pos_last_race = participant.last_position_race
+            participant.last_position_race = participant_ranking.position
+            participant.top_five += 1 if participant_ranking.position <= 5 else 0
+            participant.best_position = min(participant.best_position, participant_ranking.position)
+            participant.best_avegare_peace = min(participant.best_avegare_peace, participant_ranking.best_avegare_peace)
+            participant.best_position_real = min(participant.best_position_real, participant_ranking.best_position_real)
+            participant.points += participant_ranking.points
 
-        for idx, runner in enumerate(race_data_sorted_by_real_pos):
-            points = points_distribution.get(idx, 0)
-
-            if runner.id not in self.final_ranking:
-                self.final_ranking[runner.id] = ParticipantRankingModel(
-                    id=runner.id,
-                    first_name=runner.first_name,
-                    last_name=runner.last_name,
-                    gender=runner.gender,
-                    photo_url=runner.photo_url,
-                    person_id=runner.person_id,
-                    dorsal=runner.dorsal,
-                    category=runner.category,
-                    is_disqualified=not runner.finished,
-                    position=idx+1,
-                    points=points,
-                    pos_last_race=0,  # Será actualizada en la próxima carrera
-                    top_five=1 if idx+1 <= 5 else 0,
-                    participations=1,
-                    best_position=runner.official_pos,
-                    last_position_race=runner.official_pos,
-                    best_avegare_peace=runner.official_avg_time,
-                    best_position_real=runner.real_pos
-                )
-            else:
-                participant = self.final_ranking[runner.id]
-                participant.participations += 1
-                participant.pos_last_race = participant.last_position_race
-                participant.last_position_race = runner.official_pos
-                participant.top_five += 1 if participant.position <= 5 else 0
-                
-                if runner.official_pos < int(participant.best_position):
-                    participant.best_position = runner.official_pos
-                
-                if runner.official_avg_time and (not participant.best_avegare_peace or runner.official_avg_time < participant.best_avegare_peace):
-                    participant.best_avegare_peace = runner.official_avg_time
-                
-                if runner.real_pos < participant.best_position_real:
-                    participant.best_position_real = runner.real_pos
-                
-                if runner.finished:
-                    participant.is_disqualified = False
-                
-                participant.points += points
-                participant.position = idx + 1
-                self.final_ranking[runner.id] = participant
-
-        self.races[race_id] = self.__get_final_ranking()
-
-    def __get_final_ranking(self):
+    def get_final_ranking(self) -> List[ParticipantRankingModel]:
         results = sorted(self.final_ranking.values(), key=lambda x: x.points, reverse=True)
-
         for index, runner in enumerate(results):
             runner.position = index + 1
-
         return results

@@ -1,4 +1,5 @@
 import logging
+import requests
 from typing import List
 from app.domain.model.club_info_model import ClubInfoModel
 from app.domain.model.race_data_model import RunnerRaceDataModel
@@ -35,9 +36,9 @@ class DownloaderRunnersService:
             club_names = self.get_club_names()
 
             if race_info_simplified_model.platform == Platform.SPORTMANIACS_V1 or race_info_simplified_model.platform == Platform.SPORTMANIACS_LATEST:
-                dowloader_service = DownloaderService(race_info_simplified_model, HttpRequestSportmaniacsV1Service(), SportmaniacsDownloaderV1Service(club_names))
+                dowloader_service = DownloaderService(race_info_simplified_model, HttpRequestSportmaniacsV1Service(requests), SportmaniacsDownloaderV1Service(club_names))
             elif race_info_simplified_model.platform == Platform.SPORTMANIACS_V2:
-                dowloader_service = DownloaderService(race_info_simplified_model, HttpRequestSportmaniacsV2Service(), SportmaniacsDownloaderV2Service(club_names))
+                dowloader_service = DownloaderService(race_info_simplified_model, HttpRequestSportmaniacsV2Service(requests), SportmaniacsDownloaderV2Service(club_names))
 
             runners = dowloader_service.get_data()
 
