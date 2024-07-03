@@ -44,3 +44,7 @@ class InvalidResponseException(Exception):
 class HttpRequestException(Exception):
     """Raised when there is an error with the HTTP request."""
     pass
+
+class TimeoutException(HttpRequestException):
+    """Raised when the HTTP request times out."""
+    pass
