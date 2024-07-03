@@ -32,3 +32,15 @@ def handle_repository_exceptions(func):
             args[0].logger.error(f"Error inesperado: {exception}")
             raise RepositoryOperationError(f"Error inesperado: {exception}")
     return wrapper
+
+class InvalidRaceIdException(Exception):
+    """Raised when the race ID is not found in the URL."""
+    pass
+
+class InvalidResponseException(Exception):
+    """Raised when the response does not contain the expected data."""
+    pass
+
+class HttpRequestException(Exception):
+    """Raised when there is an error with the HTTP request."""
+    pass
