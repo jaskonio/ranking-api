@@ -1,7 +1,7 @@
 import logging
 from typing import Dict, List
 from app.aplication.base_service import BaseService
-from app.domain.model.league_model import League, LeagueRace, LeagueModel, LeagueRankingModel, ParticipantLeagueModel
+from app.domain.model.league_model import League, LeagueRace, LeagueModel, LeagueRankingModel, ParticipantLeagueModel, ParticipantRankingModel
 from app.domain.model.race_data_model import RaceDataModel, RunnerRaceDataModel
 from app.domain.utils.string_utils import remove_accents
 from app.infrastructure.mongoDB.repository.race_data_repository import RaceDataRepository
@@ -76,42 +76,39 @@ class LeagueService(BaseService):
                                                 continue
 
                                         runners_data_filtered.append(runner_data)
-                    league.add_race(race.id, runners_data_filtered)
+                    rankings = self._calculate_rankings(runners_data_filtered, league)
+                    league.add_race(race.id, rankings)
 
         return {race_id: league.races[race_id] for race_id in league.races}
 
-    def _get_race_runners(self, race: LeagueRace, all_race_data: List[RaceDataModel], runner_map: Dict[str, ParticipantLeagueModel]) -> List[RunnerRaceDataModel]:
-        """
-        Obtiene los corredores correspondientes a una carrera específica.
-        """
-        for race_data in all_race_data:
-            if race.race_data_id == race_data.id:
-                data_runners_filled = []
-                for data_runner in race_data.runners:
-                    if data_runner.finished:
-                        data_runner_filled = self._match_runner(data_runner, runner_map)
-                        if data_runner_filled is not None:
-                            data_runners_filled.append(data_runner_filled)
-                return data_runners_filled
-        return []
+    def _calculate_rankings(self, runners_data: List[RunnerRaceDataModel], league: League) -> List[ParticipantRankingModel]:
+        race_data_sorted_by_real_pos = sorted(runners_data, key=lambda x: x.real_pos)
+        points_distribution = {i : v for (i,v) in enumerate([25, 18, 15, 12, 10, 8, 6, 4, 2, 1, 0.75, 0.50, 0.25, 0.10, 0.05])}
+        rankings = []
 
-    def _match_runner(self, data_runner: RunnerRaceDataModel, runner_map: Dict[str, ParticipantLeagueModel]) -> RunnerRaceDataModel|None:
-        """
-        Encuentra el participante correspondiente al corredor en los datos de la carrera.
-        """
-        for runner_participant in runner_map.values():
-            if runner_participant.unique_dorsal and data_runner.dorsal == runner_participant.dorsal:
-                data_runner.id = runner_participant.id
-                data_runner.person_id = runner_participant.person_id
-                return data_runner
-            if not runner_participant.unique_dorsal:
-                runner_participant_full_name = remove_accents(runner_participant.first_name.lower()) + ' ' + remove_accents(runner_participant.last_name.lower())
-                data_runner_full_name = remove_accents(data_runner.first_name.lower()) + ' ' + remove_accents(data_runner.last_name.lower())
+        for idx, runner in enumerate(race_data_sorted_by_real_pos):
+            points = points_distribution.get(idx, 0)
+            ranking = ParticipantRankingModel(
+                id=runner.id,
+                first_name=runner.first_name,
+                last_name=runner.last_name,
+                gender=runner.gender,
+                photo_url=runner.photo_url,
+                person_id=runner.person_id,
+                dorsal=runner.dorsal,
+                category=runner.category,
+                is_disqualified=not runner.finished,
+                position=idx + 1,
+                points=points,
+                pos_last_race=0,
+                top_five=1 if idx + 1 <= 5 else 0,
+                participations=1,
+                best_position=runner.official_pos,
+                last_position_race=runner.official_pos,
+                best_avegare_peace=runner.official_avg_time,
+                best_position_real=runner.real_pos
+            )
+            rankings.append(ranking)
+            league.update_final_ranking(ranking)
 
-                if runner_participant_full_name == data_runner_full_name or (runner_participant_full_name in data_runner_full_name or data_runner_full_name in runner_participant_full_name):
-                    data_runner.id = runner_participant.id
-                    data_runner.person_id = runner_participant.person_id
-                    return data_runner
-            else:
-                pass
-        return None
+        return rankings
