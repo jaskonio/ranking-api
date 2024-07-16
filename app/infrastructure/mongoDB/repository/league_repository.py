@@ -44,7 +44,7 @@ class LeagueRepository(MongoDBRepository):
     def update_by_id(self, model_id:str, new_model:LeagueModel) -> Optional[LeagueModel]:
         try:
             race_leagues: List[RaceLeague] = [RaceLeague(race_info_id=race.id, order=race.order) for race in new_model.races]
-            
+
             history_rankings:List[LeagueRanking] = [LeagueRanking(**r.dict()) for r in  new_model.history_ranking]
 
             runner_participants:List[ParticipantLeague] = [ParticipantLeague(**runner_participant.dict()) for runner_participant in new_model.runner_participants]
@@ -85,6 +85,8 @@ class LeagueRepository(MongoDBRepository):
                     new_race_league = LeagueRace(**race_info.dict(), order=race_league.order)
                     league_model.races.append(new_race_league)
 
+        league_model.races = sorted(league_model.races, key=lambda x: x.order)
+        
         # Populate runner participants
         if league_entity.runner_participants is not None:
             person_map = {person.id: person for person in persons}
